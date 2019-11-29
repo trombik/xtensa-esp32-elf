@@ -1,5 +1,4 @@
 bin/ct-ng
-libdata/ldconfig/xtensa-esp32-elf
 libexec/crosstool-ng/conf
 libexec/crosstool-ng/mconf
 libexec/crosstool-ng/nconf

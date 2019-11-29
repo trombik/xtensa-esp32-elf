@@ -58,7 +58,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		wget:ftp/wget
 
-USES=		autoreconf:build bison gmake libtool python:2.7
+USES=		autoreconf:build bison gmake libtool python:2.7 iconv gettext-runtime
 USE_GCC=	7+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
@@ -134,5 +134,15 @@ do-install:
 		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.orig
 	cd ${BUILD_WRKSRC}/builds && \
 	    ${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
+
+post-install:
+	@${STRIP_CMD} ${STAGEDIR}${PREFIX}/xtensa-esp32-elf/lib/libcc1.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcc1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/xtensa-esp32-elf/libexec/gcc/xtensa-esp32-elf/8.2.0/plugin/gengtype
+
+	@${STRIP_CMD} ${STAGEDIR}${PREFIX}/libexec/crosstool-ng/conf \
+		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/mconf \
+		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/nconf
 
 .include <bsd.port.mk>
