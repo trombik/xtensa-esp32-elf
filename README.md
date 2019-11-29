@@ -4,4 +4,5 @@ Updated port of `devel/xtensa-esp32-elf`.
 
 ## Status
 
-* being tested in `poudriere`
+* `portlint(1)` is happy (some warnings: "possible direct use of command ...")
+* built successfully in `poudriere(8)`
