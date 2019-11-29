@@ -81,6 +81,12 @@ BUILD_ENV=	CT_ALLOW_BUILD_AS_ROOT_SURE=1 \
 		LD_RUN_PATH=${PREFIX}/lib/${CC} \
 		${MAKE_ENV:MPATH=*}
 
+.if defined(BATCH)
+CT_LOG_PROGRESS_BAR=	n
+.else
+CT_LOG_PROGRESS_BAR=	y
+.endif
+
 post-extract:
 	${RMDIR} ${BUILD_WRKSRC}/overlays
 	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
@@ -96,6 +102,7 @@ pre-configure:
 	    ${WRKSRC}/configure.ac
 	@${REINPLACE_CMD} -e 's|%%FILESDIR%%|${FILESDIR}|g' \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
+	    -e 's|%%CT_LOG_PROGRESS_BAR%%|${CT_LOG_PROGRESS_BAR}|g' \
 	    ${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config
 
 do-configure:
@@ -123,7 +130,7 @@ do-build:
 
 do-install:
 	${RM} ${WRKSRC}/scripts/functions.orig \
-		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.bak
+		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.bak \
 		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.orig
 	cd ${BUILD_WRKSRC}/builds && \
 	    ${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
