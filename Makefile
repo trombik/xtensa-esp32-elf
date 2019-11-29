@@ -31,11 +31,11 @@ DISTFILES=	\
 # that top directoy of an archive is same as its file name without suffix. due
 # to this, arvhives from espressif github repositories must be extracted.
 EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-esp-2019r2_GH0.tar.gz \
-	espressif-binutils-gdb-esp-2019r2-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-esp-2019r2-gdb_GH0.tar.gz \
-	espressif-xtensa-overlays-fe9a594027aa5a39cd1e653b786c42319a7afd90_GH0.tar.gz \
-	espressif-newlib-esp32-esp-2019r2_GH0.tar.gz
+	espressif-gcc-${DISTVERSION}_GH0.tar.gz \
+	espressif-binutils-gdb-${DISTVERSION}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${DISTVERSION}-gdb_GH0.tar.gz \
+	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz \
+	espressif-newlib-esp32-${DISTVERSION}_GH0.tar.gz
 
 MAINTAINER=	leres@FreeBSD.org
 COMMENT=	Espressif ESP32 toolchain
@@ -64,7 +64,7 @@ USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 
 TAGNAME=	${DISTVERSION}
-XTENSA_OVERLAYS_TAGNAME=	fe9a594027aa5a39cd1e653b786c42319a7afd90
+XTENSA_OVERLAYS_TAGNAME=	fe9a5940
 
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 	espressif:binutils-gdb:${TAGNAME}-gdb:source101 \
