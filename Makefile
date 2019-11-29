@@ -115,7 +115,7 @@ do-configure:
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV \
 	    ${MAKE_CMD} ${MAKE_ARGS} install && \
-	    ${SETENV} ${BUILD_ENV} DEBUG=1 ./ct-ng ${PORTNAME}
+	    ${SETENV} ${BUILD_ENV} ./ct-ng ${PORTNAME}
 
 pre-build:
 	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
