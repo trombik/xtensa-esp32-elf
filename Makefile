@@ -120,29 +120,29 @@ do-configure:
 pre-build:
 	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
 	${CP} ${FILESDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
-
-do-build:
-	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
-	cd ${BUILD_WRKSRC}/builds/${PORTNAME} && \
-	    ${CHMOD} +w . lib && \
-	    ${RM} build.log.bz2 lib/charset.alias && \
-	    ${CHMOD} -w . lib
-
-do-install:
 	${RM} ${WRKSRC}/scripts/functions.orig \
 		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.bak \
 		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.orig
-	cd ${BUILD_WRKSRC}/builds && \
-	    ${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
 
-post-install:
-	@${STRIP_CMD} ${STAGEDIR}${PREFIX}/xtensa-esp32-elf/lib/libcc1.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcc1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/xtensa-esp32-elf/libexec/gcc/xtensa-esp32-elf/8.2.0/plugin/gengtype
+do-build:
+	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
 
-	@${STRIP_CMD} ${STAGEDIR}${PREFIX}/libexec/crosstool-ng/conf \
+	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} +w
+	${RM} ${BUILD_WRKSRC}/builds/${PORTNAME}/build.log.bz2 \
+		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/charset.alias
+
+	@${STRIP_CMD} \
+		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/libcc1.so.0.0.0 \
+		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcc1plugin.so.0.0.0 \
+		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so.0.0.0 \
+		${BUILD_WRKSRC}/builds/${PORTNAME}/libexec/gcc/xtensa-esp32-elf/8.2.0/plugin/gengtype \
+		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/conf \
 		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/mconf \
 		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/nconf
+	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} -w
+
+do-install:
+	cd ${BUILD_WRKSRC}/builds && \
+		${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
 
 .include <bsd.port.mk>
