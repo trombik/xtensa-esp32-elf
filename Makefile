@@ -111,11 +111,11 @@ do-configure:
 	    ${BUILD_WRKSRC}/version.sh
 	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
 	cd ${BUILD_WRKSRC} && \
-	    ${SETENV} GREP=${LOCALBASE}/bin/grep ./configure --enable-local
+	    ${SETENV} GREP=${LOCALBASE}/bin/grep EGREP="${LOCALBASE}/bin/egrep" SED="${LOCALBASE}/bin/gsed" AWK="${LOCALBASE}/bin/gawk" ./configure --enable-local --prefix=${PREFIX}
 	cd ${BUILD_WRKSRC} && \
-	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV \
-	    ${MAKE_CMD} ${MAKE_ARGS} install && \
-	    ${SETENV} ${BUILD_ENV} ./ct-ng ${PORTNAME}
+	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV ${MAKE_ENV} \
+	    ${MAKE_CMD} ${MAKE_ARGS} install-strip && \
+	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
 	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
@@ -135,10 +135,7 @@ do-build:
 		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/libcc1.so.0.0.0 \
 		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcc1plugin.so.0.0.0 \
 		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so.0.0.0 \
-		${BUILD_WRKSRC}/builds/${PORTNAME}/libexec/gcc/xtensa-esp32-elf/8.2.0/plugin/gengtype \
-		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/conf \
-		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/mconf \
-		${STAGEDIR}${PREFIX}/libexec/crosstool-ng/nconf
+		${BUILD_WRKSRC}/builds/${PORTNAME}/libexec/gcc/xtensa-esp32-elf/8.2.0/plugin/gengtype
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} -w
 
 do-install:
