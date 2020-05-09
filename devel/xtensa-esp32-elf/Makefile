@@ -2,7 +2,7 @@
 # $FreeBSD$
 
 PORTNAME=	xtensa-esp32-elf
-DISTVERSION=	esp-2019r2
+PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/r/.r/}
 #PORTREVISION=	1
 CATEGORIES=	devel
 MASTER_SITES= \
@@ -17,6 +17,7 @@ MASTER_SITES= \
 		GNU/ncurses/:source6 \
 		GNU/autoconf/:source7 \
 		GNU/automake/:source8
+DISTNAME=	${PORTNAME}-${ESPRESSIF_VERSION}
 DISTFILES=	\
 		expat-2.2.5.tar.bz2:source1 \
 		gmp-6.1.2.tar.xz:source2 \
@@ -25,17 +26,16 @@ DISTFILES=	\
 		mpfr-4.0.1.tar.xz:source5 \
 		ncurses-6.1.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-
+		automake-1.16.1.tar.gz:source8
 # crosstool-NG supports custom location to archive files, but it also assumes
 # that top directoy of an archive is same as its file name without suffix. due
 # to this, arvhives from espressif github repositories must be extracted.
 EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${DISTVERSION}_GH0.tar.gz \
-	espressif-binutils-gdb-${DISTVERSION}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${DISTVERSION}-gdb_GH0.tar.gz \
+	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb_GH0.tar.gz \
 	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz \
-	espressif-newlib-esp32-${DISTVERSION}_GH0.tar.gz
+	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 
 MAINTAINER=	leres@FreeBSD.org
 COMMENT=	Espressif ESP32 toolchain
@@ -63,7 +63,10 @@ USE_GCC=	7+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 
-TAGNAME=	${DISTVERSION}
+# XXX the upstream versioning does not match one of the ports
+ESPRESSIF_VERSION=	esp-2019r2
+
+TAGNAME=	${ESPRESSIF_VERSION}
 XTENSA_OVERLAYS_TAGNAME=	fe9a5940
 
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
