@@ -2154,6 +2154,7 @@ xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcc1plugin.so.0.0.0
 xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so
 xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so.0
 xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so.0.0.0
+xtensa-esp32-elf/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/include/config/xtensa/xtensa-opts.h
 xtensa-esp32-elf/lib/ldscripts/elf32xtensa.x
 xtensa-esp32-elf/lib/ldscripts/elf32xtensa.xbn
 xtensa-esp32-elf/lib/ldscripts/elf32xtensa.xc
@@ -3247,6 +3248,10 @@ xtensa-esp32-elf/xtensa-esp32-elf/include/wctype.h
 xtensa-esp32-elf/xtensa-esp32-elf/include/wordexp.h
 xtensa-esp32-elf/xtensa-esp32-elf/include/xlocale.h
 xtensa-esp32-elf/xtensa-esp32-elf/include/xtensa/config/core-isa.h
+xtensa-esp32-elf/xtensa-esp32-elf/lib/esp32-psram/nano.specs
+xtensa-esp32-elf/xtensa-esp32-elf/lib/esp32-psram/no-rtti/nano.specs
+xtensa-esp32-elf/xtensa-esp32-elf/lib/nano.specs
+xtensa-esp32-elf/xtensa-esp32-elf/lib/no-rtti/nano.specs
 xtensa-esp32-elf/xtensa-esp32-elf/lib/crt0.o
 xtensa-esp32-elf/xtensa-esp32-elf/lib/default.specs
 xtensa-esp32-elf/xtensa-esp32-elf/lib/esp32-psram/crt0.o

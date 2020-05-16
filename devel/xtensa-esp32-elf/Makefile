@@ -64,7 +64,7 @@ USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 
 # XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2019r2
+ESPRESSIF_VERSION=	esp-2020r1
 
 TAGNAME=	${ESPRESSIF_VERSION}
 XTENSA_OVERLAYS_TAGNAME=	fe9a5940
@@ -105,6 +105,7 @@ pre-configure:
 	    ${WRKSRC}/configure.ac
 	@${REINPLACE_CMD} -e 's|%%FILESDIR%%|${FILESDIR}|g' \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
+	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    -e 's|%%CT_LOG_PROGRESS_BAR%%|${CT_LOG_PROGRESS_BAR}|g' \
 	    ${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config
 
