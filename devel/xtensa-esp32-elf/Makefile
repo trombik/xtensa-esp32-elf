@@ -58,16 +58,16 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		wget:ftp/wget
 
-USES=		autoreconf:build bison gmake libtool python:2.7 iconv gettext-runtime
+USES=		autoreconf:build bison gmake libtool python:3.5+ iconv gettext-runtime
 USE_GCC=	7+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 
 # XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2020r1
+ESPRESSIF_VERSION=	esp-2020r3
 
 TAGNAME=	${ESPRESSIF_VERSION}
-XTENSA_OVERLAYS_TAGNAME=	fe9a5940
+XTENSA_OVERLAYS_TAGNAME=	4d8c98dc
 
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 	espressif:binutils-gdb:${TAGNAME}-gdb:source101 \
@@ -137,9 +137,8 @@ do-build:
 
 	@${STRIP_CMD} \
 		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/libcc1.so.0.0.0 \
-		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcc1plugin.so.0.0.0 \
-		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.2.0/plugin/libcp1plugin.so.0.0.0 \
-		${BUILD_WRKSRC}/builds/${PORTNAME}/libexec/gcc/xtensa-esp32-elf/8.2.0/plugin/gengtype
+		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.4.0/plugin/libcc1plugin.so.0.0.0 \
+		${BUILD_WRKSRC}/builds/${PORTNAME}/libexec/gcc/xtensa-esp32-elf/8.4.0/plugin/gengtype
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} -w
 
 do-install:
