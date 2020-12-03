@@ -107,7 +107,7 @@ pre-configure:
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    -e 's|%%CT_LOG_PROGRESS_BAR%%|${CT_LOG_PROGRESS_BAR}|g' \
-	    ${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config
+	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
@@ -125,8 +125,8 @@ pre-build:
 	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
 	${CP} ${FILESDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
 	${RM} ${WRKSRC}/scripts/functions.orig \
-		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.bak \
-		${WRKSRC}/samples/xtensa-esp32-elf/crosstool.config.orig
+		${WRKSRC}/samples/${PORTNAME}/crosstool.config.bak \
+		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
 
 do-build:
 	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
@@ -134,15 +134,23 @@ do-build:
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} +w
 	${RM} ${BUILD_WRKSRC}/builds/${PORTNAME}/build.log.bz2 \
 		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/charset.alias
-
-	@${STRIP_CMD} \
-		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/libcc1.so.0.0.0 \
-		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/gcc/xtensa-esp32-elf/8.4.0/plugin/libcc1plugin.so.0.0.0 \
-		${BUILD_WRKSRC}/builds/${PORTNAME}/libexec/gcc/xtensa-esp32-elf/8.4.0/plugin/gengtype
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} -w
 
 do-install:
 	cd ${BUILD_WRKSRC}/builds && \
 		${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
+	# do NOT install ct-ng and its files. we just need binaries for the
+	# PORTNAME, not ct-ng
+	cd ${STAGEDIR}${PREFIX} && \
+		${RM} -rf bin/ct-ng \
+			libexec/crosstool-ng \
+			share/crosstool-ng \
+			share/doc/crosstool-ng \
+			share/man/man1/ct-ng.1.gz \
+			share/bash-completion
+	@${STRIP_CMD} \
+		${STAGEDIR}${PREFIX}/${PORTNAME}/lib/libcc1.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${PORTNAME}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
 
 .include <bsd.port.mk>
