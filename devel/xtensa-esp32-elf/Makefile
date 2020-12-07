@@ -3,7 +3,6 @@
 
 PORTNAME=	xtensa-esp32-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/r/.r/}
-#PORTREVISION=	1
 CATEGORIES=	devel
 MASTER_SITES= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
