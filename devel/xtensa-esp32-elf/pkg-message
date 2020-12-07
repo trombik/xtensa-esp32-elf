@@ -1,0 +1,4 @@
+To use the toolchain, add ${PREFIX}/${PORTNAME}/bin to PATH environment
+variable.
+
+export PATH=${PATH}:${PREFIX}/${PORTNAME}/bin
