@@ -140,7 +140,7 @@ do-configure:
 .if ${FLAVOR} == "idf4"
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV ${MAKE_ENV} \
-	    ${MAKE_CMD} ${MAKE_ARGS} install-strip && \
+	    ${MAKE_CMD} ${MAKE_ARGS} install-strip
 .endif
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
