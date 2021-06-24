@@ -152,5 +152,5 @@ do-install:
 		${STAGEDIR}${PREFIX}/${PORTNAME}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
 	# install metadata file for platformio
-	${INSTALL_DATA} ${FILESDIR}/piopm ${${STAGEDIR}${PREFIX}/${PORTNAME}/.piopm
+	${INSTALL_DATA} ${FILESDIR}/piopm ${STAGEDIR}${PREFIX}/${PORTNAME}/.piopm
 .include <bsd.port.mk>
