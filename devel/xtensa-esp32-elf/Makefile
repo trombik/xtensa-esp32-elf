@@ -137,11 +137,9 @@ do-configure:
 	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} GREP=${LOCALBASE}/bin/grep EGREP="${LOCALBASE}/bin/egrep" SED="${LOCALBASE}/bin/gsed" AWK="${LOCALBASE}/bin/gawk" ./configure --enable-local --prefix=${PREFIX}
-.if ${FLAVOR} == "idf4"
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV ${MAKE_ENV} \
-	    ${MAKE_CMD} ${MAKE_ARGS} install-strip
-.endif
+	    ${MAKE_CMD} ${MAKE_ARGS} install
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
