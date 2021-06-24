@@ -1760,6 +1760,7 @@ xtensa-esp32-elf/xtensa-esp32-elf/sys-include/wctype.h
 xtensa-esp32-elf/xtensa-esp32-elf/sys-include/wordexp.h
 xtensa-esp32-elf/xtensa-esp32-elf/sys-include/xlocale.h
 xtensa-esp32-elf/xtensa-esp32-elf/sys-include/xtensa/config/core-isa.h
+xtensa-esp32-elf/.piopm
 @dir xtensa-esp32-elf/xtensa-esp32-elf/include/bits
 @dir xtensa-esp32-elf/xtensa-esp32-elf/include/rpc
 @dir xtensa-esp32-elf/xtensa-esp32-elf/sys-include/bits
