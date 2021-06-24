@@ -142,6 +142,7 @@ do-configure:
 	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV ${MAKE_ENV} \
 	    ${MAKE_CMD} ${MAKE_ARGS} install-strip
 .endif
+	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
