@@ -102,7 +102,7 @@ post-extract:
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
 	    ${WRKSRC}/configure.ac
-	@${REINPLACE_CMD} -e 's|%%FILESDIR%%|${FILESDIR}|g' \
+	${REINPLACE_CMD} -e 's|%%FILESDIR%%|${FILESDIR}|g' \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    -e 's|%%CT_LOG_PROGRESS_BAR%%|${CT_LOG_PROGRESS_BAR}|g' \
@@ -151,5 +151,6 @@ do-install:
 		${STAGEDIR}${PREFIX}/${PORTNAME}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${PORTNAME}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
-
+	# install metadata file for platformio
+	${INSTALL_DATA} ${FILESDIR}/piopm ${${STAGEDIR}${PREFIX}/${PORTNAME}/.piopm
 .include <bsd.port.mk>
