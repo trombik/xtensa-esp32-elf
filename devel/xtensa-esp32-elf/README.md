@@ -1,6 +1,7 @@
 ## `devel/xtensa-esp32-elf`
 
-Updated port of `devel/xtensa-esp32-elf`.
+Updated port of `devel/xtensa-esp32-elf`. This port will not be merged to the
+official ports tree. See bug [251659](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=251659).
 
 ## Status
 
