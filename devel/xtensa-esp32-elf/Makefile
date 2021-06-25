@@ -88,6 +88,8 @@ XTENSA_OVERLAYS_TAGNAME=	eb39108
 TAGNAME=	c752ad5
 GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
 .endif
+PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
+XTENSA_ROOT_DIR=	${PORTNAME}-${FLAVOR}
 
 GNU_CONFIGURE= yes
 NO_MTREE=	yes
@@ -96,7 +98,6 @@ BINARY_ALIAS=	g++=${CXX} gcc=${CC} python=${PYTHON_VERSION}
 BUILD_ENV=	CT_ALLOW_BUILD_AS_ROOT_SURE=1 \
 		LD_RUN_PATH=${PREFIX}/lib/${CC} \
 		${MAKE_ENV:MPATH=*}
-PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
 
 .if defined(BATCH)
 CT_LOG_PROGRESS_BAR=	n
@@ -161,6 +162,7 @@ do-build:
 do-install:
 	cd ${BUILD_WRKSRC}/builds && \
 		${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
+	${MV} ${STAGEDIR}${PREFIX}/${PORTNAME} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}
 	# do NOT install ct-ng and its files. we just need binaries for the
 	# PORTNAME, not ct-ng
 	cd ${STAGEDIR}${PREFIX} && \
@@ -172,10 +174,10 @@ do-install:
 			share/bash-completion
 .if ${FLAVOR} == "idf4"
 	@${STRIP_CMD} \
-		${STAGEDIR}${PREFIX}/${PORTNAME}/lib/libcc1.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${PORTNAME}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
 .endif
 	# install metadata file for platformio
-	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${PORTNAME}/.piopm
+	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
 .include <bsd.port.mk>
