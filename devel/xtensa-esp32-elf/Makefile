@@ -1,8 +1,12 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
+# PORTNAME/PORTVERSION/DISTVERSIONPREFIX/DISTVERSION/DISTVERSIONSUFFIX/PORTREVISION/PORTEPOCH/CATEGORIES/MASTER_SITES/MASTER_SITE_SUBDIR/PROJECTHOST/PKGNAMEPREFIX/PKGNAMESUFFIX/DISTNAME/EXTRACT_SUFX/DISTFILES/DIST_SUBDIR/EXTRACT_ONLY.
 PORTNAME=	xtensa-esp32-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/}
 CATEGORIES=	devel
+MASTER_SITES=
+DISTFILES=
+EXTRACT_ONLY=
 
 MAINTAINER=	leres@FreeBSD.org
 COMMENT=	Espressif ESP32 toolchain
@@ -14,10 +18,23 @@ BROKEN_aarch64=		fails to configure: cannot compute suffix of object files: cann
 BROKEN_armv6=		fails to build: failed in step 'Installing pass-2 core C gcc compiler'
 BROKEN_armv7=		fails to build: failed in step 'Installing pass-2 core C gcc compiler'
 
+BUILD_DEPENDS=	bash:shells/bash \
+		gawk:lang/gawk \
+		git:devel/git \
+		gpatch:devel/patch \
+		${LOCALBASE}/bin/grep:textproc/gnugrep \
+		gperf:devel/gperf \
+		gsed:textproc/gsed \
+		help2man:misc/help2man \
+		makeinfo:print/texinfo \
+		wget:ftp/wget
+
+DISTNAME=	${PORTNAME}-${ESPRESSIF_VERSION}
+USES=		autoreconf:build bison gmake libtool python:3.5+ iconv gettext-runtime
 FLAVORS=	idf4 idf3
 FLAVOR?=	${FLAVORS:[1]}
 .if ${FLAVOR} == idf4
-MASTER_SITES= \
+MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
 		SF/expat/:source1 \
 		GNU/gmp/:source2 \
@@ -29,7 +46,7 @@ MASTER_SITES= \
 		GNU/ncurses/:source6 \
 		GNU/autoconf/:source7 \
 		GNU/automake/:source8
-DISTFILES=	\
+DISTFILES+=	\
 		expat-2.2.5.tar.bz2:source1 \
 		gmp-6.1.2.tar.xz:source2 \
 		isl-0.19.tar.xz:source3 \
@@ -39,7 +56,7 @@ DISTFILES=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8
 .elif ${FLAVOR} == idf3
-MASTER_SITES=	SOURCEWARE/binutils/releases/binutils:source1 \
+MASTER_SITES+=	SOURCEWARE/binutils/releases/binutils:source1 \
 		GNU/binutils:source1 \
 		https://github.com/libexpat/libexpat/releases/download/R_2_1_0/:source2 \
 		SF/expat/expat/2.1.0:source2 \
@@ -54,7 +71,7 @@ MASTER_SITES=	SOURCEWARE/binutils/releases/binutils:source1 \
 		GNU/ncurses:source9 \
 		SOURCEWARE/newlib:source10 \
 		ftp://sources.redhat.com/pub/newlib/:source10
-DISTFILES=	binutils-2.25.1.tar.bz2:source1 \
+DISTFILES+=	binutils-2.25.1.tar.bz2:source1 \
 		expat-2.1.0.tar.gz:source2 \
 		gcc-5.2.0.tar.bz2:source3 \
 		gdb-7.10.tar.xz:source4 \
@@ -65,7 +82,6 @@ DISTFILES=	binutils-2.25.1.tar.bz2:source1 \
 		ncurses-6.0.tar.gz:source9 \
 		newlib-2.2.0.tar.gz:source10
 .endif
-DISTNAME=	${PORTNAME}-${ESPRESSIF_VERSION}
 
 idf4_PLIST=	${.CURDIR}/pkg-plist.${FLAVOR}
 idf3_PLIST=	${.CURDIR}/pkg-plist.${FLAVOR}
@@ -73,18 +89,6 @@ idf4_PKGNAMESUFFIX=	-idf4
 idf3_PKGNAMESUFFIX=	-idf3
 DISTINFO_FILE=	${.CURDIR}/distinfo.${FLAVOR}
 
-BUILD_DEPENDS=	bash:shells/bash \
-		gawk:lang/gawk \
-		git:devel/git \
-		gpatch:devel/patch \
-		${LOCALBASE}/bin/grep:textproc/gnugrep \
-		gperf:devel/gperf \
-		gsed:textproc/gsed \
-		help2man:misc/help2man \
-		makeinfo:print/texinfo \
-		wget:ftp/wget
-
-USES=		autoreconf:build bison gmake libtool python:3.5+ iconv gettext-runtime
 USE_GCC=	7+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
@@ -104,7 +108,7 @@ GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 # crosstool-NG supports custom location to archive files, but it also assumes
 # that top directoy of an archive is same as its file name without suffix. due
 # to this, arvhives from espressif github repositories must be extracted.
-EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX} \
+EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb_GH0.tar.gz \
@@ -118,7 +122,7 @@ XTENSA_OVERLAYS_TAGNAME=	eb39108
 # https://github.com/espressif/arduino-esp32/blob/gh-pages/package_esp32_index.json
 TAGNAME=	c752ad5
 GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
-EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX}
+EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX}
 TARBALLS=       ${BUILD_WRKSRC}/.build/tarballs
 .endif
 
