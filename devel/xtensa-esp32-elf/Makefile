@@ -220,6 +220,9 @@ do-install:
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
+.elif ${FLAVOR} == idf3
+	@${STRIP_CMD} \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/xtensa-esp32-elf/5.2.0/plugin/gengtype
 .endif
 	# install metadata file for platformio
 	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
