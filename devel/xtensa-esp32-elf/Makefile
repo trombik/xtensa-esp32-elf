@@ -1,6 +1,5 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
-# PORTNAME/PORTVERSION/DISTVERSIONPREFIX/DISTVERSION/DISTVERSIONSUFFIX/PORTREVISION/PORTEPOCH/CATEGORIES/MASTER_SITES/MASTER_SITE_SUBDIR/PROJECTHOST/PKGNAMEPREFIX/PKGNAMESUFFIX/DISTNAME/EXTRACT_SUFX/DISTFILES/DIST_SUBDIR/EXTRACT_ONLY.
 PORTNAME=	xtensa-esp32-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/}
 CATEGORIES=	devel
@@ -178,7 +177,11 @@ do-configure:
 	    ${BUILD_WRKSRC}/version.sh
 	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
 	cd ${BUILD_WRKSRC} && \
-	    ${SETENV} GREP=${LOCALBASE}/bin/grep EGREP="${LOCALBASE}/bin/egrep" SED="${LOCALBASE}/bin/gsed" AWK="${LOCALBASE}/bin/gawk" ./configure --enable-local --prefix=${PREFIX}
+	    ${SETENV} GREP=${LOCALBASE}/bin/grep \
+		EGREP="${LOCALBASE}/bin/egrep" \
+		SED="${LOCALBASE}/bin/gsed" \
+		AWK="${LOCALBASE}/bin/gawk" \
+		./configure --enable-local --prefix=${PREFIX}
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV ${MAKE_ENV} \
 	    ${MAKE_CMD} ${MAKE_ARGS} install
