@@ -84,7 +84,9 @@ EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX} \
 .elif ${FLAVOR} == "idf3"
 ESPRESSIF_VERSION=	crosstool-ng-1.22.0
 XTENSA_OVERLAYS_TAGNAME=	eb39108
-# the latest commit in xtensa-1.22.x branch
+# the latest commit in espressif/crosstools-NG xtensa-1.22.x branch
+# this should match the supported version in arduino-esp32. see:
+# https://github.com/espressif/arduino-esp32/blob/gh-pages/package_esp32_index.json
 TAGNAME=	c752ad5
 GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
 .endif
