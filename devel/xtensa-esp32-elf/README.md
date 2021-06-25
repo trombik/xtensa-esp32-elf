@@ -31,7 +31,7 @@ The files are installed under `${PREFIX}/xtensa-esp32-elf-idf3`, usually
 ```console
 mkdir -p ~/.platformio/packages
 cd ~/.platformio/packages
-ln -s ln -s /usr/local/xtensa-esp32-elf-idf3 toolchain-xtensa32
+ln -s /usr/local/xtensa-esp32-elf-idf3 toolchain-xtensa32
 ```
 
 Run `pio run` in the project directory.
