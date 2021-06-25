@@ -3,28 +3,6 @@
 PORTNAME=	xtensa-esp32-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/}
 CATEGORIES=	devel
-MASTER_SITES= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
-		SF/expat/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-3.1.3/:source5 \
-		GNU/mpfr/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8
-DISTNAME=	${PORTNAME}-${ESPRESSIF_VERSION}
-DISTFILES=	\
-		expat-2.2.5.tar.bz2:source1 \
-		gmp-6.1.2.tar.xz:source2 \
-		isl-0.19.tar.xz:source3 \
-		mpc-1.1.0.tar.gz:source4 \
-		mpfr-4.0.1.tar.xz:source5 \
-		ncurses-6.1.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8
 
 MAINTAINER=	leres@FreeBSD.org
 COMMENT=	Espressif ESP32 toolchain
@@ -37,11 +15,62 @@ BROKEN_armv6=		fails to build: failed in step 'Installing pass-2 core C gcc comp
 BROKEN_armv7=		fails to build: failed in step 'Installing pass-2 core C gcc compiler'
 
 FLAVORS=	idf4 idf3
-FLAVOR=	${FLAVORS:[1]}
+FLAVOR?=	${FLAVORS:[1]}
+.if ${FLAVOR} == idf4
+MASTER_SITES= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
+		SF/expat/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-3.1.3/:source5 \
+		GNU/mpfr/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8
+DISTFILES=	\
+		expat-2.2.5.tar.bz2:source1 \
+		gmp-6.1.2.tar.xz:source2 \
+		isl-0.19.tar.xz:source3 \
+		mpc-1.1.0.tar.gz:source4 \
+		mpfr-4.0.1.tar.xz:source5 \
+		ncurses-6.1.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8
+.elif ${FLAVOR} == idf3
+MASTER_SITES=	SOURCEWARE/binutils/releases/binutils:source1 \
+		GNU/binutils:source1 \
+		https://github.com/libexpat/libexpat/releases/download/R_2_1_0/:source2 \
+		SF/expat/expat/2.1.0:source2 \
+		GCC/releases/gcc-5.2.0:source3 \
+		GNU/gdb:source4 \
+		GNU/gmp:source5 \
+		http://isl.gforge.inria.fr/:source6 \
+		GNU/mpc:source7 \
+		http://www.mpfr.org/mpfr-3.1.3/:source8 \
+		GNU/mpfr:source8 \
+		ftp://ftp.invisible-island.net/ncurses/:source9 \
+		GNU/ncurses:source9 \
+		SOURCEWARE/newlib:source10 \
+		ftp://sources.redhat.com/pub/newlib/:source10
+DISTFILES=	binutils-2.25.1.tar.bz2:source1 \
+		expat-2.1.0.tar.gz:source2 \
+		gcc-5.2.0.tar.bz2:source3 \
+		gdb-7.10.tar.xz:source4 \
+		gmp-6.0.0a.tar.xz:source5 \
+		isl-0.14.tar.xz:source6 \
+		mpc-1.0.3.tar.gz:source7 \
+		mpfr-3.1.3.tar.xz:source8 \
+		ncurses-6.0.tar.gz:source9 \
+		newlib-2.2.0.tar.gz:source10
+.endif
+DISTNAME=	${PORTNAME}-${ESPRESSIF_VERSION}
+
 idf4_PLIST=	${.CURDIR}/pkg-plist.${FLAVOR}
 idf3_PLIST=	${.CURDIR}/pkg-plist.${FLAVOR}
-idf4_PKGNAMESUFFIX=	-${FLAVOR}
-idf3_PKGNAMESUFFIX=	-${FLAVOR}
+idf4_PKGNAMESUFFIX=	-idf4
+idf3_PKGNAMESUFFIX=	-idf3
 DISTINFO_FILE=	${.CURDIR}/distinfo.${FLAVOR}
 
 BUILD_DEPENDS=	bash:shells/bash \
@@ -60,7 +89,7 @@ USE_GCC=	7+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 
-.if ${FLAVOR} == "idf4"
+.if ${FLAVOR} == idf4
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2020r3
 XTENSA_OVERLAYS_TAGNAME=	4d8c98dc
@@ -81,7 +110,7 @@ EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb_GH0.tar.gz \
 	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
-.elif ${FLAVOR} == "idf3"
+.elif ${FLAVOR} == idf3
 ESPRESSIF_VERSION=	crosstool-ng-1.22.0
 XTENSA_OVERLAYS_TAGNAME=	eb39108
 # the latest commit in espressif/crosstools-NG xtensa-1.22.x branch
@@ -89,7 +118,10 @@ XTENSA_OVERLAYS_TAGNAME=	eb39108
 # https://github.com/espressif/arduino-esp32/blob/gh-pages/package_esp32_index.json
 TAGNAME=	c752ad5
 GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
+EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX}
+TARBALLS=       ${BUILD_WRKSRC}/.build/tarballs
 .endif
+
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
 XTENSA_ROOT_DIR=	${PORTNAME}-${FLAVOR}
 
@@ -99,6 +131,7 @@ SUBDIR=		crosstool-NG
 BINARY_ALIAS=	g++=${CXX} gcc=${CC} python=${PYTHON_VERSION}
 BUILD_ENV=	CT_ALLOW_BUILD_AS_ROOT_SURE=1 \
 		LD_RUN_PATH=${PREFIX}/lib/${CC} \
+		CT_FORBID_DOWNLOAD=y \
 		${MAKE_ENV:MPATH=*}
 
 .if defined(BATCH)
@@ -108,23 +141,25 @@ CT_LOG_PROGRESS_BAR=	y
 .endif
 
 post-extract:
-.if ${FLAVOR} == "idf4"
+.if ${FLAVOR} == idf4
 	${RMDIR} ${BUILD_WRKSRC}/overlays
 	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
 	${MKDIR} ${BUILD_WRKSRC}/.build/tarballs
-#.for F in $(DISTFILES:N$(EXTRACT_ONLY))
-.for F in $(DISTFILES)
+.elif ${FLAVOR} == idf3
+	${MKDIR} ${TARBALLS}
+	${MKDIR} ${WRKSRC}/local-patches/gdb/7.10
+	${CP} ${PATCHDIR}/0001-gdb-7.12.1.patch ${WRKSRC}/local-patches/gdb/7.10
+.endif
+.for F in $(DISTFILES:N$(EXTRACT_ONLY))
 	${LN} -s ${DISTDIR}/${F:C/:source[0-9]+$//} \
 	    ${BUILD_WRKSRC}/.build/tarballs
 .endfor
-.endif
 
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
 	    ${WRKSRC}/configure.ac
-.if ${FLAVOR} == "idf4"
+.if ${FLAVOR} == idf4
 	${REINPLACE_CMD} \
-		-e 's|%%FILESDIR%%|${FILESDIR}|g' \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
@@ -147,7 +182,7 @@ do-configure:
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
-.if ${FLAVOR} == "idf4"
+.if ${FLAVOR} == idf4
 	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
 	${CP} ${FILESDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
 .endif
@@ -176,7 +211,7 @@ do-install:
 			share/doc/crosstool-ng \
 			share/man/man1/ct-ng.1.gz \
 			share/bash-completion
-.if ${FLAVOR} == "idf4"
+.if ${FLAVOR} == idf4
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
@@ -184,4 +219,5 @@ do-install:
 .endif
 	# install metadata file for platformio
 	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
+
 .include <bsd.port.mk>
