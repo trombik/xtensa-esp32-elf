@@ -113,13 +113,23 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb_GH0.tar.gz \
 	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
+
 .elif ${FLAVOR} == idf3
-ESPRESSIF_VERSION=	crosstool-ng-1.22.0
-XTENSA_OVERLAYS_TAGNAME=	eb39108
+
 # the latest commit in espressif/crosstools-NG xtensa-1.22.x branch
 # this should match the supported version in arduino-esp32. see:
 # https://github.com/espressif/arduino-esp32/blob/gh-pages/package_esp32_index.json
 TAGNAME=	c752ad5
+
+# the old branch has no consistent version number scheme. modify
+# ESPRESSIF_VERSION so that the version number looks similar to packages for
+# other platforms and also compatible with PORTVERSION.
+#
+# as it's 1.22.0-97-gc752ad5-5.2.0 at the time of this writing,
+# ESPRESSIF_VERSION_IDF3 is 97.
+ESPRESSIF_VERSION_IDF3=	97
+ESPRESSIF_VERSION=	crosstool-ng-1.22.0.${ESPRESSIF_VERSION_IDF3}.g${TAGNAME}
+XTENSA_OVERLAYS_TAGNAME=	eb39108
 GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX}
 TARBALLS=       ${BUILD_WRKSRC}/.build/tarballs
