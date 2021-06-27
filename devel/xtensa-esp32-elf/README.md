@@ -29,6 +29,8 @@ make install FLAVOR="idf3"
 The files are installed under `${PREFIX}/xtensa-esp32-elf-idf3`, usually
 `/usr/local/xtensa-esp32-elf-idf3`.
 
+### `platformio` and `arduino-esp32`
+
 ```console
 mkdir -p ~/.platformio/packages
 cd ~/.platformio/packages
@@ -66,4 +68,26 @@ Compiling .pio/build/esp32/FrameworkArduino/FunctionalInterrupt.cpp.o
 Compiling .pio/build/esp32/FrameworkArduino/HardwareSerial.cpp.o
 Compiling .pio/build/esp32/FrameworkArduino/IPAddress.cpp.o
 ...
+```
+### `esp-idf`
+
+Set relevant environment variables, such as `IDF_PATH`.
+
+Add `bin` directory of the package to `PATH` environment variable.
+
+```console
+export PATH=${PATH}:/usr/local/xtensa-esp32-elf-idf4/bin
+```
+
+If you have used the old (without `FLAVOR`) port, make sure to clean the
+`build` directory.
+
+```console
+idf.py clean
+```
+
+Build the project as usual.
+
+```console
+idf.py all
 ```
