@@ -88,17 +88,17 @@ idf4_PKGNAMESUFFIX=	-idf4
 idf3_PKGNAMESUFFIX=	-idf3
 DISTINFO_FILE=	${.CURDIR}/distinfo.${FLAVOR}
 
-USE_GCC=	7+
+USE_GCC=	9+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 
 .if ${FLAVOR} == idf4
 # XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2020r3
-XTENSA_OVERLAYS_TAGNAME=	4d8c98dc
+ESPRESSIF_VERSION=	esp-2021r1
+XTENSA_OVERLAYS_TAGNAME=	eb39108
 TAGNAME=	${ESPRESSIF_VERSION}
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${TAGNAME}-gdb:source101 \
+	espressif:binutils-gdb:${TAGNAME}-gdb92:source101 \
 	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
 	espressif:newlib-esp32:${TAGNAME}:source103 \
 	espressif:xtensa-overlays:${XTENSA_OVERLAYS_TAGNAME}:source104 \
