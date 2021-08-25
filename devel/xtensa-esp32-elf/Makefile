@@ -34,7 +34,7 @@ FLAVORS=	idf4 idf3
 FLAVOR?=	${FLAVORS:[1]}
 .if ${FLAVOR} == idf4
 MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
+		https://github.com/libexpat/libexpat/releases/download/R_2_2_9/:source1 \
 		SF/expat/:source1 \
 		GNU/gmp/:source2 \
 		http://isl.gforge.inria.fr/:source3 \
@@ -44,16 +44,18 @@ MASTER_SITES+= \
 		ftp://ftp.invisible-island.net/ncurses/:source6 \
 		GNU/ncurses/:source6 \
 		GNU/autoconf/:source7 \
-		GNU/automake/:source8
+		GNU/automake/:source8 \
+		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
 DISTFILES+=	\
-		expat-2.2.5.tar.bz2:source1 \
-		gmp-6.1.2.tar.xz:source2 \
+		expat-2.2.9.tar.gz:source1 \
+		gmp-6.2.0.tar.xz:source2 \
 		isl-0.19.tar.xz:source3 \
 		mpc-1.1.0.tar.gz:source4 \
-		mpfr-4.0.1.tar.xz:source5 \
-		ncurses-6.1.tar.gz:source6 \
+		mpfr-4.0.2.tar.xz:source5 \
+		ncurses-6.2.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.2.11.tar.gz:source11
 .elif ${FLAVOR} == idf3
 MASTER_SITES+=	SOURCEWARE/binutils/releases/binutils:source1 \
 		GNU/binutils:source1 \
@@ -95,10 +97,10 @@ USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 .if ${FLAVOR} == idf4
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r1
-XTENSA_OVERLAYS_TAGNAME=	eb39108
+XTENSA_OVERLAYS_TAGNAME=	a5ab689
 TAGNAME=	${ESPRESSIF_VERSION}
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${TAGNAME}-gdb92:source101 \
+	espressif:binutils-gdb:${TAGNAME}-gdb81:source101 \
 	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
 	espressif:newlib-esp32:${TAGNAME}:source103 \
 	espressif:xtensa-overlays:${XTENSA_OVERLAYS_TAGNAME}:source104 \
@@ -110,7 +112,7 @@ GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb81_GH0.tar.gz \
 	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 
@@ -147,6 +149,12 @@ BUILD_ENV=	CT_ALLOW_BUILD_AS_ROOT_SURE=1 \
 		CT_FORBID_DOWNLOAD=y \
 		${MAKE_ENV:MPATH=*}
 
+.if ${FLAVOR} == idf4
+# XXX as configure in ncurses 6.2 breaks dynamic linker search path, subsequent
+# execution of bash fails. this workaround is obtained from devel/ncurses
+BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
+.endif
+
 .if defined(BATCH)
 CT_LOG_PROGRESS_BAR=	n
 .else
@@ -175,6 +183,7 @@ pre-configure:
 	${REINPLACE_CMD} \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
+		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 .endif
 	${REINPLACE_CMD} \
