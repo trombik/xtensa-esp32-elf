@@ -1,3 +1,4 @@
+xtensa-esp32-elf-idf4/.piopm
 xtensa-esp32-elf-idf4/bin/xtensa-esp32-elf-addr2line
 xtensa-esp32-elf-idf4/bin/xtensa-esp32-elf-ar
 xtensa-esp32-elf-idf4/bin/xtensa-esp32-elf-as
@@ -28,7 +29,6 @@ xtensa-esp32-elf-idf4/bin/xtensa-esp32-elf-readelf
 xtensa-esp32-elf-idf4/bin/xtensa-esp32-elf-size
 xtensa-esp32-elf-idf4/bin/xtensa-esp32-elf-strings
 xtensa-esp32-elf-idf4/bin/xtensa-esp32-elf-strip
-xtensa-esp32-elf-idf4/include/gdb/jit-reader.h
 xtensa-esp32-elf-idf4/lib/gcc/xtensa-esp32-elf/8.4.0/crtbegin.o
 xtensa-esp32-elf-idf4/lib/gcc/xtensa-esp32-elf/8.4.0/crtend.o
 xtensa-esp32-elf-idf4/lib/gcc/xtensa-esp32-elf/8.4.0/crti.o
@@ -569,16 +569,23 @@ xtensa-esp32-elf-idf4/share/gdb/syscalls/sparc-linux.xml
 xtensa-esp32-elf-idf4/share/gdb/syscalls/sparc64-linux.xml
 xtensa-esp32-elf-idf4/share/gdb/system-gdbinit/elinos.py
 xtensa-esp32-elf-idf4/share/gdb/system-gdbinit/wrs-linux.py
-xtensa-esp32-elf-idf4/share/licenses/autoconf/COPYING
-xtensa-esp32-elf-idf4/share/licenses/autoconf/COPYING.EXCEPTION
-xtensa-esp32-elf-idf4/share/licenses/autoconf/COPYINGv3
-xtensa-esp32-elf-idf4/share/licenses/automake/COPYING
 xtensa-esp32-elf-idf4/share/licenses/binutils/COPYING
 xtensa-esp32-elf-idf4/share/licenses/binutils/COPYING.LIB
 xtensa-esp32-elf-idf4/share/licenses/binutils/COPYING.LIBGLOSS
 xtensa-esp32-elf-idf4/share/licenses/binutils/COPYING.NEWLIB
 xtensa-esp32-elf-idf4/share/licenses/binutils/COPYING3
 xtensa-esp32-elf-idf4/share/licenses/binutils/COPYING3.LIB
+xtensa-esp32-elf-idf4/share/licenses/binutils/bfd/COPYING
+xtensa-esp32-elf-idf4/share/licenses/binutils/gas/COPYING
+xtensa-esp32-elf-idf4/share/licenses/binutils/gdb/COPYING
+xtensa-esp32-elf-idf4/share/licenses/binutils/include/COPYING
+xtensa-esp32-elf-idf4/share/licenses/binutils/include/COPYING3
+xtensa-esp32-elf-idf4/share/licenses/binutils/libiberty/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/binutils/readline/readline/COPYING
+xtensa-esp32-elf-idf4/share/licenses/binutils/sim/arm/COPYING
+xtensa-esp32-elf-idf4/share/licenses/binutils/sim/ppc/COPYING
+xtensa-esp32-elf-idf4/share/licenses/binutils/sim/ppc/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/binutils/zlib/contrib/dotzlib/LICENSE_1_0.txt
 xtensa-esp32-elf-idf4/share/licenses/crosstool-ng/COPYING
 xtensa-esp32-elf-idf4/share/licenses/crosstool-ng/LICENSE
 xtensa-esp32-elf-idf4/share/licenses/crosstool-ng/licenses.d/by-sa/deed.en
@@ -598,12 +605,37 @@ xtensa-esp32-elf-idf4/share/licenses/gcc/COPYING.LIB
 xtensa-esp32-elf-idf4/share/licenses/gcc/COPYING.RUNTIME
 xtensa-esp32-elf-idf4/share/licenses/gcc/COPYING3
 xtensa-esp32-elf-idf4/share/licenses/gcc/COPYING3.LIB
+xtensa-esp32-elf-idf4/share/licenses/gcc/gcc/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gcc/gcc/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/gcc/gcc/COPYING3
+xtensa-esp32-elf-idf4/share/licenses/gcc/gcc/COPYING3.LIB
+xtensa-esp32-elf-idf4/share/licenses/gcc/gcc/go/gofrontend/LICENSE
+xtensa-esp32-elf-idf4/share/licenses/gcc/gcc/testsuite/gcc.dg/params/LICENSE
+xtensa-esp32-elf-idf4/share/licenses/gcc/include/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gcc/include/COPYING3
+xtensa-esp32-elf-idf4/share/licenses/gcc/libffi/LICENSE
+xtensa-esp32-elf-idf4/share/licenses/gcc/libgo/LICENSE
+xtensa-esp32-elf-idf4/share/licenses/gcc/libiberty/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/gcc/libquadmath/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/gcc/libsanitizer/LICENSE.TXT
+xtensa-esp32-elf-idf4/share/licenses/gcc/zlib/contrib/dotzlib/LICENSE_1_0.txt
 xtensa-esp32-elf-idf4/share/licenses/gdb/COPYING
 xtensa-esp32-elf-idf4/share/licenses/gdb/COPYING.LIB
 xtensa-esp32-elf-idf4/share/licenses/gdb/COPYING.LIBGLOSS
 xtensa-esp32-elf-idf4/share/licenses/gdb/COPYING.NEWLIB
 xtensa-esp32-elf-idf4/share/licenses/gdb/COPYING3
 xtensa-esp32-elf-idf4/share/licenses/gdb/COPYING3.LIB
+xtensa-esp32-elf-idf4/share/licenses/gdb/bfd/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gdb/gas/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gdb/gdb/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gdb/include/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gdb/include/COPYING3
+xtensa-esp32-elf-idf4/share/licenses/gdb/libiberty/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/gdb/readline/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gdb/sim/arm/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gdb/sim/ppc/COPYING
+xtensa-esp32-elf-idf4/share/licenses/gdb/sim/ppc/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/gdb/zlib/contrib/dotzlib/LICENSE_1_0.txt
 xtensa-esp32-elf-idf4/share/licenses/gmp/COPYING
 xtensa-esp32-elf-idf4/share/licenses/gmp/COPYING.LESSERv3
 xtensa-esp32-elf-idf4/share/licenses/gmp/COPYINGv2
@@ -619,6 +651,13 @@ xtensa-esp32-elf-idf4/share/licenses/newlib/COPYING.LIBGLOSS
 xtensa-esp32-elf-idf4/share/licenses/newlib/COPYING.NEWLIB
 xtensa-esp32-elf-idf4/share/licenses/newlib/COPYING3
 xtensa-esp32-elf-idf4/share/licenses/newlib/COPYING3.LIB
+xtensa-esp32-elf-idf4/share/licenses/newlib/include/COPYING
+xtensa-esp32-elf-idf4/share/licenses/newlib/include/COPYING3
+xtensa-esp32-elf-idf4/share/licenses/newlib/newlib/libc/sys/linux/linuxthreads/LICENSE
+xtensa-esp32-elf-idf4/share/licenses/newlib/winsup/COPYING
+xtensa-esp32-elf-idf4/share/licenses/newlib/winsup/COPYING.LIB
+xtensa-esp32-elf-idf4/share/licenses/newlib/winsup/utils/COPYING.dumper
+xtensa-esp32-elf-idf4/share/licenses/zlib/contrib/dotzlib/LICENSE_1_0.txt
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/bin/ar
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/bin/as
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/bin/ld
@@ -1466,6 +1505,7 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/fastmath.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/fcntl.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/fenv.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/fnmatch.h
+xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/gdb/jit-reader.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/getopt.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/glob.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/grp.h
@@ -1496,6 +1536,7 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/machine/types.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/malloc.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/math.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/memory.h
+xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/ndbm.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/newlib.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/paths.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/pthread.h
@@ -1524,6 +1565,7 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/string.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/strings.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/_default_fcntl.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/_intsup.h
+xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/_locale.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/_pthreadtypes.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/_sigset.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/_stdint.h
@@ -1538,6 +1580,7 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/dirent.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/errno.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/fcntl.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/features.h
+xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/fenv.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/file.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/iconvnls.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/sys/lock.h
@@ -1573,7 +1616,6 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/utmp.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/wchar.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/wctype.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/wordexp.h
-xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/xlocale.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/xtensa/config/core-isa.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/lib/crt0.o
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/lib/default.specs
@@ -1681,6 +1723,7 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/machine/types.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/malloc.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/math.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/memory.h
+xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/ndbm.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/newlib.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/paths.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/pthread.h
@@ -1709,6 +1752,7 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/string.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/strings.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/_default_fcntl.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/_intsup.h
+xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/_locale.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/_pthreadtypes.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/_sigset.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/_stdint.h
@@ -1723,6 +1767,7 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/dirent.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/errno.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/fcntl.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/features.h
+xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/fenv.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/file.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/iconvnls.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/sys/lock.h
@@ -1758,9 +1803,8 @@ xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/utmp.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/wchar.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/wctype.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/wordexp.h
-xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/xlocale.h
 xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/xtensa/config/core-isa.h
-xtensa-esp32-elf-idf4/.piopm
+@dir xtensa-esp32-elf-idf4/include
 @dir xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/bits
 @dir xtensa-esp32-elf-idf4/xtensa-esp32-elf/include/rpc
 @dir xtensa-esp32-elf-idf4/xtensa-esp32-elf/sys-include/bits

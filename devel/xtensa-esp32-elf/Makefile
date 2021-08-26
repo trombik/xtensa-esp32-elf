@@ -149,6 +149,11 @@ BUILD_ENV=	CT_ALLOW_BUILD_AS_ROOT_SURE=1 \
 		CT_FORBID_DOWNLOAD=y \
 		${MAKE_ENV:MPATH=*}
 
+# XXX CT_LOG_DEBUG is noisy. without this, however, ct-ng does not produce
+# meaningful error messages, and one has to see build.log for the actual
+# error.
+XTENSA_LOG_LEVEL?=	CT_LOG_DEBUG=y
+
 .if ${FLAVOR} == idf4
 # XXX as configure in ncurses 6.2 breaks dynamic linker search path, subsequent
 # execution of bash fails. this workaround is obtained from devel/ncurses
@@ -188,6 +193,8 @@ pre-configure:
 .endif
 	${REINPLACE_CMD} \
 	    -e 's|%%CT_LOG_PROGRESS_BAR%%|${CT_LOG_PROGRESS_BAR}|g' \
+		-e 's|%%MAKE_JOBS_NUMBER%%|${MAKE_JOBS_NUMBER}|g' \
+		-e 's|%%XTENSA_LOG_LEVEL%%|${XTENSA_LOG_LEVEL}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 
 do-configure:
@@ -239,9 +246,9 @@ do-install:
 			share/bash-completion
 .if ${FLAVOR} == idf4
 	@${STRIP_CMD} \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/xtensa-esp32-elf/8.4.0/plugin/libcp1plugin.so.0.0.0
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/xtensa-esp32-elf/8.4.0/plugin/gengtype
 .elif ${FLAVOR} == idf3
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/xtensa-esp32-elf/5.2.0/plugin/gengtype
