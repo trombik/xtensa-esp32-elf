@@ -29,7 +29,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		wget:ftp/wget
 
 DISTNAME=	${PORTNAME}-${ESPRESSIF_VERSION}
-USES=		autoreconf:build bison gmake libtool python:3.5+ iconv gettext-runtime
+USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv
 FLAVORS=	idf4 idf3
 FLAVOR?=	${FLAVORS:[1]}
 .if ${FLAVOR} == idf4
