@@ -7,7 +7,7 @@ MASTER_SITES=
 DISTFILES=
 EXTRACT_ONLY=
 
-MAINTAINER=	leres@FreeBSD.org
+MAINTAINER=	y@trombik.org
 COMMENT=	Espressif ESP32 toolchain
 
 LICENSE=	GPLv2 LGPL21
