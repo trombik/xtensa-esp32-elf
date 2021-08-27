@@ -1,6 +1,6 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
-PORTNAME=	xtensa-esp32-elf
+PORTNAME=	xtensa-${XTENSA_CHIP}-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/}
 CATEGORIES=	devel
 MASTER_SITES=
@@ -28,10 +28,22 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		wget:ftp/wget
 
-DISTNAME=	${PORTNAME}-${ESPRESSIF_VERSION}
-USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv
+# XXX use iconv:wchar_t.
+# configure scripts picks -liconv during gcc build from converters/libiconv
+# installed by dependencies. fixes error in stage-qa
+USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t
+
+.if !defined(XTENSA_CHIP)
+XTENSA_CHIP=	esp32
+.endif
+
+.if ${PORTNAME} == xtensa-esp32-elf
 FLAVORS=	idf4 idf3
+.elif ${PORTNAME} == xtensa-esp32s2-elf
+FLAVORS=	idf4
+.endif
 FLAVOR?=	${FLAVORS:[1]}
+
 .if ${FLAVOR} == idf4
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_2_9/:source1 \
@@ -84,11 +96,11 @@ DISTFILES+=	binutils-2.25.1.tar.bz2:source1 \
 		newlib-2.2.0.tar.gz:source10
 .endif
 
-idf4_PLIST=	${.CURDIR}/pkg-plist.${FLAVOR}
-idf3_PLIST=	${.CURDIR}/pkg-plist.${FLAVOR}
+idf4_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf3_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf4_PKGNAMESUFFIX=	-idf4
 idf3_PKGNAMESUFFIX=	-idf3
-DISTINFO_FILE=	${.CURDIR}/distinfo.${FLAVOR}
+DISTINFO_FILE=	${MASTERDIR}/distinfo.${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
 
@@ -166,6 +178,14 @@ BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
 CT_LOG_PROGRESS_BAR=	n
 .else
 CT_LOG_PROGRESS_BAR=	y
+.endif
+
+.if ${PORTNAME} == xtensa-esp32-elf
+XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa32
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	2.50200.0
+.elif ${PORTNAME} == xtensa-esp32s2-elf
+XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa32s2
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
 .endif
 
 post-extract:
@@ -249,13 +269,18 @@ do-install:
 .if ${FLAVOR} == idf4
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/xtensa-esp32-elf/8.4.0/plugin/libcp1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/xtensa-esp32-elf/8.4.0/plugin/gengtype
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcc1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
 .elif ${FLAVOR} == idf3
 	@${STRIP_CMD} \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/xtensa-esp32-elf/5.2.0/plugin/gengtype
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/5.2.0/plugin/gengtype
 .endif
 	# install metadata file for platformio
 	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
+	${REINPLACE_CMD} \
+	    -e 's|%%XTENSA_PLATFORMIO_TOOLCHAIN_NAME%%|${XTENSA_PLATFORMIO_TOOLCHAIN_NAME}|' \
+	    -e 's|%%XTENSA_PLATFORMIO_TOOLCHAIN_VERSION%%|${XTENSA_PLATFORMIO_TOOLCHAIN_VERSION}|' \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
 
 .include <bsd.port.mk>
