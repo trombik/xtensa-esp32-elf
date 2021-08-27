@@ -12,6 +12,8 @@ official ports tree. See bug [251659](https://bugs.freebsd.org/bugzilla/show_bug
 * successfully built a Blink example with [arduino-esp32](https://github.com/espressif/arduino-esp32)
   version 1.0.6 (aka version 3.10006.210326 in `platformio`)
 * the port is now `FLAVOR`-ed
+* the port is now the master port of `xtensa-esp32s2-elf`, which should work with
+  `esp-idf`. Not tested with `platformio` (needs ULP co-processor toolchain).
 
 ## Usage
 
