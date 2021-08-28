@@ -1,0 +1,5 @@
+Binutils fork with support for the ESP32 ULP co-processor.
+
+https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/ulp.html
+
+WWW: https://github.com/espressif/binutils-esp32ulp
