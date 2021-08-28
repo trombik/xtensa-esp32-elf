@@ -14,6 +14,8 @@ official ports tree. See bug [251659](https://bugs.freebsd.org/bugzilla/show_bug
 * the port is now `FLAVOR`-ed
 * the port is now the master port of `xtensa-esp32s2-elf`, which should work with
   `esp-idf`. Not tested with `platformio` (needs ULP co-processor toolchain).
+* the repository includes `devel/binutils-esp32ulp` and `devel/binutils-esp32s2ulp` (not tested
+  yet)
 
 ## Usage
 
