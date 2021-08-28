@@ -1,5 +1,3 @@
-# $FreeBSD$
-
 PORTNAME=	binutils-${ESPRESSIF_CHIP}ulp
 PORTVERSION=	${ESPRESSIF_VERSION:S/-esp-/./}
 CATEGORIES=	devel
@@ -45,9 +43,6 @@ PLIST_SUB+=	PORTNAME=${PORTNAME} ESPRESSIF_CHIP=${ESPRESSIF_CHIP}
 INSTALL_TARGET=	install-strip
 
 .include <bsd.port.pre.mk>
-
-pre-configure:
-	${ECHO} ${CONFIGURE_ARGS}
 
 post-configure:
 	${ECHO} "MAKEINFO = :" >> ${WRKSRC}/Makefile
