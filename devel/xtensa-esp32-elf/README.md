@@ -3,6 +3,9 @@
 Updated port of `devel/xtensa-esp32-elf`. This port will not be merged to the
 official ports tree. See bug [251659](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=251659).
 
+For `openocd` debugger, use
+[trombik/freebsd-ports-openocd-esp32](https://github.com/trombik/freebsd-ports-openocd-esp32).
+
 ## Status
 
 * `portlint(1)` is NOT happy (see #6)
