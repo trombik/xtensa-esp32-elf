@@ -9,13 +9,14 @@ COMMENT=	Binutils fork with support for the ESP32 ULP co-processor
 LICENSE=	GPLv2
 LICENSE_FILE=	${WRKSRC}/COPYING
 
+USES=	bison cpe gmake tar:xz compiler:env
+
 # see https://github.com/espressif/binutils-esp32ulp/releases
 ESPRESSIF_VERSION=	2.28.51-esp-20191205
 .if !defined(ESPRESSIF_CHIP)
 ESPRESSIF_CHIP=	esp32
 .endif
 
-USES=	bison cpe gmake tar:xz compiler:env
 USE_GITHUB=	yes
 USE_GCC=	yes
 GH_TUPLE=	espressif:binutils-esp32ulp:v${ESPRESSIF_VERSION}
