@@ -45,6 +45,10 @@ INSTALL_TARGET=	install-strip
 
 .include <bsd.port.pre.mk>
 
+pre-configure:
+	# see .set_displayed_version in .gitlab-ci.yml
+	${REINPLACE_CMD} -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
+		${WRKSRC}/bfd/Makefile.in
 post-configure:
 	${ECHO} "MAKEINFO = :" >> ${WRKSRC}/Makefile
 

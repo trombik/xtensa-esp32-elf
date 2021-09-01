@@ -1,0 +1,11 @@
+--- bfd/Makefile.in.orig	2019-12-04 05:22:11 UTC
++++ bfd/Makefile.in
+@@ -2205,7 +2205,7 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh
+ 	. $(srcdir)/development.sh ;\
+ 	if test "$$development" = true ; then \
+ 	  bfd_version_date=`$(SED) -n -e 's/.*DATE //p' < $(srcdir)/version.h` ;\
+-	  bfd_version_string="\"$(VERSION).$${bfd_version_date}\"" ;\
++	  bfd_version_string="\"%%ESPRESSIF_VERSION%%\"" ;\
+ 	  bfd_soversion="$(VERSION).$${bfd_version_date}" ;\
+ 	fi ;\
+ 	$(SED) -e "s,@bfd_version@,$$bfd_version," \
