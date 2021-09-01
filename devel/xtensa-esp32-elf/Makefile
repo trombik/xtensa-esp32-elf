@@ -111,13 +111,11 @@ USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 .if ${FLAVOR} == idf4
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r1
-XTENSA_OVERLAYS_TAGNAME=	a5ab689
 TAGNAME=	${ESPRESSIF_VERSION}
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 	espressif:binutils-gdb:${TAGNAME}-gdb81:source101 \
 	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
 	espressif:newlib-esp32:${TAGNAME}:source103 \
-	espressif:xtensa-overlays:${XTENSA_OVERLAYS_TAGNAME}:source104 \
 	espressif:crosstool-NG:${TAGNAME}
 
 # crosstool-NG supports custom location to archive files, but it also assumes
@@ -127,8 +125,11 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb81_GH0.tar.gz \
-	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
+
+.if ${XTENSA_CHIP} == esp32 || ${XTENSA_CHIP} == esp32s2
+XTENSA_OVERLAYS_TAGNAME=	a5ab689
+.endif
 
 .elif ${FLAVOR} == idf3
 
@@ -148,7 +149,11 @@ ESPRESSIF_VERSION=	crosstool-ng-1.22.0.${ESPRESSIF_VERSION_IDF3}.g${TAGNAME}
 XTENSA_OVERLAYS_TAGNAME=	eb39108
 GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX}
-TARBALLS=       ${BUILD_WRKSRC}/.build/tarballs
+.endif
+
+.if defined(XTENSA_OVERLAYS_TAGNAME)
+GH_TUPLE+=	espressif:xtensa-overlays:${XTENSA_OVERLAYS_TAGNAME}:source104
+EXTRACT_ONLY+=	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz
 .endif
 
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
@@ -189,19 +194,19 @@ XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
 .endif
 
 post-extract:
-.if ${FLAVOR} == idf4
 	${RMDIR} ${BUILD_WRKSRC}/overlays
-	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
 	${MKDIR} ${BUILD_WRKSRC}/.build/tarballs
-.elif ${FLAVOR} == idf3
-	${MKDIR} ${TARBALLS}
-	${MKDIR} ${WRKSRC}/local-patches/gdb/7.10
-	${CP} ${PATCHDIR}/0001-gdb-7.12.1.patch ${WRKSRC}/local-patches/gdb/7.10
-.endif
 .for F in $(DISTFILES:N$(EXTRACT_ONLY))
 	${LN} -s ${DISTDIR}/${F:C/:source[0-9]+$//} \
 	    ${BUILD_WRKSRC}/.build/tarballs
 .endfor
+.if ${FLAVOR} == idf3
+	${MKDIR} ${WRKSRC}/local-patches/gdb/7.10
+	${CP} ${PATCHDIR}/0001-gdb-7.12.1.patch ${WRKSRC}/local-patches/gdb/7.10
+.endif
+.if defined(XTENSA_OVERLAYS_TAGNAME)
+	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
+.endif
 
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
