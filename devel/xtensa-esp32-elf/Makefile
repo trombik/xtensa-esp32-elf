@@ -29,7 +29,6 @@ BUILD_DEPENDS=	bash:shells/bash \
 		wget:ftp/wget
 
 # TODO
-# * remove a patch for gmp 6.1
 # * see if install-strip works
 
 # XXX use iconv:wchar_t.
@@ -251,10 +250,6 @@ do-configure:
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
-.if ${FLAVOR} == idf4
-	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
-	${CP} ${FILESDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
-.endif
 	${RM} ${WRKSRC}/scripts/functions.orig \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.bak \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
