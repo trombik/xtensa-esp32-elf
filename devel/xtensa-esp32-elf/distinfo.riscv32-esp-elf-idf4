@@ -1,4 +1,4 @@
-TIMESTAMP = 1630466230
+TIMESTAMP = 1630480545
 SHA256 (expat-2.2.9.tar.gz) = 4456e0aa72ecc7e1d4b3368cd545a5eec7f9de5133a8dc37fdb1efa6174c4947
 SIZE (expat-2.2.9.tar.gz) = 661213
 SHA256 (gmp-6.2.0.tar.xz) = 258e6cd51b3fbdfc185c716d55f82c08aff57df0c6fbd143cf6ed561267a1526
@@ -27,3 +27,5 @@ SHA256 (espressif-binutils-gdb-esp-2021r1-binutils_GH0.tar.gz) = 2c94742c491d4cc
 SIZE (espressif-binutils-gdb-esp-2021r1-binutils_GH0.tar.gz) = 60653892
 SHA256 (espressif-newlib-esp32-esp-2021r1_GH0.tar.gz) = 42af635fbcc23c56f0b9bb951a340722ac337e5cbb349b21fb3e136c11e6dff4
 SIZE (espressif-newlib-esp32-esp-2021r1_GH0.tar.gz) = 21913792
+SHA256 (espressif-xtensa-overlays-a5ab689_GH0.tar.gz) = 0087aac5e7015d43ff904ef984278df1f99c6757709088c52632b27dc482268f
+SIZE (espressif-xtensa-overlays-a5ab689_GH0.tar.gz) = 465719

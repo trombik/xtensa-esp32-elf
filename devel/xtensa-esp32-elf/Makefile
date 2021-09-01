@@ -130,10 +130,7 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
-
-.if ${PORTNAME} == toolchain-xtensa32 || ${PORTNAME} == toolchain-xtensa32s2
 XTENSA_OVERLAYS_TAGNAME=	a5ab689
-.endif
 
 .elif ${FLAVOR} == idf3
 
@@ -150,7 +147,6 @@ TAGNAME=	c752ad5
 # ESPRESSIF_VERSION_IDF3 is 97.
 ESPRESSIF_VERSION_IDF3=	97
 ESPRESSIF_VERSION=	crosstool-ng-1.22.0.${ESPRESSIF_VERSION_IDF3}.g${TAGNAME}
-XTENSA_OVERLAYS_TAGNAME=	eb39108
 GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX}
 .endif
@@ -201,7 +197,6 @@ XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
 .endif
 
 post-extract:
-	${RMDIR} ${BUILD_WRKSRC}/overlays
 	${MKDIR} ${BUILD_WRKSRC}/.build/tarballs
 .for F in $(DISTFILES:N$(EXTRACT_ONLY))
 	${LN} -s ${DISTDIR}/${F:C/:source[0-9]+$//} \
@@ -212,6 +207,7 @@ post-extract:
 	${CP} ${PATCHDIR}/0001-gdb-7.12.1.patch ${WRKSRC}/local-patches/gdb/7.10
 .endif
 .if defined(XTENSA_OVERLAYS_TAGNAME)
+	${RMDIR} ${BUILD_WRKSRC}/overlays
 	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
 .endif
 

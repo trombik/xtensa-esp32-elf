@@ -1,4 +1,4 @@
-TIMESTAMP = 1630464143
+TIMESTAMP = 1630479658
 SHA256 (binutils-2.25.1.tar.bz2) = b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
 SIZE (binutils-2.25.1.tar.bz2) = 24163561
 SHA256 (expat-2.1.0.tar.gz) = 823705472f816df21c8f6aa026dd162b280806838bb55b3432b0fb1fcca7eb86
@@ -21,5 +21,3 @@ SHA256 (newlib-2.2.0.tar.gz) = f8add263b0737591aff451b12a00c262c2efac4fa87d741fa
 SIZE (newlib-2.2.0.tar.gz) = 16521910
 SHA256 (espressif-crosstool-NG-1.22.0.97.gc752ad5-c752ad5_GH0.tar.gz) = 0c3ee810ef0fe3783234470aca1e7f09fd405884ca25c79d708a3010288cc90e
 SIZE (espressif-crosstool-NG-1.22.0.97.gc752ad5-c752ad5_GH0.tar.gz) = 2669363
-SHA256 (espressif-xtensa-overlays-eb39108_GH0.tar.gz) = 6a6d4320aede56203c03753654d9e79ebe1cb7c2330c6070ee967de79ed844e3
-SIZE (espressif-xtensa-overlays-eb39108_GH0.tar.gz) = 433364
