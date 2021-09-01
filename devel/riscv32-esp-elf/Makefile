@@ -1,5 +1,4 @@
 PORTNAME=	riscv32-esp-elf
-XTENSA_CHIP=	esp32c3
 MASTERDIR=	${.CURDIR}/../xtensa-esp32-elf
 
 .include "${MASTERDIR}/Makefile"

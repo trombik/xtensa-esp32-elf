@@ -29,7 +29,6 @@ BUILD_DEPENDS=	bash:shells/bash \
 		wget:ftp/wget
 
 # TODO
-# * replace XTENSA_CHIP with PORTNAME
 # * replace gdb92 with XTENSA_GDB_VERSION
 # * remove a patch for gmp 6.1
 # * see if install-strip works
@@ -38,10 +37,6 @@ BUILD_DEPENDS=	bash:shells/bash \
 # configure scripts picks -liconv during gcc build from converters/libiconv
 # installed by dependencies. fixes error in stage-qa
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t
-
-.if !defined(XTENSA_CHIP)
-XTENSA_CHIP=	esp32
-.endif
 
 .if ${PORTNAME} == xtensa-esp32-elf
 FLAVORS=	idf4 idf3
@@ -118,7 +113,7 @@ USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r1
 TAGNAME=	${ESPRESSIF_VERSION}
-.if ${XTENSA_CHIP} == esp32c3
+.if ${PORTNAME} == riscv32-esp-elf
 XTENSA_GDB_VERSION=	gdb92
 .else
 XTENSA_GDB_VERSION=	gdb81
@@ -138,7 +133,7 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 
-.if ${XTENSA_CHIP} == esp32 || ${XTENSA_CHIP} == esp32s2
+.if ${PORTNAME} == toolchain-xtensa32 || ${PORTNAME} == toolchain-xtensa32s2
 XTENSA_OVERLAYS_TAGNAME=	a5ab689
 .endif
 
