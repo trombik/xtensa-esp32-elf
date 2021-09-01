@@ -20,6 +20,7 @@ For `openocd` debugger, use
 * the repository includes `devel/binutils-esp32ulp` and `devel/binutils-esp32s2ulp` (not tested
   yet)
 * the repository includes `devel/riscv32-esp-elf` (not tested yet)
+* `devel/binutils-esp32ulp` compiles an example in `esp-idf` fine
 
 ## Usage
 
