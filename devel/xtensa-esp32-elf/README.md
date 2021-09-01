@@ -17,10 +17,11 @@ For `openocd` debugger, use
 * the port is now `FLAVOR`-ed
 * the port is now the master port of `xtensa-esp32s2-elf`, which should work with
   `esp-idf`. Not tested with `platformio` (needs ULP co-processor toolchain).
-* the repository includes `devel/binutils-esp32ulp` and `devel/binutils-esp32s2ulp` (not tested
-  yet)
+* the repository includes `devel/binutils-esp32ulp` and `devel/binutils-esp32s2ulp`
 * the repository includes `devel/riscv32-esp-elf` (not tested yet)
 * `devel/binutils-esp32ulp` compiles an example in `esp-idf` fine
+* `devel/binutils-esp32s2ulp` should work but no example in `esp-idf` `master`
+  branch
 
 ## Usage
 
