@@ -29,7 +29,6 @@ BUILD_DEPENDS=	bash:shells/bash \
 		wget:ftp/wget
 
 # TODO
-# * replace gdb92 with XTENSA_GDB_VERSION
 # * remove a patch for gmp 6.1
 # * see if install-strip works
 
@@ -225,6 +224,7 @@ pre-configure:
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
+		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 .endif
 	${REINPLACE_CMD} \
