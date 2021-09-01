@@ -221,6 +221,9 @@ pre-configure:
 		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
 		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
+	${REINPLACE_CMD} \
+	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
+	    ${WRKSRC}/maintainer/git-version-gen
 .endif
 	${REINPLACE_CMD} \
 	    -e 's|%%CT_LOG_PROGRESS_BAR%%|${CT_LOG_PROGRESS_BAR}|g' \
@@ -230,9 +233,11 @@ pre-configure:
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
+.if ${FLAVOR} == idf3
 	${PRINTF} "#!/bin/sh\necho '${SUBDIR:tl}-${TAGNAME}'\n" > \
 	    ${BUILD_WRKSRC}/version.sh
 	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
+.endif
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} GREP=${LOCALBASE}/bin/grep \
 		EGREP="${LOCALBASE}/bin/egrep" \
