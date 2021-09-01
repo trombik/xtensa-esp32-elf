@@ -1,5 +1,5 @@
-PORTNAME=	xtensa-esp32s2-elf
-XTENSA_CHIP=	esp32s2
+PORTNAME=	riscv32-esp-elf
+XTENSA_CHIP=	esp32c3
 MASTERDIR=	${.CURDIR}/../xtensa-esp32-elf
 
 .include "${MASTERDIR}/Makefile"

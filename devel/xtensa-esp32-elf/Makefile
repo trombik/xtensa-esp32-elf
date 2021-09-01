@@ -1,6 +1,6 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
-PORTNAME=	xtensa-${XTENSA_CHIP}-elf
+PORTNAME?=	xtensa-esp32-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/}
 CATEGORIES=	devel
 MASTER_SITES=
@@ -28,6 +28,12 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		wget:ftp/wget
 
+# TODO
+# * replace XTENSA_CHIP with PORTNAME
+# * replace gdb92 with XTENSA_GDB_VERSION
+# * remove a patch for gmp 6.1
+# * see if install-strip works
+
 # XXX use iconv:wchar_t.
 # configure scripts picks -liconv during gcc build from converters/libiconv
 # installed by dependencies. fixes error in stage-qa
@@ -39,7 +45,7 @@ XTENSA_CHIP=	esp32
 
 .if ${PORTNAME} == xtensa-esp32-elf
 FLAVORS=	idf4 idf3
-.elif ${PORTNAME} == xtensa-esp32s2-elf
+.elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
 FLAVORS=	idf4
 .endif
 FLAVOR?=	${FLAVORS:[1]}
@@ -100,7 +106,7 @@ idf4_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf3_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf4_PKGNAMESUFFIX=	-idf4
 idf3_PKGNAMESUFFIX=	-idf3
-DISTINFO_FILE=	${MASTERDIR}/distinfo.${FLAVOR}
+DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
 
@@ -112,8 +118,13 @@ USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r1
 TAGNAME=	${ESPRESSIF_VERSION}
+.if ${XTENSA_CHIP} == esp32c3
+XTENSA_GDB_VERSION=	gdb92
+.else
+XTENSA_GDB_VERSION=	gdb81
+.endif
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${TAGNAME}-gdb81:source101 \
+	espressif:binutils-gdb:${TAGNAME}-${XTENSA_GDB_VERSION}:source101 \
 	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
 	espressif:newlib-esp32:${TAGNAME}:source103 \
 	espressif:crosstool-NG:${TAGNAME}
@@ -124,7 +135,7 @@ GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-gdb81_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 
 .if ${XTENSA_CHIP} == esp32 || ${XTENSA_CHIP} == esp32s2
@@ -190,6 +201,9 @@ XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa32
 XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	2.50200.0
 .elif ${PORTNAME} == xtensa-esp32s2-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa32s2
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
+.elif ${PORTNAME} == riscv32-esp-elf
+XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-riscv-esp
 XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
 .endif
 
