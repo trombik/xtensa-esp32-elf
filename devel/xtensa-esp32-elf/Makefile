@@ -28,9 +28,6 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		wget:ftp/wget
 
-# TODO
-# * see if install-strip works
-
 # XXX use iconv:wchar_t.
 # configure scripts picks -liconv during gcc build from converters/libiconv
 # installed by dependencies. fixes error in stage-qa
@@ -163,26 +160,31 @@ GNU_CONFIGURE= yes
 NO_MTREE=	yes
 SUBDIR=		crosstool-NG
 BINARY_ALIAS=	g++=${CXX} gcc=${CC} python=${PYTHON_VERSION}
-BUILD_ENV=	CT_ALLOW_BUILD_AS_ROOT_SURE=1 \
-		LD_RUN_PATH=${PREFIX}/lib/${CC} \
-		CT_FORBID_DOWNLOAD=y \
+BUILD_ENV=	LD_RUN_PATH=${PREFIX}/lib/${CC} \
 		${MAKE_ENV:MPATH=*}
+
+# these variables are automatically appended to crosstool.config at
+# pre-configure. common variables should go into XTENSA_CT_CONFIG
+XTENSA_CT_CONFIG+=	\
+	CT_FORBID_DOWNLOAD=y \
+	CT_PARALLEL_JOBS=${MAKE_JOBS_NUMBER}
 
 # XXX CT_LOG_DEBUG is noisy. without this, however, ct-ng does not produce
 # meaningful error messages, and one has to see build.log for the actual
 # error.
-XTENSA_LOG_LEVEL?=	CT_LOG_DEBUG=y
+XTENSA_CT_CONFIG+=	CT_LOG_DEBUG=y
+
+.if defined(BATCH)
+XTENSA_CT_CONFIG+=	CT_LOG_PROGRESS_BAR=n
+.endif
+
+# XXX ct-ng does not allow this to be defined in crosstool.config
+BUILD_ENV+=	CT_ALLOW_BUILD_AS_ROOT_SURE=y
 
 .if ${FLAVOR} == idf4
 # XXX as configure in ncurses 6.2 breaks dynamic linker search path, subsequent
 # execution of bash fails. this workaround is obtained from devel/ncurses
 BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
-.endif
-
-.if defined(BATCH)
-CT_LOG_PROGRESS_BAR=	n
-.else
-CT_LOG_PROGRESS_BAR=	y
 .endif
 
 .if ${PORTNAME} == xtensa-esp32-elf
@@ -225,11 +227,8 @@ pre-configure:
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    ${WRKSRC}/maintainer/git-version-gen
 .endif
-	${REINPLACE_CMD} \
-	    -e 's|%%CT_LOG_PROGRESS_BAR%%|${CT_LOG_PROGRESS_BAR}|g' \
-		-e 's|%%MAKE_JOBS_NUMBER%%|${MAKE_JOBS_NUMBER}|g' \
-		-e 's|%%XTENSA_LOG_LEVEL%%|${XTENSA_LOG_LEVEL}|g' \
-	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
+	${ECHO} ${XTENSA_CT_CONFIG} | ${TR} '[[:space:]]' '\n' \
+		>> ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
