@@ -19,14 +19,12 @@ BROKEN_armv7=		fails to build: failed in step 'Installing pass-2 core C gcc comp
 
 BUILD_DEPENDS=	bash:shells/bash \
 		gawk:lang/gawk \
-		git:devel/git \
 		gpatch:devel/patch \
 		${LOCALBASE}/bin/grep:textproc/gnugrep \
 		gperf:devel/gperf \
 		gsed:textproc/gsed \
 		help2man:misc/help2man \
-		makeinfo:print/texinfo \
-		wget:ftp/wget
+		makeinfo:print/texinfo
 
 # XXX use iconv:wchar_t.
 # configure scripts picks -liconv during gcc build from converters/libiconv
@@ -90,6 +88,9 @@ DISTFILES+=	binutils-2.25.1.tar.bz2:source1 \
 		mpfr-3.1.3.tar.xz:source8 \
 		ncurses-6.0.tar.gz:source9 \
 		newlib-2.2.0.tar.gz:source10
+
+# older ct-ng requires wget. without it, configure fails.
+BUILD_DEPENDS+=	wget:ftp/wget
 .endif
 
 idf4_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
