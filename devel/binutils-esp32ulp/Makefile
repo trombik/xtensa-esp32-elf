@@ -4,7 +4,7 @@ CATEGORIES=	devel
 MASTER_SITES=	#
 
 MAINTAINER=	y@trombik.org
-COMMENT=	Binutils fork with support for the ESP32 ULP co-processor
+COMMENT=	Binutils fork with support for the ${ESPRESSIF_CHIP} ULP co-processor
 
 LICENSE=	GPLv2
 LICENSE_FILE=	${WRKSRC}/COPYING

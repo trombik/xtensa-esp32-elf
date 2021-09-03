@@ -8,7 +8,7 @@ DISTFILES=
 EXTRACT_ONLY=
 
 MAINTAINER=	y@trombik.org
-COMMENT=	Espressif ESP32 toolchain
+COMMENT?=	Espressif ESP32 toolchain
 
 LICENSE=	GPLv2 LGPL21
 LICENSE_COMB=	multi
