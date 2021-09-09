@@ -1,0 +1,159 @@
+# TODOs
+#
+# * support "Re-run with Terminal Access"
+#   https://medium.com/cirruslabs/introducing-cirrus-terminal-a-simple-way-to-get-ssh-like-access-to-your-tasks-1def0449065d
+# * publish packages when releasing
+# * support quaterly/latest ports
+
+freebsd_instance:
+  cpu: 4
+  memory: 4
+
+env:
+  HOME: /root
+  PATH: /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+  USER: root
+
+setup_task:
+  matrix:
+    - freebsd_instance:
+        image_family: freebsd-13-0
+    - freebsd_instance:
+        image_family: freebsd-12-2
+  define_common_variables_script: |
+    PD_BASEFS="/usr/local/poudriere"
+    PD_REQUIRED_PACKAGES="ports-mgmt/poudriere ports-mgmt/portshaker ports-mgmt/portshaker-config git-lite"
+
+    # e.g. 122
+    PD_VERSION_SHORT=`uname -r | sed -e 's/-.*//' -e 's/\.//'`
+
+    # e.g. amd64
+    PD_MACHINE=`uname -m`
+
+    # e.g. 12.2-RELEASE
+    PD_RELEASE_NAME=`uname -r | sed -e 's/-p.*//'`
+
+    # e.g. 122amd64
+    PD_JAIL_NAME="${PD_VERSION_SHORT}${PD_MACHINE}"
+    PD_PORTS_NAME="default"
+
+    # e.g 122amd64-default
+    PD_BUILD_NAME="${PD_JAIL_NAME}-${PD_PORTS_NAME}"
+
+    # note that the ${CIRRUS_ENV} file is NOT a shell script. empty line is
+    # not allowed. value should NOT be quoted (i.e. NOT `foo="bar buz"`. use
+    # `foo=bar buz` instead).
+    cat << __EOF__ >> ${CIRRUS_ENV}
+    PD_BASEFS=${PD_BASEFS}
+    PD_REQUIRED_PACKAGES=${PD_REQUIRED_PACKAGES}
+    PD_VERSION_SHORT=${PD_VERSION_SHORT}
+    PD_MACHINE=${PD_MACHINE}
+    PD_RELEASE_NAME=${PD_RELEASE_NAME}
+    PD_JAIL_NAME=${PD_JAIL_NAME}
+    PD_PORTS_NAME=${PD_PORTS_NAME}
+    PD_BUILD_NAME=${PD_BUILD_NAME}
+    __EOF__
+    cat ${CIRRUS_ENV}
+
+  setup_script: |
+    uname -msr
+    sysctl kern.osreldate
+    env | sort
+
+    # configure _merged_ ports tree
+    cat << __EOF__ > /usr/local/etc/portshaker.conf
+    mirror_base_dir="/var/cache/portshaker"
+    ports_trees="${PD_PORTS_NAME}"
+    default_ports_tree="${PD_BASEFS}/ports/${PD_PORTS_NAME}"
+    default_merge_from="github:freebsd:freebsd-ports:main github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}"
+    fail_on_conflict="y"
+
+    __EOF__
+
+    # configure poudriere
+    cat << __EOF__ > /usr/local/etc/poudriere.conf
+    NO_ZFS=yes
+    BASEFS=${PD_BASEFS}
+    USE_TMPFS=data
+    FREEBSD_HOST=https://download.FreeBSD.org
+    FLAVOR_DEFAULT_ALL=yes
+    DISTFILES_CACHE=${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles
+
+    __EOF__
+    cat /usr/local/etc/poudriere.conf
+
+  required_packages_cache:
+    folder: /var/cache/pkg
+    fingerprint_script:
+      - uname -msr
+      - echo 20210909
+    populate_script: |
+      pkg fetch --dependencies --yes ${PD_REQUIRED_PACKAGES}
+
+  required_packages_install_script: |
+    pkg install --yes ${PD_REQUIRED_PACKAGES}
+
+  ports_tree_cache:
+    folder: /var/cache/portshaker/github_freebsd_freebsd-ports_main
+    fingerprint_script:
+      - echo github_freebsd_freebsd-ports_main
+      - echo 20210909
+    populate_script: |
+      time -h portshaker -u github:freebsd:freebsd-ports:main
+
+  ports_tree_install_script: |
+    echo Updating github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}
+    portshaker -u github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}
+
+    # create the merged ports tree
+    time -h portshaker -M
+
+    # create the merged ports tree
+    poudriere ports -c -p ${PD_PORTS_NAME} -M ${PD_BASEFS}/ports/${PD_PORTS_NAME} -m null
+
+    # ensure DISTFILES_CACHE exists
+    mkdir -p ${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles
+
+  built_packages_cache:
+    folder: ${PD_BASEFS}/data/packages
+
+  create_jail_script: |
+
+    # cannot cache jails at the moment. see:
+    # https://github.com/freebsd/poudriere/issues/137
+    #
+    # also, the size of ${PD_BASEFS}/jails is too big to cache, and
+    # cirrus-ci refuses to cache
+    poudriere jail -c -j ${PD_JAIL_NAME} -m ftp -v ${PD_RELEASE_NAME}
+
+  build_script: |
+
+    # create artifacts directory
+    #
+    # https://cirrus-ci.org/guide/writing-tasks
+    # "Right now only storing files under $CIRRUS_WORKING_DIR folder as
+    # artifacts is supported with a total size limit of 1G for a community
+    # task"
+    mkdir -p ${CIRRUS_WORKING_DIR}/logs
+
+    # create a list of all packages in the repository
+    ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
+
+    poudriere ports -l
+    poudriere jail -l
+
+    # build ALL_ORIGIN
+    echo Building ${ALL_ORIGIN}
+    poudriere bulk -j "${PD_VERSION_SHORT}${PD_MACHINE}" -p ${PD_PORTS_NAME} -t -C ${ALL_ORIGIN}
+
+  on_failure:
+    show_error_log_script: |
+      for F in ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/errors/*.log; do
+        echo "${F}"
+        cat ${F}
+      done
+  always:
+    copy_log_script: |
+      cp ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/*.log ${CIRRUS_WORKING_DIR}/logs/
+    log_artifacts:
+      path: "logs/*.log"
