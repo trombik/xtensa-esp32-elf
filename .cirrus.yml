@@ -88,9 +88,13 @@ setup_task:
       - uname -msr
       - echo 20210909
     populate_script: |
+
+      # do NOT quote PD_REQUIRED_PACKAGES
       pkg fetch --dependencies --yes ${PD_REQUIRED_PACKAGES}
 
   required_packages_install_script: |
+
+    # do NOT quote PD_REQUIRED_PACKAGES
     pkg install --yes ${PD_REQUIRED_PACKAGES}
 
   ports_tree_cache:
@@ -102,17 +106,17 @@ setup_task:
       time -h portshaker -u github:freebsd:freebsd-ports:main
 
   ports_tree_install_script: |
-    echo Updating github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}
-    portshaker -u github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}
+    echo Updating "github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}"
+    portshaker -u "github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}"
 
     # create the merged ports tree
     time -h portshaker -M
 
     # create the merged ports tree
-    poudriere ports -c -p ${PD_PORTS_NAME} -M ${PD_BASEFS}/ports/${PD_PORTS_NAME} -m null
+    poudriere ports -c -p "${PD_PORTS_NAME}" -M "${PD_BASEFS}/ports/${PD_PORTS_NAME}" -m null
 
     # ensure DISTFILES_CACHE exists
-    mkdir -p ${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles
+    mkdir -p "${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles"
 
   built_packages_cache:
     folder: ${PD_BASEFS}/data/packages
@@ -124,7 +128,7 @@ setup_task:
     #
     # also, the size of ${PD_BASEFS}/jails is too big to cache, and
     # cirrus-ci refuses to cache
-    poudriere jail -c -j ${PD_JAIL_NAME} -m ftp -v ${PD_RELEASE_NAME}
+    poudriere jail -c -j "${PD_JAIL_NAME}" -m ftp -v "${PD_RELEASE_NAME}"
 
   build_script: |
 
@@ -134,7 +138,7 @@ setup_task:
     # "Right now only storing files under $CIRRUS_WORKING_DIR folder as
     # artifacts is supported with a total size limit of 1G for a community
     # task"
-    mkdir -p ${CIRRUS_WORKING_DIR}/logs
+    mkdir -p "${CIRRUS_WORKING_DIR}/logs"
 
     # create a list of all packages in the repository
     ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
@@ -143,17 +147,21 @@ setup_task:
     poudriere jail -l
 
     # build ALL_ORIGIN
-    echo Building ${ALL_ORIGIN}
-    poudriere bulk -j "${PD_VERSION_SHORT}${PD_MACHINE}" -p ${PD_PORTS_NAME} -t -C ${ALL_ORIGIN}
+    echo "Building ${ALL_ORIGIN}"
+
+    # do NOT quote ALL_ORIGIN
+    poudriere bulk -j "${PD_BUILD_NAME}" -p "${PD_PORTS_NAME}" -t -C ${ALL_ORIGIN}
 
   on_failure:
     show_error_log_script: |
+      # do NOT quote, wildcard
       for F in ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/errors/*.log; do
         echo "${F}"
         cat ${F}
       done
   always:
     copy_log_script: |
-      cp ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/*.log ${CIRRUS_WORKING_DIR}/logs/
+      # do NOT quote, wildcard
+      cp ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/*.log "${CIRRUS_WORKING_DIR}/logs/"
     log_artifacts:
       path: "logs/*.log"
