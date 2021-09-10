@@ -8,6 +8,7 @@
 freebsd_instance:
   cpu: 4
   memory: 4
+  disk: 80
 
 env:
   HOME: /root
