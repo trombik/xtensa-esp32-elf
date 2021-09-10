@@ -151,7 +151,7 @@ setup_task:
     echo "Building ${ALL_ORIGIN}"
 
     # do NOT quote ALL_ORIGIN
-    poudriere bulk -j "${PD_BUILD_NAME}" -p "${PD_PORTS_NAME}" -t -C ${ALL_ORIGIN}
+    poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -t -C ${ALL_ORIGIN}
 
   on_failure:
     show_error_log_script: |
