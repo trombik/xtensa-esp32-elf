@@ -22,8 +22,15 @@ setup_task:
     - freebsd_instance:
         image_family: freebsd-12-2
   define_common_variables_script: |
-    PD_BASEFS="/tmp/poudriere"
+    PD_WORKDIR="/tmp"
+
+    PD_BASEFS="${PD_WORKDIR}/poudriere"
+    PD_CCACHE_DIR=/var/cache/ccache
     PD_REQUIRED_PACKAGES="ports-mgmt/poudriere ports-mgmt/portshaker ports-mgmt/portshaker-config git-lite"
+
+    # the branch to use for the FreeBSD ports tree.
+    # see https://github.com/freebsd/freebsd-ports/branches
+    PD_FREEBSD_PORTS_BRANCH="2021Q2"
 
     # e.g. 122
     PD_VERSION_SHORT=`uname -r | sed -e 's/-.*//' -e 's/\.//'`
@@ -45,7 +52,9 @@ setup_task:
     # not allowed. value should NOT be quoted (i.e. NOT `foo="bar buz"`. use
     # `foo=bar buz` instead).
     cat << __EOF__ >> ${CIRRUS_ENV}
+    PD_WORKDIR=${PD_WORKDIR}
     PD_BASEFS=${PD_BASEFS}
+    PD_CCACHE_DIR=${PD_CCACHE_DIR}
     PD_REQUIRED_PACKAGES=${PD_REQUIRED_PACKAGES}
     PD_VERSION_SHORT=${PD_VERSION_SHORT}
     PD_MACHINE=${PD_MACHINE}
@@ -53,6 +62,7 @@ setup_task:
     PD_JAIL_NAME=${PD_JAIL_NAME}
     PD_PORTS_NAME=${PD_PORTS_NAME}
     PD_BUILD_NAME=${PD_BUILD_NAME}
+    PD_FREEBSD_PORTS_BRANCH=${PD_FREEBSD_PORTS_BRANCH}
     __EOF__
     cat ${CIRRUS_ENV}
 
@@ -68,7 +78,7 @@ setup_task:
     mirror_base_dir="/var/cache/portshaker"
     ports_trees="${PD_PORTS_NAME}"
     default_ports_tree="${PD_BASEFS}/ports/${PD_PORTS_NAME}"
-    default_merge_from="github:freebsd:freebsd-ports:main github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}"
+    default_merge_from="github:freebsd:freebsd-ports:${PD_FREEBSD_PORTS_BRANCH} github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}"
     fail_on_conflict="y"
 
     __EOF__
@@ -81,6 +91,7 @@ setup_task:
     FREEBSD_HOST=https://download.FreeBSD.org
     FLAVOR_DEFAULT_ALL=yes
     DISTFILES_CACHE=${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles
+    PD_CCACHE_DIR=${PD_CCACHE_DIR}
 
     __EOF__
     cat /usr/local/etc/poudriere.conf
@@ -101,12 +112,12 @@ setup_task:
     pkg install --yes ${PD_REQUIRED_PACKAGES}
 
   ports_tree_cache:
-    folder: /var/cache/portshaker/github_freebsd_freebsd-ports_main
+    folder: /var/cache/portshaker/github_freebsd_freebsd-ports_${PD_FREEBSD_PORTS_BRANCH}
     fingerprint_script:
-      - echo github_freebsd_freebsd-ports_main
+      - echo github_freebsd_freebsd-ports_${PD_FREEBSD_PORTS_BRANCH}
       - echo 20210909
     populate_script: |
-      time -h portshaker -u github:freebsd:freebsd-ports:main
+      time -h portshaker -u github:freebsd:freebsd-ports:${PD_FREEBSD_PORTS_BRANCH}
 
   ports_tree_install_script: |
     echo Updating "github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}"
