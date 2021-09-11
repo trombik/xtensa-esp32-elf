@@ -48,12 +48,13 @@ setup_task:
     PD_CCACHE_DIR=/var/cache/ccache
     PD_REQUIRED_PACKAGES="ports-mgmt/poudriere-devel ports-mgmt/portshaker ports-mgmt/portshaker-config git-lite"
 
-    # the branch to use for the FreeBSD ports tree
+    # the branch to use for the FreeBSD ports tree.
     # see https://github.com/freebsd/freebsd-ports/branches for available
     # branches
     PD_FREEBSD_PORTS_BRANCH="2021Q3"
 
-    # the branch to use for the FreeBSD package tree
+    # the branch to use for the FreeBSD package tree. the build fetches
+    # and installs packages required by PD_ALL_ORIGIN.
     # see https://pkg.freebsd.org/FreeBSD:13:amd64/ for available branches
     PD_FREEBSD_PACKAGE_BRANCH=quarterly
 
@@ -121,7 +122,7 @@ setup_task:
     FREEBSD_HOST=https://download.FreeBSD.org
     FLAVOR_DEFAULT_ALL=yes
     DISTFILES_CACHE=${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles
-    PD_CCACHE_DIR=${PD_CCACHE_DIR}
+    CCACHE_DIR=${PD_CCACHE_DIR}
 
     __EOF__
     cat /usr/local/etc/poudriere.conf
@@ -185,19 +186,19 @@ setup_task:
     mkdir -p "${CIRRUS_WORKING_DIR}/logs"
 
     # create a list of all packages in the repository
-    ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
+    PD_ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
 
     poudriere ports -l
     poudriere jail -l
 
-    # build ALL_ORIGIN
-    echo "Building ${ALL_ORIGIN}"
+    # build PD_ALL_ORIGIN
+    echo "Building ${PD_ALL_ORIGIN}"
 
-    # do NOT quote ALL_ORIGIN
-    # use -b flag to pre-install binary packages on which ${ALL_ORIGIN}
+    # do NOT quote PD_ALL_ORIGIN
+    # use -b flag to pre-install binary packages on which ${PD_ALL_ORIGIN}
     # depends. it saves time by skipping depended builds. -b flag requires
     # ports-mgmt/poudriere-devel.
-    poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C ${ALL_ORIGIN}
+    poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C ${PD_ALL_ORIGIN}
 
   on_failure:
     show_error_log_script: |
