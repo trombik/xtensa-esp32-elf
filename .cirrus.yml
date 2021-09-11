@@ -37,7 +37,7 @@ setup_task:
   # increase timeout_in. in most cases, build will not finish in 60m, which is
   # the default. the default is not documented at
   # https://cirrus-ci.org/guide/writing-tasks/, but at https://cirrus-ci.org/faq/
-  timeout_in: 120m
+  timeout_in: 240m
   define_common_variables_script: |
 
     # define common variavles used in *_script. remember to export variables
