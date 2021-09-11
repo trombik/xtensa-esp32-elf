@@ -5,11 +5,6 @@
 # * publish packages when releasing
 # * support quaterly/latest ports
 
-freebsd_instance:
-  cpu: 4
-  memory: 4
-  disk: 80
-
 env:
   HOME: /root
   PATH: /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
@@ -17,13 +12,21 @@ env:
 
 setup_task:
   matrix:
+    # XXX use compute_engine_instance, instead of freebsd_instance, which is a
+    # syntactic sugar. with freebsd_instance, disk parameter is ignored.
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
         image: family/freebsd-13-0
         platform: freebsd
+        cpu: 4
+        memory: 4
         disk: 80
     - freebsd_instance:
-        image_family: freebsd-12-2
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
+        platform: freebsd
+        cpu: 4
+        memory: 4
         disk: 80
   define_common_variables_script: |
     PD_WORKDIR="/tmp"
@@ -73,6 +76,8 @@ setup_task:
   setup_script: |
     uname -msr
     sysctl kern.osreldate
+    sysctl hw.ncpu
+    top -bP
     env | sort
     df -h
     mount
