@@ -249,6 +249,15 @@ setup_task:
     # depends. it saves time by skipping depended builds. -b flag requires
     # ports-mgmt/poudriere-devel.
     poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C "${PD_ORIGIN}"
+  copy_packages_script: |
+    mkdir -p "${PD_WORKDIR}/packages"
+    cp "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}" "${PD_WORKDIR}/packages/"
+
+  packages_artifacts: |
+
+    # can be downloaded at:
+    # https://api.cirrus-ci.com/v1/artifact/build/<CIRRUS_BUILD_ID>/<TASK_NAME>/<ARTIFACTS_NAME>.zip
+    path: "packages/*"
 
   on_failure:
     show_error_log_script: |
@@ -265,3 +274,4 @@ setup_task:
       cp ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/*.log "${CIRRUS_WORKING_DIR}/logs/"
     log_artifacts:
       path: "logs/*.log"
+      type: text/plain
