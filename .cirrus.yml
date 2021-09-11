@@ -250,8 +250,14 @@ setup_task:
     # ports-mgmt/poudriere-devel.
     poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C "${PD_ORIGIN}"
   copy_packages_script: |
-    mkdir -p "${PD_WORKDIR}/packages"
-    cp -RL "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}" "${PD_WORKDIR}/packages/"
+
+    mkdir -p "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
+    D=`realpath "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/All"`
+    cp ${D}/* "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
+    for F in meta.conf meta.txz packagesite.txz; do
+      F=`realpath "${D}/${F}"`
+      cp "${F}" "${PD_WORKDIR}/packages/${PD_JAIL_NAME}"
+    done
     ls -alR "${PD_WORKDIR}/packages"
 
   packages_artifacts: |
@@ -276,3 +282,67 @@ setup_task:
     log_artifacts:
       path: "logs/*.log"
       type: text/plain
+
+test_task:
+  matrix:
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
+
+  define_common_variables_script: |
+
+    # e.g. 122
+    PD_VERSION_SHORT=`uname -r | sed -e 's/-.*//' -e 's/\.//'`
+
+    # e.g. amd64
+    PD_MACHINE=`uname -m`
+
+    # e.g. 12.2-RELEASE
+    PD_RELEASE_NAME=`uname -r | sed -e 's/-p.*//'`
+
+    # e.g. 122amd64
+    PD_JAIL_NAME="${PD_VERSION_SHORT}${PD_MACHINE}"
+
+    cat << __EOF__ >> ${CIRRUS_ENV}
+    PD_VERSION_SHORT=${PD_VERSION_SHORT}
+    PD_MACHINE=${PD_MACHINE}
+    PD_RELEASE_NAME=${PD_RELEASE_NAME}
+    PD_JAIL_NAME=${PD_JAIL_NAME}
+    __EOF__
+    cat ${CIRRUS_ENV}
+
+  show_env_script: |
+    env | sort
+
+  download_packages_script: |
+    fetch -o ${CIRRUS_WORKING_DIR}/packages.zip \
+      "https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}/packages.zip"
+    (cd ${CIRRUS_WORKING_DIR} && unzip packages.zip)
+    ls -alR ${CIRRUS_WORKING_DIR}/packages
+
+  setup_pkg_conf: |
+    mkdir -p /usr/local/etc/pkg/repos
+    cat < __EOF__ > /usr/local/etc/pkg/repos/local.conf
+    local: {
+      URL: "file://${CIRRUS_WORKING_DIR}/packages/${PD_JAIL_NAME}"
+      ENABLED: yes
+    }
+    __EOF__
+    cat /usr/local/etc/pkg/repos/local.conf
+
+  install_packages_script: |
+
+    # create a list of all packages in the repository
+    PD_ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
+    echo "PD_ALL_ORIGIN=${PD_ALL_ORIGIN}"
+    for D in ${PD_ALL_ORIGIN}; do
+      PD_FLAVORS=`make -V FLAVORS -C "${D}"`
+      echo "PD_FLAVORS=${PD_FLAVORS}"
+      for F in ${PD_FLAVORS}; do
+        echo "FLAVOR=${F}"
+        P=`make -V PKGNAME -C "${D}" FLAVOR="${F}"`
+        echo "${P}"
+        pkg install --repository local "${P}"
+      done
+    done
