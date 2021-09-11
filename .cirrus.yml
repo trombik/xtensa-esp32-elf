@@ -16,7 +16,7 @@ env:
   PATH: /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
   USER: root
 
-setup_task:
+build_task:
   matrix:
     # XXX divide the CI into multiple per-package build using matrix. max
     # timeout_in for a single task is limited to two hours. because of that,
@@ -285,6 +285,8 @@ setup_task:
       type: text/plain
 
 test_task:
+  depends_on:
+    - build
   matrix:
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
