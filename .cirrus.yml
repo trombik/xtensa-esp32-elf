@@ -19,14 +19,14 @@ setup_task:
         image: family/freebsd-13-0
         platform: freebsd
         cpu: 4
-        memory: 4
+        memory: 8
         disk: 80
-    - freebsd_instance:
+    - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
         image: family/freebsd-12-2
         platform: freebsd
         cpu: 4
-        memory: 4
+        memory: 8
         disk: 80
   define_common_variables_script: |
     PD_WORKDIR="/tmp"
