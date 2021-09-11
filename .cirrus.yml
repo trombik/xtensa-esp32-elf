@@ -90,7 +90,7 @@ build_task:
 
     # define common variavles used in *_script. remember to export variables
     # at the end of this script.
-    PD_WORKDIR="$CIRRUS_WORKING_DIR}"
+    PD_WORKDIR="${CIRRUS_WORKING_DIR}"
     PD_BASEFS="${PD_WORKDIR}/poudriere"
     PD_CCACHE_DIR=/var/cache/ccache
     PD_REQUIRED_PACKAGES="ports-mgmt/poudriere-devel ports-mgmt/portshaker ports-mgmt/portshaker-config git-lite"
@@ -252,11 +252,12 @@ build_task:
   copy_packages_script: |
 
     mkdir -p "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
+    ls -alR     "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}"
     D=`realpath "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/All"`
     cp ${D}/* "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
-    ls -al ${PD_WORKDIR}/packages/${PD_JAIL_NAME}
+    ls -alR "${PD_WORKDIR}/packages/${PD_JAIL_NAME}"
     for F in meta.conf meta.txz packagesite.txz; do
-      F=`realpath "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/${F}"`
+      F=`realpath "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/${F}"`
       cp "${F}" "${PD_WORKDIR}/packages/${PD_JAIL_NAME}"
     done
     ls -alR "${PD_WORKDIR}/packages"
