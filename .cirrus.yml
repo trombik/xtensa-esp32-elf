@@ -34,11 +34,14 @@ setup_task:
         cpu: 4
         memory: 8
         disk: 80
-  # increase timeout_in. in most cases, build will not finish 60m, which is
+  # increase timeout_in. in most cases, build will not finish in 60m, which is
   # the default. the default is not documented at
   # https://cirrus-ci.org/guide/writing-tasks/, but at https://cirrus-ci.org/faq/
   timeout_in: 120m
   define_common_variables_script: |
+
+    # define common variavles used in *_script. remember to export variables
+    # at the end of this script.
     PD_WORKDIR="/tmp"
 
     PD_BASEFS="${PD_WORKDIR}/poudriere"
@@ -46,7 +49,8 @@ setup_task:
     PD_REQUIRED_PACKAGES="ports-mgmt/poudriere-devel ports-mgmt/portshaker ports-mgmt/portshaker-config git-lite"
 
     # the branch to use for the FreeBSD ports tree
-    # see https://github.com/freebsd/freebsd-ports/branches
+    # see https://github.com/freebsd/freebsd-ports/branches for available
+    # branches
     PD_FREEBSD_PORTS_BRANCH="2021Q3"
 
     # the branch to use for the FreeBSD package tree
@@ -69,6 +73,8 @@ setup_task:
     # e.g 122amd64-default
     PD_BUILD_NAME="${PD_JAIL_NAME}-${PD_PORTS_NAME}"
 
+    # `export` the variables so that other scripts can use them.
+    #
     # note that the ${CIRRUS_ENV} file is NOT a shell script. empty line is
     # not allowed. value should NOT be quoted (i.e. NOT `foo="bar buz"`. use
     # `foo=bar buz` instead).
@@ -84,6 +90,7 @@ setup_task:
     PD_PORTS_NAME=${PD_PORTS_NAME}
     PD_BUILD_NAME=${PD_BUILD_NAME}
     PD_FREEBSD_PORTS_BRANCH=${PD_FREEBSD_PORTS_BRANCH}
+    PD_FREEBSD_PACKAGE_BRANCH=${PD_FREEBSD_PACKAGE_BRANCH}
     __EOF__
     cat ${CIRRUS_ENV}
 
