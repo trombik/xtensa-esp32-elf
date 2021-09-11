@@ -19,8 +19,10 @@ setup_task:
   matrix:
     - freebsd_instance:
         image_family: freebsd-13-0
+        disk: 80
     - freebsd_instance:
         image_family: freebsd-12-2
+        disk: 80
   define_common_variables_script: |
     PD_WORKDIR="/tmp"
 
