@@ -17,8 +17,10 @@ env:
 
 setup_task:
   matrix:
-    - freebsd_instance:
-        image_family: freebsd-13-0
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
         disk: 80
     - freebsd_instance:
         image_family: freebsd-12-2
