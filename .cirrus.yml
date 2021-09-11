@@ -42,8 +42,7 @@ setup_task:
 
     # define common variavles used in *_script. remember to export variables
     # at the end of this script.
-    PD_WORKDIR="/tmp"
-
+    PD_WORKDIR="$CIRRUS_WORKING_DIR}"
     PD_BASEFS="${PD_WORKDIR}/poudriere"
     PD_CCACHE_DIR=/var/cache/ccache
     PD_REQUIRED_PACKAGES="ports-mgmt/poudriere-devel ports-mgmt/portshaker ports-mgmt/portshaker-config git-lite"
@@ -169,9 +168,6 @@ setup_task:
     # ensure DISTFILES_CACHE exists
     mkdir -p "${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles"
 
-  built_packages_cache:
-    folder: ${PD_BASEFS}/data/packages
-
   create_jail_script: |
 
     # cannot cache jails at the moment. see:
@@ -212,7 +208,7 @@ setup_task:
       # do NOT quote, wildcard
       for F in ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/errors/*.log; do
         echo "${F}"
-        cat ${F}
+        cat "${F}"
       done
   always:
     copy_log_script: |
