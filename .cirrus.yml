@@ -22,7 +22,7 @@ setup_task:
     - freebsd_instance:
         image_family: freebsd-12-2
   define_common_variables_script: |
-    PD_BASEFS="/usr/local/poudriere"
+    PD_BASEFS="/tmp/poudriere"
     PD_REQUIRED_PACKAGES="ports-mgmt/poudriere ports-mgmt/portshaker ports-mgmt/portshaker-config git-lite"
 
     # e.g. 122
@@ -60,6 +60,8 @@ setup_task:
     uname -msr
     sysctl kern.osreldate
     env | sort
+    df -h
+    mount
 
     # configure _merged_ ports tree
     cat << __EOF__ > /usr/local/etc/portshaker.conf
