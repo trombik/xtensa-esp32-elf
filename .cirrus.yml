@@ -4,6 +4,7 @@
 #   https://medium.com/cirruslabs/introducing-cirrus-terminal-a-simple-way-to-get-ssh-like-access-to-your-tasks-1def0449065d
 # * publish packages when releasing
 # * support quaterly/latest ports
+# * support other FreeBSD releases
 #
 # known issues
 #
@@ -17,6 +18,11 @@ env:
 
 setup_task:
   matrix:
+    # XXX divide the CI into multiple per-package build using matrix. max
+    # timeout_in for a single task is limited to two hours. because of that,
+    # the build (which takes more than two hours) fails. this is not a
+    # portable, nor a generic solution for other ports.
+    #
     # XXX use compute_engine_instance, instead of freebsd_instance, which is a
     # syntactic sugar. with freebsd_instance, disk parameter is ignored.
     # see https://github.com/cirruslabs/cirrus-ci-docs/issues/911
@@ -27,17 +33,59 @@ setup_task:
         cpu: 4
         memory: 8
         disk: 80
+      env:
+        PD_ORIGIN: devel/riscv32-esp-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "riscv32-esp-elf*"
+
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
-        image: family/freebsd-12-2
+        image: family/freebsd-13-0
         platform: freebsd
         cpu: 4
         memory: 8
         disk: 80
+      env:
+        PD_ORIGIN: devel/xtensa-esp32-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "xtensa-esp32-elf*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/xtensa-esp32s2-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "xtensa-esp32s2-elf*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/binutils-esp32s2ulp
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32s2ulp"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/binutils-esp32ulp
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32ulp"
+
   # increase timeout_in. in most cases, build will not finish in 60m, which is
   # the default. the default is not documented at
   # https://cirrus-ci.org/guide/writing-tasks/, but at https://cirrus-ci.org/faq/
-  timeout_in: 240m
+  # the max timeout_in is two hours.
+  timeout_in: 120m
   define_common_variables_script: |
 
     # define common variavles used in *_script. remember to export variables
@@ -122,6 +170,7 @@ setup_task:
     FLAVOR_DEFAULT_ALL=yes
     DISTFILES_CACHE=${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles
     CCACHE_DIR=${PD_CCACHE_DIR}
+    ALLOW_MAKE_JOBS_PACKAGES="${PD_ALLOW_MAKE_JOBS_PACKAGES}"
 
     # increase MAX_FILES. crosstool-NG.sh tries to modify ulimit during the
     # build, which is not allowed.
@@ -188,19 +237,18 @@ setup_task:
     mkdir -p "${CIRRUS_WORKING_DIR}/logs"
 
     # create a list of all packages in the repository
-    PD_ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
+    # PD_ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
 
     poudriere ports -l
     poudriere jail -l
 
-    # build PD_ALL_ORIGIN
-    echo "Building ${PD_ALL_ORIGIN}"
+    # build PD_ORIGIN
+    echo "Building ${PD_ORIGIN}"
 
-    # do NOT quote PD_ALL_ORIGIN
-    # use -b flag to pre-install binary packages on which ${PD_ALL_ORIGIN}
+    # use -b flag to pre-install binary packages on which ${PD_ORIGIN}
     # depends. it saves time by skipping depended builds. -b flag requires
     # ports-mgmt/poudriere-devel.
-    poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C ${PD_ALL_ORIGIN}
+    poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C "${PD_ORIGIN}"
 
   on_failure:
     show_error_log_script: |
