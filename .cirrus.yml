@@ -124,6 +124,12 @@ setup_task:
     DISTFILES_CACHE=${PD_BASEFS}/ports/${PD_PORTS_NAME}/distfiles
     CCACHE_DIR=${PD_CCACHE_DIR}
 
+    # increase MAX_FILES. crosstool-NG.sh tries to modify ulimit during the
+    # build, which is not allowed.
+    #
+    # crosstool-NG.sh: line 112: ulimit: open files: cannot modify limit: Operation not permitted
+    MAX_FILES=4096
+
     __EOF__
     cat /usr/local/etc/poudriere.conf
 
