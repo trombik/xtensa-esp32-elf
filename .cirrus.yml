@@ -254,6 +254,7 @@ setup_task:
     mkdir -p "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
     D=`realpath "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/All"`
     cp ${D}/* "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
+    ls -al ${PD_WORKDIR}/packages/${PD_JAIL_NAME}
     for F in meta.conf meta.txz packagesite.txz; do
       F=`realpath "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/${F}"`
       cp "${F}" "${PD_WORKDIR}/packages/${PD_JAIL_NAME}"
