@@ -5,7 +5,7 @@
 # * publish packages when releasing
 # * support quaterly/latest ports
 # * support other FreeBSD releases
-# * re-generate packagesite.txz
+# * sign the packages
 #
 # known issues
 #
@@ -252,7 +252,7 @@ build_task:
     poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C "${PD_ORIGIN}"
   copy_packages_script: |
 
-    __PD_SRC="${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/.latest"
+    __PD_SRC="${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/.latest/All"
     __PD_DEST="${PD_WORKDIR}/packages/${PD_BUILD_NAME}"
 
     ls -alR "${__PD_SRC}"
@@ -281,9 +281,29 @@ build_task:
       path: "logs/*.log"
       type: text/plain
 
-test_task:
+generate_repo_task:
   depends_on:
     - build
+  matrix:
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
+
+  download_packages_script: |
+    fetch -o "${CIRRUS_WORKING_DIR}/packages.zip" \
+      "https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}/packages.zip"
+    (cd ${CIRRUS_WORKING_DIR} && unzip packages.zip)
+    ls -al "${CIRRUS_WORKING_DIR}/packages"
+    pkg repo "${CIRRUS_WORKING_DIR}/packages"
+    ls -al "${CIRRUS_WORKING_DIR}/packages"
+
+  packages_artifacts: |
+    path: "packages/*"
+
+test_task:
+  depends_on:
+    - generate_packagesite_txz
   matrix:
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
@@ -325,7 +345,7 @@ test_task:
     mkdir -p /usr/local/etc/pkg/repos
     cat < __EOF__ > /usr/local/etc/pkg/repos/local.conf
     local: {
-      URL: "file://${CIRRUS_WORKING_DIR}/packages/${PD_JAIL_NAME}"
+      URL: "file:///${CIRRUS_WORKING_DIR}/packages/${PD_JAIL_NAME}"
       ENABLED: yes
     }
     __EOF__
