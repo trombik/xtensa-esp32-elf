@@ -5,6 +5,7 @@
 # * publish packages when releasing
 # * support quaterly/latest ports
 # * support other FreeBSD releases
+# * re-generate packagesite.txz
 #
 # known issues
 #
@@ -251,16 +252,13 @@ build_task:
     poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C "${PD_ORIGIN}"
   copy_packages_script: |
 
-    mkdir -p "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
-    ls -alR     "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}"
-    D=`realpath "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/All"`
-    cp ${D}/* "${PD_WORKDIR}/packages/${PD_JAIL_NAME}/All"
-    ls -alR "${PD_WORKDIR}/packages/${PD_JAIL_NAME}"
-    for F in meta.conf meta.txz packagesite.txz; do
-      F=`realpath "${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/${F}"`
-      cp "${F}" "${PD_WORKDIR}/packages/${PD_JAIL_NAME}"
-    done
-    ls -alR "${PD_WORKDIR}/packages"
+    __PD_SRC="${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/.latest"
+    __PD_DEST="${PD_WORKDIR}/packages/${PD_BUILD_NAME}"
+
+    ls -alR "${__PD_SRC}"
+    mkdir -p "${__PD_DEST}"
+    cp -R "${__PD_SRC}"/*  "${__PD_DEST}"
+    ls -alR "${__PD_DEST}"
 
   packages_artifacts: |
 
@@ -271,7 +269,6 @@ build_task:
   on_failure:
     show_error_log_script: |
 
-      # do NOT quote, wildcard
       for F in ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/errors/*.log; do
         echo "${F}"
         cat "${F}"
@@ -279,7 +276,6 @@ build_task:
   always:
     copy_log_script: |
 
-      # do NOT quote, wildcard
       cp ${PD_BASEFS}/data/logs/bulk/${PD_BUILD_NAME}/latest/logs/*.log "${CIRRUS_WORKING_DIR}/logs/"
     log_artifacts:
       path: "logs/*.log"
