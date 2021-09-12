@@ -1,11 +1,9 @@
 # TODOs
 #
-# * support "Re-run with Terminal Access"
-#   https://medium.com/cirruslabs/introducing-cirrus-terminal-a-simple-way-to-get-ssh-like-access-to-your-tasks-1def0449065d
-# * publish packages when releasing
+# * publish packages on GitHub Pages when releasing
 # * support quaterly/latest ports
 # * support other FreeBSD releases
-# * sign the packages
+# * generate a kye and sign the packages with it
 #
 # known issues
 #
@@ -264,7 +262,10 @@ build_task:
 
     # can be downloaded at:
     # https://api.cirrus-ci.com/v1/artifact/build/<CIRRUS_BUILD_ID>/<ARTIFACTS_NAME>.zip
-    path: "packages/*"
+    # path: "packages/*"
+    #
+    # Error from upload stream: rpc error: code = Unknown desc =
+    path: "packages/*.txz"
 
   on_failure:
     show_error_log_script: |
@@ -356,6 +357,8 @@ test_task:
     # create a list of all packages in the repository
     PD_ALL_ORIGIN=`echo */* | sed -e 's|/[[:space:]]| |g' -e 's|/$||'`
     echo "PD_ALL_ORIGIN=${PD_ALL_ORIGIN}"
+
+    # install ${PD_ALL_ORIGIN}
     for D in ${PD_ALL_ORIGIN}; do
       PD_FLAVORS=`make -V FLAVORS -C "${D}"`
       echo "PD_FLAVORS=${PD_FLAVORS}"
