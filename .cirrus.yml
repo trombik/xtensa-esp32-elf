@@ -267,6 +267,7 @@ build_task:
     #
     # Error from upload stream: rpc error: code = Unknown desc =
     path: "packages/All/${PD_ALLOW_MAKE_JOBS_PACKAGES}"
+    type: application/octet-stream
 
   on_failure:
     show_error_log_script: |
