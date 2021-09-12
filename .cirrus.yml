@@ -250,13 +250,14 @@ build_task:
     poudriere bulk -j "${PD_JAIL_NAME}" -p "${PD_PORTS_NAME}" -b "${PD_FREEBSD_PACKAGE_BRANCH}" -t -C "${PD_ORIGIN}"
   copy_packages_script: |
 
-    __PD_SRC="${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/.latest/All"
+    __PD_SRC="${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/.latest"
     __PD_DEST="${PD_WORKDIR}/packages/${PD_BUILD_NAME}"
 
     ls -alR "${__PD_SRC}"
     mkdir -p "${__PD_DEST}"
     cp -R "${__PD_SRC}"/*  "${__PD_DEST}"
     ls -alR "${__PD_DEST}"
+    du -cksh "${__PD_DEST}"
 
   packages_artifacts: |
 
@@ -265,7 +266,7 @@ build_task:
     # path: "packages/*"
     #
     # Error from upload stream: rpc error: code = Unknown desc =
-    path: "packages/*.txz"
+    path: "packages/*"
 
   on_failure:
     show_error_log_script: |
