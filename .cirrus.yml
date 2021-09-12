@@ -67,7 +67,7 @@ build_task:
         disk: 80
       env:
         PD_ORIGIN: devel/binutils-esp32s2ulp
-        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32s2ulp"
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32s2ulp*"
 
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
@@ -78,7 +78,7 @@ build_task:
         disk: 80
       env:
         PD_ORIGIN: devel/binutils-esp32ulp
-        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32ulp"
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32ulp*"
 
   # increase timeout_in. in most cases, build will not finish in 60m, which is
   # the default. the default is not documented at
@@ -266,7 +266,7 @@ build_task:
     # path: "packages/*"
     #
     # Error from upload stream: rpc error: code = Unknown desc =
-    path: "packages/*"
+    path: "packages/All/${PD_ALLOW_MAKE_JOBS_PACKAGES}"
 
   on_failure:
     show_error_log_script: |
