@@ -303,7 +303,7 @@ generate_repo_task:
 
 test_task:
   depends_on:
-    - generate_packagesite_txz
+    - generate_repo_task
   matrix:
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
