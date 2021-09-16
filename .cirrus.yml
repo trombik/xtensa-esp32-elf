@@ -9,6 +9,10 @@
 #
 # * caching does not work as I wish. do not expect *_cache implementations are
 #   right.
+# * PR by contributors fails
+#    Updating "github:${CIRRUS_REPO_OWNER}:${CIRRUS_REPO_NAME}:${CIRRUS_BRANCH}"
+#    Failed to update the 'github:trombik:xtensa-esp32-elf:pull/21' ports tree.
+
 
 env:
   HOME: /root
@@ -263,11 +267,7 @@ build_task:
 
     # can be downloaded at:
     # https://api.cirrus-ci.com/v1/artifact/build/<CIRRUS_BUILD_ID>/<ARTIFACTS_NAME>.zip
-    # path: "packages/*"
-    #
-    # Error from upload stream: rpc error: code = Unknown desc =
-    # https://github.com/cirruslabs/cirrus-ci-docs/issues/913
-    path: "packages/All/${PD_ALLOW_MAKE_JOBS_PACKAGES}"
+    path: "packages/${PD_BUILD_NAME}/All/${PD_ALLOW_MAKE_JOBS_PACKAGES}"
     type: application/octet-stream
 
   on_failure:
