@@ -347,7 +347,7 @@ test_task:
 
   setup_pkg_conf_script: |
     mkdir -p /usr/local/etc/pkg/repos
-    cat < __EOF__ > /usr/local/etc/pkg/repos/local.conf
+    cat << __EOF__ > /usr/local/etc/pkg/repos/local.conf
     local: {
       URL: "file:///${CIRRUS_WORKING_DIR}/packages/${PD_JAIL_NAME}"
       ENABLED: yes
