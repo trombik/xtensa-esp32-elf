@@ -400,4 +400,4 @@ test_task:
         echo "${PD_ALL_PACKAGES}"
       fi
     done
-    pkg install --repository local ${PD_ALL_PACKAGES}
+    pkg install -y --repository local ${PD_ALL_PACKAGES}
