@@ -385,7 +385,7 @@ test_task:
     for D in ${PD_ALL_ORIGIN}; do
       PD_FLAVORS=`make -V FLAVORS -C "${D}"`
       echo "PD_FLAVORS=${PD_FLAVORS}"
-      if [ "x${FLAVORS}" != "x" ]; then
+      if [ "x${PD_FLAVORS}" != "x" ]; then
         for F in ${PD_FLAVORS}; do
           echo "FLAVOR=${F}"
           P=`make -V PKGNAME -C "${D}" FLAVOR="${F}"`
