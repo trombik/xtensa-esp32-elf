@@ -316,6 +316,7 @@ generate_repo_task:
       - "repos/*"
       - "repos/*/*"
       - "repos/*/*/*"
+      - "repos/*/*/*/*"
 
 test_task:
   depends_on:
