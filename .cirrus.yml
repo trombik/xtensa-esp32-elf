@@ -255,7 +255,7 @@ build_task:
   copy_packages_script: |
 
     __PD_SRC="${PD_BASEFS}/data/packages/${PD_BUILD_NAME}/.latest/All"
-    __PD_DEST="${PD_WORKDIR}/packages/${PD_BUILD_NAME}/All"
+    __PD_DEST="${PD_WORKDIR}/packages/${PD_JAIL_NAME}/${PD_BUILD_NAME}/All"
 
     ls -alR "${__PD_SRC}"
     mkdir -p "${__PD_DEST}"
@@ -267,7 +267,7 @@ build_task:
 
     # can be downloaded at:
     # https://api.cirrus-ci.com/v1/artifact/build/<CIRRUS_BUILD_ID>/<ARTIFACTS_NAME>.zip
-    path: "packages/${PD_BUILD_NAME}/All/${PD_ALLOW_MAKE_JOBS_PACKAGES}"
+    path: "packages/${PD_JAIL_NAME}/${PD_BUILD_NAME}/All/${PD_ALLOW_MAKE_JOBS_PACKAGES}"
     type: application/octet-stream
 
   on_failure:
@@ -298,12 +298,24 @@ generate_repo_task:
     fetch -o "${CIRRUS_WORKING_DIR}/packages.zip" \
       "https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}/packages.zip"
     (cd ${CIRRUS_WORKING_DIR} && unzip packages.zip)
-    ls -al "${CIRRUS_WORKING_DIR}/packages"
-    pkg repo "${CIRRUS_WORKING_DIR}/packages"
-    ls -al "${CIRRUS_WORKING_DIR}/packages"
 
-  repo_artifacts:
-    path: "packages"
+  generete_repo_script: |
+    for D in ${CIRRUS_WORKING_DIR}/packages/* ; do
+      if [ -d "${D}" ]; then
+        ls -alR  "${CIRRUS_WORKING_DIR}/packages/${D}"
+        pkg repo "${CIRRUS_WORKING_DIR}/packages/${D}"
+        ls -alR  "${CIRRUS_WORKING_DIR}/packages/${D}"
+      fi
+    done
+    mv "${CIRRUS_WORKING_DIR}/packages" "${CIRRUS_WORKING_DIR}/repos"
+
+  repos_artifacts:
+
+    # XXX cirrus-ci does not upload directories
+    paths:
+      - "repos/*"
+      - "repos/*/*"
+      - "repos/*/*/*"
 
 test_task:
   depends_on:
@@ -327,29 +339,35 @@ test_task:
 
     # e.g. 122amd64
     PD_JAIL_NAME="${PD_VERSION_SHORT}${PD_MACHINE}"
+    PD_PORTS_NAME="default"
+
+    # e.g 122amd64-default
+    PD_BUILD_NAME="${PD_JAIL_NAME}-${PD_PORTS_NAME}"
 
     cat << __EOF__ >> ${CIRRUS_ENV}
     PD_VERSION_SHORT=${PD_VERSION_SHORT}
     PD_MACHINE=${PD_MACHINE}
     PD_RELEASE_NAME=${PD_RELEASE_NAME}
     PD_JAIL_NAME=${PD_JAIL_NAME}
+    PD_PORTS_NAME=${PD_PORTS_NAME}
+    PD_BUILD_NAME=${PD_BUILD_NAME}
     __EOF__
     cat ${CIRRUS_ENV}
 
   show_env_script: |
     env | sort
 
-  download_packages_script: |
-    fetch -o ${CIRRUS_WORKING_DIR}/packages.zip \
-      "https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}/packages.zip"
-    (cd ${CIRRUS_WORKING_DIR} && unzip packages.zip)
-    ls -alR ${CIRRUS_WORKING_DIR}/packages
+  download_repos_script: |
+    fetch -o ${CIRRUS_WORKING_DIR}/repos.zip \
+      "https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}/repos.zip"
+    (cd ${CIRRUS_WORKING_DIR} && unzip repos.zip)
+    ls -alR "${CIRRUS_WORKING_DIR}/repos"
 
   setup_pkg_conf_script: |
     mkdir -p /usr/local/etc/pkg/repos
     cat << __EOF__ > /usr/local/etc/pkg/repos/local.conf
     local: {
-      URL: "file:///${CIRRUS_WORKING_DIR}/packages/${PD_JAIL_NAME}"
+      URL: "file:///${CIRRUS_WORKING_DIR}/repos/${PD_JAIL_NAME}/${PD_BUILD_NAME}"
       ENABLED: yes
     }
     __EOF__
