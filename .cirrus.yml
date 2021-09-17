@@ -302,9 +302,9 @@ generate_repo_task:
   generete_repo_script: |
     for D in ${CIRRUS_WORKING_DIR}/packages/* ; do
       if [ -d "${D}" ]; then
-        ls -alR  "${CIRRUS_WORKING_DIR}/packages/${D}"
-        pkg repo "${CIRRUS_WORKING_DIR}/packages/${D}"
-        ls -alR  "${CIRRUS_WORKING_DIR}/packages/${D}"
+        ls -alR  "${D}"
+        pkg repo "${D}"
+        ls -alR  "${D}"
       fi
     done
     mv "${CIRRUS_WORKING_DIR}/packages" "${CIRRUS_WORKING_DIR}/repos"
