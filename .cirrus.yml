@@ -300,7 +300,7 @@ generate_repo_task:
     (cd ${CIRRUS_WORKING_DIR} && unzip packages.zip)
 
   generete_repo_script: |
-    for D in ${CIRRUS_WORKING_DIR}/packages/* ; do
+    for D in ${CIRRUS_WORKING_DIR}/packages/*/* ; do
       if [ -d "${D}" ]; then
         ls -alR  "${D}"
         pkg repo "${D}"
