@@ -444,17 +444,17 @@ test_task:
       echo "PD_FLAVORS=${PD_FLAVORS}"
       if [ "x${PD_FLAVORS}" != "x" ]; then
         for F in ${PD_FLAVORS}; do
-          PD_PREFIX=`make -V PREFIX FLAVOR="${F}"`
-          PD_PORTNAME=`make -V PORTNAME FLAVOR="${F}"`
-          PD_PKGNAMESUFFIX=`make -V PKGNAMESUFFIX FLAVOR="${F}"`
+          PD_PREFIX=`make -C "${D}" -V PREFIX FLAVOR="${F}"`
+          PD_PORTNAME=`make -C "${D}" -V PORTNAME FLAVOR="${F}"`
+          PD_PKGNAMESUFFIX=`make -C "${D}" -V PKGNAMESUFFIX FLAVOR="${F}"`
           PD_BIN_PATH="${PD_PREFIX}/${PD_PORTNAME}${PD_PKGNAMESUFFIX}/bin"
           PATH="${PATH}:${PD_BIN_PATH}"
           export PATH
         done
       else
-        PD_PREFIX=`make -V PREFIX`
-        PD_PORTNAME=`make -V PORTNAME`
-        PD_PKGNAMESUFFIX=`make -V PKGNAMESUFFIX`
+        PD_PREFIX=`make -C "${D}" -V PREFIX`
+        PD_PORTNAME=`make -C "${D}" -V PORTNAME`
+        PD_PKGNAMESUFFIX=`make -C "${D}" -V PKGNAMESUFFIX`
         PD_BIN_PATH="${PD_PREFIX}/${PD_PORTNAME}${PD_PKGNAMESUFFIX}/bin"
         PATH="${PATH}:${PD_BIN_PATH}"
         export PATH
