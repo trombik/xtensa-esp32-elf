@@ -395,6 +395,8 @@ test_task:
       kQIDAQAB
       -----END PUBLIC KEY-----
       __EOF__
+    else
+      echo "Do NOT create FINGERPRINTS"
     fi
     mkdir -p /usr/local/etc/pkg/repos
     cat << __EOF__ > /usr/local/etc/pkg/repos/local.conf
@@ -433,3 +435,36 @@ test_task:
       fi
     done
     pkg install -y ${PD_ALL_PACKAGES}
+
+    # test if the binaries work
+    # add `bin` to PATH
+    for D in ${PD_ALL_ORIGIN}; do
+      PD_FLAVORS=`make -V FLAVORS -C "${D}"`
+      echo "PD_FLAVORS=${PD_FLAVORS}"
+      if [ "x${PD_FLAVORS}" != "x" ]; then
+        for F in ${PD_FLAVORS}; do
+          PD_PREFIX=`make -V PREFIX FLAVOR="${F}"`
+          PD_PORTNAME=`make -V PORTNAME FLAVOR="${F}"`
+          PD_PKGNAMESUFFIX=`make -V PKGNAMESUFFIX FLAVOR="${F}"`
+          PD_BIN_PATH="${PD_PREFIX}/${PD_PORTNAME}${PD_PKGNAMESUFFIX}/bin"
+          PATH="${PATH}:${PD_BIN_PATH}"
+          export PATH
+        done
+      else
+        PD_PREFIX=`make -V PREFIX`
+        PD_PORTNAME=`make -V PORTNAME`
+        PD_PKGNAMESUFFIX=`make -V PKGNAMESUFFIX`
+        PD_BIN_PATH="${PD_PREFIX}/${PD_PORTNAME}${PD_PKGNAMESUFFIX}/bin"
+        PATH="${PATH}:${PD_BIN_PATH}"
+        export PATH
+      fi
+    done
+    echo "${PATH}"
+
+    PD_GCC_FILES="riscv32-esp-elf-gcc xtensa-esp32-elf-gcc xtensa-esp32s2-elf-gcc"
+    PD_AS_FILES="esp32ulp-elf-as esp32s2ulp-elf-as"
+    for F in ${PD_GCC_FILES} ${PD_AS_FILES}; do
+      which "${F}"
+      file `which ${F}`
+      "${F}" --version
+    done
