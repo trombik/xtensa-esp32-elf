@@ -3,7 +3,7 @@
 # * publish packages on GitHub Pages when releasing
 # * support quaterly/latest ports
 # * support other FreeBSD releases
-# * generate a kye and sign the packages with it
+# * generate a key and sign the packages with it
 #
 # known issues
 #
@@ -286,6 +286,8 @@ build_task:
       type: text/plain
 
 generate_repo_task:
+  environment:
+    PD_REPO_KEY: ENCRYPTED[9777177c79dd17f340bc987bf3365c9e2d37e49848901d081034f1b1d30d03fab7b23bc5578a6780fb87e792c37d8936]
   depends_on:
     - build
   matrix:
@@ -300,10 +302,21 @@ generate_repo_task:
     (cd ${CIRRUS_WORKING_DIR} && unzip packages.zip)
 
   generete_repo_script: |
+    if [ "${CIRRUS_REPO_OWNER}" = "trombik" ]; then
+      touch repo.key
+      chmod 0400 repo.key
+      echo "${PD_REPO_KEY}" > repo.key
+    fi
     for D in ${CIRRUS_WORKING_DIR}/packages/*/* ; do
       if [ -d "${D}" ]; then
         ls -alR  "${D}"
-        pkg repo "${D}"
+        if [ -f repo.key ]; then
+          echo "Create a signed repo"
+          pkg repo "${D}" repo.key
+        else
+          echo "Create a repo"
+          pkg repo "${D}"
+        fi
         ls -alR  "${D}"
       fi
     done
@@ -365,11 +378,30 @@ test_task:
     ls -alR "${CIRRUS_WORKING_DIR}/repos"
 
   setup_pkg_conf_script: |
+
+    PD_FINGERPRINTS="NONE"
+    if [ "${CIRRUS_REPO_OWNER}" = "trombik" ]; then
+      echo "Create FINGERPRINTS"
+      PD_FINGERPRINTS="/usr/local/etc/pkg/fingerprints/local"
+      mkdir -p "${PD_FINGERPRINTS}"
+      cat <<__EOF__ > "${PD_FINGERPRINTS}/trusted"
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsiXZS851++ZaUFPO5hgR
+      iVMzGoRcunmi+Uk2r9bHXSL4CL45iBz+tvELjsVZtZWshbfgAvLtTos3LrLt+04n
+      VEmu1f+kRVnKzuI1ruM7ACmdr/HEYAcf2e0IpHhy9jQIUY/gL1PsajABOOG4O4FA
+      Eng8Ojfn1h1Ryth0S18dT71rIeFAQoZwXln+VjTM+Ppn5YXFZQJwF/ioIh7dPK6f
+      ij/tmbUVb+Aqy+zn8E/P66SZ8ZL/FT6FZ9w5a7Z6QzJoQlqEWql/QNe8qdrJX2Ya
+      T8ra5eCzWJhgYAoBjJN8mnnTqQ1gZnKEiSrzO1OU6gPATTJnL/iFQ4CCLKYd8oYE
+      kQIDAQAB
+      -----END PUBLIC KEY-----
+      __EOF__
+    fi
     mkdir -p /usr/local/etc/pkg/repos
     cat << __EOF__ > /usr/local/etc/pkg/repos/local.conf
     local: {
       URL: "file:///${CIRRUS_WORKING_DIR}/repos/${PD_JAIL_NAME}/${PD_BUILD_NAME}"
       ENABLED: yes
+      FINGERPRINTS: "${PD_FINGERPRINTS}"
     }
     __EOF__
     cat /usr/local/etc/pkg/repos/local.conf
