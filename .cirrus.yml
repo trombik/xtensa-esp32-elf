@@ -585,3 +585,60 @@ test_task:
       rm -rf ${HOME}/.espressif/python_env ${IDF_PATH}/examples/get-started/blink/build ${IDF_PATH}/examples/get-started/blink/sdkconfig
       (cd ${IDF_PATH} && git stash)
     done
+
+publish_task:
+  skip: $CIRRUS_TAG == ""
+  depends_on:
+    - test
+  matrix:
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
+  environment:
+    github_api_token: ENCRYPTED[39b951fc1c1e31cee78aabf8e511e57084064156f914e2ad764934926bee8dabc0dbc3cb6754459f9c1887e5bf34858c]
+  publish_artifact_script: |
+    filename="repos.zip"
+    fetch -o ${CIRRUS_WORKING_DIR}/repos.zip \
+      "https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}/${filename}"
+
+    # Author: Stefan Buck
+    # License: MIT
+    # https://gist.github.com/stefanbuck/ce788fee19ab6eb0b4447a85fc99f447
+    #
+    # upload-github-release-asset.sh github_api_token=TOKEN owner=stefanbuck repo=playground tag=v0.1.0 filename=./build.zip
+    echo "${CIRRUS_TAG}"
+    if [ "x${CIRRUS_TAG}" != "x" ]; then
+      GH_API="https://api.github.com"
+      GH_REPO="$GH_API/repos/${CIRRUS_REPO_OWNER}/${CIRRUS_REPO_NAME}"
+      GH_RELEASES="$GH_REPO/releases"
+      GH_TAGS="$GH_RELEASES/tags/${CIRRUS_TAG}"
+      AUTH="Authorization: token $github_api_token"
+
+      if test "$tag" == "LATEST"; then
+        GH_TAGS="$GH_REPO/releases/latest"
+      fi
+
+      # Validate token.
+      curl -o /dev/null -sH "$AUTH" $GH_REPO || { echo "Error: Invalid repo, token or network issue!";  exit 1; }
+
+      # Create a release from tag if it does not exist.
+      curl -s -d "{\"tag_name\":\"$tag\"}" -H "$AUTH" "$GH_RELEASES" > /dev/null
+
+      # Read asset tags.
+      response=$(curl -sH "$AUTH" $GH_TAGS)
+
+      # Get ID of the asset based on given filename.
+      eval "$(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:alnum:]]=')"
+      echo "ID=${id}"
+      [ -n "$id" ] || { echo "Error: Failed to get release id for tag: $tag"; echo "$response" | awk 'length($0)<100' >&2; exit 1; }
+
+      # Upload asset
+      echo "Uploading asset... "
+
+      # Construct url
+      GH_ASSET="https://uploads.github.com/repos/${CIRRUS_REPO_OWNER}/${CIRRUS_REPO_NAME}/releases/$id/assets?name=$(basename $filename)"
+      echo "GH_ASSET=${GH_ASSET}"
+
+      curl "$GITHUB_OAUTH_BASIC" --data-binary @"$filename" -H "$AUTH" -H "Content-Type: application/octet-stream" $GH_ASSET
+    fi
