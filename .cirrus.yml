@@ -62,7 +62,7 @@ publish_task:
       echo "Uploading asset... "
 
       # Construct url
-      GH_ASSET="https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=$(basename $filename)"
+      GH_ASSET="https://uploads.github.com/repos/${CIRRUS_REPO_OWNER}/${CIRRUS_REPO_NAME}/releases/$id/assets?name=$(basename $filename)"
       echo "GH_ASSET=${GH_ASSET}"
 
       curl "$GITHUB_OAUTH_BASIC" --data-binary @"$filename" -H "$AUTH" -H "Content-Type: application/octet-stream" $GH_ASSET
