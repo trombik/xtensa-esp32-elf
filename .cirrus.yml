@@ -22,7 +22,7 @@ publish_task:
   environment:
     github_api_token: ENCRYPTED[39b951fc1c1e31cee78aabf8e511e57084064156f914e2ad764934926bee8dabc0dbc3cb6754459f9c1887e5bf34858c]
   publish_artifact_script: |
-    env | sort
+    env | sort | grep -v github_api_token
     filename="repos.zip"
     fetch -o ${CIRRUS_WORKING_DIR}/repos.zip \
       "https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}/repos.zip" || true
