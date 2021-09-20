@@ -29,6 +29,8 @@ build_task:
     # XXX use compute_engine_instance, instead of freebsd_instance, which is a
     # syntactic sugar. with freebsd_instance, disk parameter is ignored.
     # see https://github.com/cirruslabs/cirrus-ci-docs/issues/911
+    #
+    # FreeBSD 13.0
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
         image: family/freebsd-13-0
@@ -76,6 +78,62 @@ build_task:
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
         image: family/freebsd-13-0
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/binutils-esp32ulp
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32ulp*"
+
+    # FreeBSD 12.2
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/riscv32-esp-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "riscv32-esp-elf*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/xtensa-esp32-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "xtensa-esp32-elf*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/xtensa-esp32s2-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "xtensa-esp32s2-elf*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/binutils-esp32s2ulp
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32s2ulp*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
         platform: freebsd
         cpu: 4
         memory: 8
@@ -335,9 +393,16 @@ test_task:
   depends_on:
     - generate_repo
   matrix:
+    # FreeBSD 13.0
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
         image: family/freebsd-13-0
+        platform: freebsd
+
+    # FreeBSD 12.2
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
         platform: freebsd
 
   define_common_variables_script: |
