@@ -469,3 +469,54 @@ test_task:
       file `which ${F}`
       "${F}" --version
     done
+
+  test_required_packages_cache:
+    folder: /var/cache/pkg
+    fingerprint_script:
+      - uname -msr
+      - echo 20210909
+    populate_script: |
+
+      pkg fetch --dependencies --yes git-lite python38 py38-pip py38-virtualenv py38-pyserial py38-cryptography rust cmake gmake
+
+  build_idf_examples_script: |
+
+    # XXX remove obsolete python37
+    pkg delete -y python37 python2 python27
+    pkg install -y git-lite python38 py38-pip py38-virtualenv py38-pyserial py38-cryptography rust cmake gmake
+
+    # XXX fixup python3
+    ln -s /usr/local/bin/python3.8 /usr/local/bin/python3
+    git clone https://github.com/espressif/esp-idf
+    IDF_PATH=`realpath esp-idf`
+    export IDF_PATH
+
+    PD_OLD_PATH="${PATH}"
+    for V in v3.3.5 master; do
+      (cd "${IDF_PATH}" && git checkout "${V}" && git submodule update --init --recursive --depth 1)
+
+      # XXX pretend to be Linux
+      sed -i.bak -e "s/'Linux-x86_64': PLATFORM_LINUX64,/'Linux-x86_64': PLATFORM_LINUX64, 'FreeBSD-amd64': PLATFORM_LINUX64,/" ${IDF_PATH}/tools/idf_tools.py
+
+      # XXX make is gmake
+      sed -i.bak -e 's/MAKE_CMD = "make"/MAKE_CMD = "gmake"/g' ${IDF_PATH}/tools/idf.py
+
+      python3 "${IDF_PATH}/tools/idf_tools.py" --non-interactive install-python-env
+      PD_IDF_PYTHON_ENV=`echo ${HOME}/.espressif/python_env/idf*_py*_env/bin`
+      PATH="${PD_IDF_PYTHON_ENV}:${PATH}"
+      PATH="${PATH}:${IDF_PATH}/tools"
+      case "${V}" in
+        v3.*)
+          PATH="${PATH}:/usr/local/xtensa-esp32-elf-idf3/bin"
+          ;;
+        *)
+          PATH="${PATH}:/usr/local/xtensa-esp32-elf-idf4/bin"
+          ;;
+      esac
+      (cd "${IDF_PATH}/examples/get-started/blink" && idf.py all)
+
+      # clean up
+      PATH=${PD_OLD_PATH}
+      rm -rf ${HOME}/.espressif/python_env ${IDF_PATH}/examples/get-started/blink/build ${IDF_PATH}/examples/get-started/blink/sdkconfig
+      (cd ${IDF_PATH} && git stash)
+    done
