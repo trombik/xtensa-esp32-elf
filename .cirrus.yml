@@ -517,6 +517,6 @@ test_task:
 
       # clean up
       PATH=${PD_OLD_PATH}
-      rm -rf ${HOME}/.espressif/python_env ${IDF_PATH}/examples/get-started/blink/build
+      rm -rf ${HOME}/.espressif/python_env ${IDF_PATH}/examples/get-started/blink/build ${IDF_PATH}/examples/get-started/blink/sdkconfig
       (cd ${IDF_PATH} && git stash)
     done
