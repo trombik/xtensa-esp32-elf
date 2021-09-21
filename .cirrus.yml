@@ -20,6 +20,7 @@ env:
   USER: root
 
 build_task:
+  skip: "changesIncludeOnly('**.md')"
   matrix:
     # XXX divide the CI into multiple per-package build using matrix. max
     # timeout_in for a single task is limited to two hours. because of that,
@@ -344,6 +345,7 @@ build_task:
       type: text/plain
 
 generate_repo_task:
+  skip: "changesIncludeOnly('**.md')"
   environment:
     PD_REPO_KEY: ENCRYPTED[9777177c79dd17f340bc987bf3365c9e2d37e49848901d081034f1b1d30d03fab7b23bc5578a6780fb87e792c37d8936]
   depends_on:
@@ -390,6 +392,7 @@ generate_repo_task:
       - "repos/*/*/*/*"
 
 test_task:
+  skip: "changesIncludeOnly('**.md')"
   depends_on:
     - generate_repo
   matrix:
