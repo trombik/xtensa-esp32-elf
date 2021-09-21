@@ -2,8 +2,6 @@
 #
 # * publish packages on GitHub Pages when releasing
 # * support quaterly/latest ports
-# * support other FreeBSD releases
-# * generate a key and sign the packages with it
 #
 # known issues
 #
