@@ -22,10 +22,16 @@ For `openocd` debugger, use
 * `devel/binutils-esp32ulp` compiles an example in `esp-idf` fine
 * `devel/binutils-esp32s2ulp` should work but no example in `esp-idf` `master`
   branch
+* A package repository is now available at [Releases](../releases).
 
 ## Usage
 
-Copy the repository to your ports tree (use [`ports-mgmt/portshaker`](https://www.freshports.org/ports-mgmt/portshaker/).
+You can install packages either by building from source, or using a package
+repository.
+
+### Building from source
+
+Copy the repository to your ports tree (use [`ports-mgmt/portshaker`](https://www.freshports.org/ports-mgmt/portshaker/)).
 
 The port has two `FLAVOR`, `idf4` and `idf3`. Choose one (if you are trying to
 build an Arduino project, use `idf3`).
@@ -38,6 +44,62 @@ make install FLAVOR="idf3"
 
 The files are installed under `${PREFIX}/xtensa-esp32-elf-idf3`, usually
 `/usr/local/xtensa-esp32-elf-idf3`.
+
+### Installing pre-built packages
+
+If you want to install pre-built packages, use the provided packages
+repository.
+
+[The Releases page](../releases) has a package repository under `Assets`,
+`repos.zip`. The zip  file contains package repositories for FreeBSD releases.
+Download the zip file, and extract it.
+
+In this example, the path to the extracted archive is assumed to be
+`/usr/local/packages/repos`. The repository name is `local`, which works as a
+_overlay_ package repository.
+
+```console
+# mkdir -p /usr/local/packages
+# cd /usr/local/packages
+# unzip /path/to/repos.zip
+# ls repos
+122amd64/ 130amd64/
+```
+
+The packages are signed with a key. The public key can be found at
+[.fingerprint](.fingerprint).  Download and copy the public key.
+
+```console
+> fetch https://raw.githubusercontent.com/trombik/xtensa-esp32-elf/devel/.fingerprint
+# mkdir -p /usr/local/etc/pkg/fingerprints/local
+# cp .fingerprint /usr/local/etc/pkg/fingerprints/local/trusted
+```
+
+Then, create `pkg.conf(8)`.
+
+```console
+# mkdir -p /usr/local/etc/pkg/repos
+# vi /usr/local/etc/pkg/repos/local.conf
+```
+
+```text
+# /usr/local/etc/pkg/repos/local.conf
+local: {
+  URL: "file:///usr/local/packages/repos/${VERSION_MAJOR}${VERSION_MINOR}${ARCH}/${VERSION_MAJOR}${VERSION_MINOR}${ARCH}-default"
+  ENABLED: yes
+  FINGERPRINTS: /usr/local/etc/pkg/fingerprints/local
+}
+```
+
+Install the package you want to use, such as `xtensa-esp32-elf-idf4`.
+
+```console
+# pkg install xtensa-esp32-elf-idf4
+```
+
+The above command will install the package and its dependencies. Note that
+the dependencies are installed from the FreeBSD package repository, not from
+`local` repository.
 
 ### `platformio` and `arduino-esp32`
 
