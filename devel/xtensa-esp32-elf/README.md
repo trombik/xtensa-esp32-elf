@@ -31,7 +31,7 @@ repository.
 
 ### Building from source
 
-Copy the repository to your ports tree (use [`ports-mgmt/portshaker`](https://www.freshports.org/ports-mgmt/portshaker/).
+Copy the repository to your ports tree (use [`ports-mgmt/portshaker`](https://www.freshports.org/ports-mgmt/portshaker/)).
 
 The port has two `FLAVOR`, `idf4` and `idf3`. Choose one (if you are trying to
 build an Arduino project, use `idf3`).
@@ -85,7 +85,7 @@ Then, create `pkg.conf(8)`.
 ```text
 # /usr/local/etc/pkg/repos/local.conf
 local: {
-  URL: "file:///usr/local/packages/repos/${VERSION_MAJOR}${VERSION_MINOR}${ARCH}/${VERSION_MAJOR}${VERSION_MINOR}${ARCH}-default
+  URL: "file:///usr/local/packages/repos/${VERSION_MAJOR}${VERSION_MINOR}${ARCH}/${VERSION_MAJOR}${VERSION_MINOR}${ARCH}-default"
   ENABLED: yes
   FINGERPRINTS: /usr/local/etc/pkg/fingerprints/local
 }
