@@ -32,7 +32,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf4 idf3
+FLAVORS=	idf4 idf42 idf41 idf3
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
 FLAVORS=	idf4
 .endif
@@ -59,6 +59,52 @@ DISTFILES+=	\
 		mpc-1.1.0.tar.gz:source4 \
 		mpfr-4.0.2.tar.xz:source5 \
 		ncurses-6.2.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.2.11.tar.gz:source11
+.elif ${FLAVOR} == idf41
+MASTER_SITES+= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-3.1.3/:source5 \
+		GNU/mpfr/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8 \
+		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
+DISTFILES+=	\
+		expat-2.2.5.tar.bz2:source1 \
+		gmp-6.1.2.tar.xz:source2 \
+		isl-0.19.tar.xz:source3 \
+		mpc-1.1.0.tar.gz:source4 \
+		mpfr-4.0.1.tar.xz:source5 \
+		ncurses-6.1.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.2.11.tar.gz:source11
+.elif ${FLAVOR} == idf42
+MASTER_SITES+= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-3.1.3/:source5 \
+		GNU/mpfr/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8 \
+		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
+DISTFILES+=	\
+		expat-2.2.5.tar.bz2:source1 \
+		gmp-6.1.2.tar.xz:source2 \
+		isl-0.19.tar.xz:source3 \
+		mpc-1.1.0.tar.gz:source4 \
+		mpfr-4.0.1.tar.xz:source5 \
+		ncurses-6.1.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.11.tar.gz:source11
@@ -94,8 +140,12 @@ BUILD_DEPENDS+=	wget:ftp/wget
 .endif
 
 idf4_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf41_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf3_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf4_PKGNAMESUFFIX=	-idf4
+idf41_PKGNAMESUFFIX=	-idf41
+idf42_PKGNAMESUFFIX=	-idf42
 idf3_PKGNAMESUFFIX=	-idf3
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
@@ -129,6 +179,27 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	a5ab689
+
+.elif ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+ESPRESSIF_VERSION=	esp-2020r3
+TAGNAME=	${ESPRESSIF_VERSION}
+.if ${PORTNAME} == riscv32-esp-elf
+IGNORE=	ESP-IDF 4.1 does not support riscv32-esp-elf
+.else
+XTENSA_GDB_VERSION=	gdb
+.endif
+GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
+	espressif:binutils-gdb:${TAGNAME}-${XTENSA_GDB_VERSION}:source101 \
+	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
+	espressif:newlib-esp32:${TAGNAME}:source103 \
+	espressif:crosstool-NG:${TAGNAME}
+
+EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
+	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
+	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
+XTENSA_OVERLAYS_TAGNAME=	4d8c98d
 
 .elif ${FLAVOR} == idf3
 
@@ -182,7 +253,7 @@ XTENSA_CT_CONFIG+=	CT_LOG_PROGRESS_BAR=n
 # XXX ct-ng does not allow this to be defined in crosstool.config
 BUILD_ENV+=	CT_ALLOW_BUILD_AS_ROOT_SURE=y
 
-.if ${FLAVOR} == idf4
+.if ${FLAVOR} == idf4 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 # XXX as configure in ncurses 6.2 breaks dynamic linker search path, subsequent
 # execution of bash fails. this workaround is obtained from devel/ncurses
 BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
@@ -217,13 +288,15 @@ post-extract:
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
 	    ${WRKSRC}/configure.ac
-.if ${FLAVOR} == idf4
+.if ${FLAVOR} == idf4 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	${REINPLACE_CMD} \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
 		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
+.endif
+.if ${FLAVOR} == idf4
 	${REINPLACE_CMD} \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    ${WRKSRC}/maintainer/git-version-gen
@@ -233,7 +306,7 @@ pre-configure:
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
-.if ${FLAVOR} == idf3
+.if ${FLAVOR} == idf3 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	${PRINTF} "#!/bin/sh\necho '${SUBDIR:tl}-${TAGNAME}'\n" > \
 	    ${BUILD_WRKSRC}/version.sh
 	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
@@ -251,6 +324,11 @@ do-configure:
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
+.if ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
+	${CP} ${PATCHDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
+.endif
+
 	${RM} ${WRKSRC}/scripts/functions.orig \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.bak \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
@@ -276,7 +354,7 @@ do-install:
 			share/doc/crosstool-ng \
 			share/man/man1/ct-ng.1.gz \
 			share/bash-completion
-.if ${FLAVOR} == idf4
+.if ${FLAVOR} == idf4 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcc1plugin.so.0.0.0 \
