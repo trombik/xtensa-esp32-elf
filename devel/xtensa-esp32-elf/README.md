@@ -68,7 +68,7 @@ _overlay_ package repository.
 ```
 
 The packages are signed with a key. The public key can be found at
-[.fingerprint](.fingerprint).  Download and copy the public key.
+[.fingerprint](../../.fingerprint).  Download and copy the public key.
 
 ```console
 > fetch https://raw.githubusercontent.com/trombik/xtensa-esp32-elf/devel/.fingerprint
