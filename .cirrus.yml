@@ -158,7 +158,7 @@ build_task:
     # the branch to use for the FreeBSD ports tree.
     # see https://github.com/freebsd/freebsd-ports/branches for available
     # branches
-    PD_FREEBSD_PORTS_BRANCH="2021Q3"
+    PD_FREEBSD_PORTS_BRANCH="2021Q4"
 
     # the branch to use for the FreeBSD package tree. the build fetches
     # and installs packages required by PD_ALL_ORIGIN.
