@@ -33,8 +33,9 @@ repository.
 
 Copy the repository to your ports tree (use [`ports-mgmt/portshaker`](https://www.freshports.org/ports-mgmt/portshaker/)).
 
-The port has two `FLAVOR`, `idf4` and `idf3`. Choose one (if you are trying to
-build an Arduino project, use `idf3`).
+The port has `FLAVOR`s, `idf4`, `idf41`, `idf42` and `idf3`. Choose one (if
+you are trying to build an Arduino project, choose the esp-idf version your
+Arduino version requires).
 
 ```console
 cd /usr/ports/devel/xtensa-esp32-elf
