@@ -32,15 +32,15 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf4 idf42 idf41 idf3
+FLAVORS=	idf43 idf42 idf41 idf3
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
-FLAVORS=	idf4
+FLAVORS=	idf43
 .endif
 FLAVOR?=	${FLAVORS:[1]}
 
-.if ${FLAVOR} == idf4
+.if ${FLAVOR} == idf43
 MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_2_9/:source1 \
+		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
 		GNU/gmp/:source2 \
 		http://isl.gforge.inria.fr/:source3 \
@@ -53,7 +53,7 @@ MASTER_SITES+= \
 		GNU/automake/:source8 \
 		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
 DISTFILES+=	\
-		expat-2.2.9.tar.gz:source1 \
+		expat-2.4.1.tar.gz:source1 \
 		gmp-6.2.0.tar.xz:source2 \
 		isl-0.19.tar.xz:source3 \
 		mpc-1.1.0.tar.gz:source4 \
@@ -139,13 +139,13 @@ DISTFILES+=	binutils-2.25.1.tar.bz2:source1 \
 BUILD_DEPENDS+=	wget:ftp/wget
 .endif
 
-idf4_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf41_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf41_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf3_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf4_PKGNAMESUFFIX=	-idf4
-idf41_PKGNAMESUFFIX=	-idf41
+idf43_PKGNAMESUFFIX=	-idf43
 idf42_PKGNAMESUFFIX=	-idf42
+idf41_PKGNAMESUFFIX=	-idf41
 idf3_PKGNAMESUFFIX=	-idf3
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
@@ -155,15 +155,11 @@ USE_GCC=	9+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 
-.if ${FLAVOR} == idf4
+.if ${FLAVOR} == idf43
 # XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2021r1
+ESPRESSIF_VERSION=	esp-2021r2
 TAGNAME=	${ESPRESSIF_VERSION}
-.if ${PORTNAME} == riscv32-esp-elf
-XTENSA_GDB_VERSION=	gdb92
-.else
-XTENSA_GDB_VERSION=	gdb81
-.endif
+XTENSA_GDB_VERSION=	gdb
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 	espressif:binutils-gdb:${TAGNAME}-${XTENSA_GDB_VERSION}:source101 \
 	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
@@ -253,7 +249,7 @@ XTENSA_CT_CONFIG+=	CT_LOG_PROGRESS_BAR=n
 # XXX ct-ng does not allow this to be defined in crosstool.config
 BUILD_ENV+=	CT_ALLOW_BUILD_AS_ROOT_SURE=y
 
-.if ${FLAVOR} == idf4 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+.if ${FLAVOR} == idf43 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 # XXX as configure in ncurses 6.2 breaks dynamic linker search path, subsequent
 # execution of bash fails. this workaround is obtained from devel/ncurses
 BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
@@ -288,7 +284,7 @@ post-extract:
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
 	    ${WRKSRC}/configure.ac
-.if ${FLAVOR} == idf4 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+.if ${FLAVOR} == idf43 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	${REINPLACE_CMD} \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
@@ -296,7 +292,7 @@ pre-configure:
 		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 .endif
-.if ${FLAVOR} == idf4
+.if ${FLAVOR} == idf43
 	${REINPLACE_CMD} \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    ${WRKSRC}/maintainer/git-version-gen
@@ -354,7 +350,7 @@ do-install:
 			share/doc/crosstool-ng \
 			share/man/man1/ct-ng.1.gz \
 			share/bash-completion
-.if ${FLAVOR} == idf4 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+.if ${FLAVOR} == idf43 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcc1plugin.so.0.0.0 \
