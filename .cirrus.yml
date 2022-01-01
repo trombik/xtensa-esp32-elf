@@ -587,7 +587,7 @@ publish_task:
         image: family/freebsd-13-0
         platform: freebsd
   environment:
-    github_api_token: ENCRYPTED[39b951fc1c1e31cee78aabf8e511e57084064156f914e2ad764934926bee8dabc0dbc3cb6754459f9c1887e5bf34858c]
+    github_api_token: ENCRYPTED[324df1458089f12ec2e7e8134f09d26bd40342f140ec8ff2d0269c9792d8ba6b93cf40a6c650f68c8abc3283e23be565]
   publish_artifact_script: |
     filename="repos.zip"
     fetch -o ${CIRRUS_WORKING_DIR}/repos.zip \
