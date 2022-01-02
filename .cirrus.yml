@@ -539,7 +539,7 @@ test_task:
 
     # XXX remove obsolete python37
     pkg delete -y python37 python2 python27
-    pkg install -y git-lite python38 py38-pip py38-virtualenv py38-pyserial py38-cryptography rust cmake gmake
+    pkg install -y git-lite python38 py38-pip py38-pyserial py38-cryptography rust cmake gmake
 
     # XXX fixup python3
     ln -s /usr/local/bin/python3.8 /usr/local/bin/python3
