@@ -229,7 +229,8 @@ NO_MTREE=	yes
 SUBDIR=		crosstool-NG
 BINARY_ALIAS=	g++=${CXX} gcc=${CC} python=${PYTHON_VERSION}
 BUILD_ENV=	LD_RUN_PATH=${PREFIX}/lib/${CC} \
-		${MAKE_ENV:MPATH=*}
+		${MAKE_ENV:MPATH=*} \
+		CT_JOBS=${MAKE_JOBS_NUMBER}
 
 # these variables are automatically appended to crosstool.config at
 # pre-configure. common variables should go into XTENSA_CT_CONFIG
