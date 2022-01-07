@@ -29,7 +29,8 @@ BUILD_DEPENDS=	bash:shells/bash \
 # XXX use iconv:wchar_t.
 # configure scripts picks -liconv during gcc build from converters/libiconv
 # installed by dependencies. fixes error in stage-qa
-USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t
+# XXX use ncurses, which is required by gdb (libtinfow)
+USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${PORTNAME} == xtensa-esp32-elf
 FLAVORS=	idf43 idf42 idf41 idf3
@@ -154,6 +155,7 @@ SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
 USE_GCC=	9+
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
+LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
 .if ${FLAVOR} == idf43
 # XXX the upstream versioning does not match one of the ports
