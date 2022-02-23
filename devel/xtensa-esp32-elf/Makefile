@@ -33,7 +33,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf43 idf42 idf41 idf3
+FLAVORS=	idf43 idf42 idf41
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
 FLAVORS=	idf43
 .endif
@@ -109,45 +109,14 @@ DISTFILES+=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.11.tar.gz:source11
-.elif ${FLAVOR} == idf3
-MASTER_SITES+=	SOURCEWARE/binutils/releases/binutils:source1 \
-		GNU/binutils:source1 \
-		https://github.com/libexpat/libexpat/releases/download/R_2_1_0/:source2 \
-		SF/expat/expat/2.1.0:source2 \
-		GCC/releases/gcc-5.2.0:source3 \
-		GNU/gdb:source4 \
-		GNU/gmp:source5 \
-		http://isl.gforge.inria.fr/:source6 \
-		GNU/mpc:source7 \
-		http://www.mpfr.org/mpfr-3.1.3/:source8 \
-		GNU/mpfr:source8 \
-		ftp://ftp.invisible-island.net/ncurses/:source9 \
-		GNU/ncurses:source9 \
-		SOURCEWARE/newlib:source10 \
-		ftp://sources.redhat.com/pub/newlib/:source10
-DISTFILES+=	binutils-2.25.1.tar.bz2:source1 \
-		expat-2.1.0.tar.gz:source2 \
-		gcc-5.2.0.tar.bz2:source3 \
-		gdb-7.10.tar.xz:source4 \
-		gmp-6.0.0a.tar.xz:source5 \
-		isl-0.14.tar.xz:source6 \
-		mpc-1.0.3.tar.gz:source7 \
-		mpfr-3.1.3.tar.xz:source8 \
-		ncurses-6.0.tar.gz:source9 \
-		newlib-2.2.0.tar.gz:source10
-
-# older ct-ng requires wget. without it, configure fails.
-BUILD_DEPENDS+=	wget:ftp/wget
 .endif
 
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf41_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf3_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PKGNAMESUFFIX=	-idf43
 idf42_PKGNAMESUFFIX=	-idf42
 idf41_PKGNAMESUFFIX=	-idf41
-idf3_PKGNAMESUFFIX=	-idf3
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
@@ -198,24 +167,6 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	4d8c98d
-
-.elif ${FLAVOR} == idf3
-
-# the latest commit in espressif/crosstools-NG xtensa-1.22.x branch
-# this should match the supported version in arduino-esp32. see:
-# https://github.com/espressif/arduino-esp32/blob/gh-pages/package_esp32_index.json
-TAGNAME=	c752ad5
-
-# the old branch has no consistent version number scheme. modify
-# ESPRESSIF_VERSION so that the version number looks similar to packages for
-# other platforms and also compatible with PORTVERSION.
-#
-# as it's 1.22.0-97-gc752ad5-5.2.0 at the time of this writing,
-# ESPRESSIF_VERSION_IDF3 is 97.
-ESPRESSIF_VERSION_IDF3=	97
-ESPRESSIF_VERSION=	crosstool-ng-1.22.0.${ESPRESSIF_VERSION_IDF3}.g${TAGNAME}
-GH_TUPLE=	espressif:crosstool-NG:${TAGNAME}
-EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX}
 .endif
 
 .if defined(XTENSA_OVERLAYS_TAGNAME)
@@ -275,10 +226,6 @@ post-extract:
 	${LN} -s ${DISTDIR}/${F:C/:source[0-9]+$//} \
 	    ${BUILD_WRKSRC}/.build/tarballs
 .endfor
-.if ${FLAVOR} == idf3
-	${MKDIR} ${WRKSRC}/local-patches/gdb/7.10
-	${CP} ${PATCHDIR}/0001-gdb-7.12.1.patch ${WRKSRC}/local-patches/gdb/7.10
-.endif
 .if defined(XTENSA_OVERLAYS_TAGNAME)
 	${RMDIR} ${BUILD_WRKSRC}/overlays
 	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
@@ -305,7 +252,7 @@ pre-configure:
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
-.if ${FLAVOR} == idf3 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+.if ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	${PRINTF} "#!/bin/sh\necho '${SUBDIR:tl}-${TAGNAME}'\n" > \
 	    ${BUILD_WRKSRC}/version.sh
 	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
@@ -359,9 +306,6 @@ do-install:
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcc1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
-.elif ${FLAVOR} == idf3
-	@${STRIP_CMD} \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/5.2.0/plugin/gengtype
 .endif
 	# install metadata file for platformio
 	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
