@@ -33,18 +33,18 @@ repository.
 
 Copy the repository to your ports tree (use [`ports-mgmt/portshaker`](https://www.freshports.org/ports-mgmt/portshaker/)).
 
-The port has `FLAVOR`s, `idf4`, `idf41`, `idf42` and `idf3`. Choose one (if
+The port has `FLAVOR`s, `idf4`, `idf41`, and `idf42` Choose one (if
 you are trying to build an Arduino project, choose the esp-idf version your
 Arduino version requires).
 
 ```console
 cd /usr/ports/devel/xtensa-esp32-elf
-make FLAVOR="idf3"
-make install FLAVOR="idf3"
+make FLAVOR="idf43"
+make install FLAVOR="idf43"
 ```
 
-The files are installed under `${PREFIX}/xtensa-esp32-elf-idf3`, usually
-`/usr/local/xtensa-esp32-elf-idf3`.
+The files are installed under `${PREFIX}/xtensa-esp32-elf-${FLAVOR}`, usually
+`/usr/local/xtensa-esp32-elf-${FLAVOR}`.
 
 ### Installing pre-built packages
 
@@ -107,7 +107,7 @@ the dependencies are installed from the FreeBSD package repository, not from
 ```console
 mkdir -p ~/.platformio/packages
 cd ~/.platformio/packages
-ln -s /usr/local/xtensa-esp32-elf-idf3 toolchain-xtensa32
+ln -s /usr/local/xtensa-esp32-elf-${FLAVOR} toolchain-xtensa32
 ```
 
 Run `pio run` in the project directory.

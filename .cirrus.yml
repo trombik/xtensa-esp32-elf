@@ -548,7 +548,7 @@ test_task:
     export IDF_PATH
 
     PD_OLD_PATH="${PATH}"
-    for V in v3.3.5 v4.1.2 v4.2.2 v4.3.2; do
+    for V in v4.1.2 v4.2.2 v4.3.2; do
       (cd "${IDF_PATH}" && git checkout "${V}" && git submodule update --init --recursive --depth 1)
 
       # XXX pretend to be Linux
@@ -562,9 +562,6 @@ test_task:
       PATH="${PD_IDF_PYTHON_ENV}:${PATH}"
       PATH="${PATH}:${IDF_PATH}/tools"
       case "${V}" in
-        v3.*)
-          PATH="${PATH}:/usr/local/xtensa-esp32-elf-idf3/bin"
-          ;;
         v4.1.*)
           PATH="${PATH}:/usr/local/xtensa-esp32-elf-idf41/bin"
           ;;
