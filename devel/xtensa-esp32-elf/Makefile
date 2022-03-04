@@ -203,11 +203,9 @@ XTENSA_CT_CONFIG+=	CT_LOG_PROGRESS_BAR=n
 # XXX ct-ng does not allow this to be defined in crosstool.config
 BUILD_ENV+=	CT_ALLOW_BUILD_AS_ROOT_SURE=y
 
-.if ${FLAVOR} == idf43 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 # XXX as configure in ncurses 6.2 breaks dynamic linker search path, subsequent
 # execution of bash fails. this workaround is obtained from devel/ncurses
 BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
-.endif
 
 .if ${PORTNAME} == xtensa-esp32-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa32
@@ -234,14 +232,12 @@ post-extract:
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
 	    ${WRKSRC}/configure.ac
-.if ${FLAVOR} == idf43 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	${REINPLACE_CMD} \
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
 		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
-.endif
 .if ${FLAVOR} == idf43
 	${REINPLACE_CMD} \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
@@ -300,13 +296,11 @@ do-install:
 			share/doc/crosstool-ng \
 			share/man/man1/ct-ng.1.gz \
 			share/bash-completion
-.if ${FLAVOR} == idf43 || ${FLAVOR} == idf41 || ${FLAVOR} == idf42
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcc1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
-.endif
 	# install metadata file for platformio
 	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
 	${REINPLACE_CMD} \
