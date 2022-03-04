@@ -33,13 +33,15 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf43 idf42 idf41
+FLAVORS=	idf44 idf43 idf42 idf41
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
-FLAVORS=	idf43
+FLAVORS=	idf44 idf43
+.elif ${PORTNAME} == xtensa-esp32s3-elf
+FLAVORS=	idf44
 .endif
 FLAVOR?=	${FLAVORS:[1]}
 
-.if ${FLAVOR} == idf43
+.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
@@ -111,9 +113,11 @@ DISTFILES+=	\
 		zlib-1.2.11.tar.gz:source11
 .endif
 
+idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf41_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf44_PKGNAMESUFFIX=	-idf44
 idf43_PKGNAMESUFFIX=	-idf43
 idf42_PKGNAMESUFFIX=	-idf42
 idf41_PKGNAMESUFFIX=	-idf41
@@ -126,7 +130,7 @@ USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
-.if ${FLAVOR} == idf43
+.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r2
 TAGNAME=	${ESPRESSIF_VERSION}
@@ -213,6 +217,9 @@ XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	2.50200.0
 .elif ${PORTNAME} == xtensa-esp32s2-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa32s2
 XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
+.elif ${PORTNAME} == xtensa-esp32s3-elf
+XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa32s3
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
 .elif ${PORTNAME} == riscv32-esp-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-riscv-esp
 XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
@@ -238,7 +245,7 @@ pre-configure:
 		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
 		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
-.if ${FLAVOR} == idf43
+.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 	${REINPLACE_CMD} \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    ${WRKSRC}/maintainer/git-version-gen
