@@ -71,6 +71,17 @@ build_task:
         memory: 8
         disk: 80
       env:
+        PD_ORIGIN: devel/xtensa-esp32s3-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "xtensa-esp32s3-elf*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-13-0
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
         PD_ORIGIN: devel/binutils-esp32s2ulp
         PD_ALLOW_MAKE_JOBS_PACKAGES: "binutils-esp32s2ulp*"
 
@@ -118,6 +129,17 @@ build_task:
       env:
         PD_ORIGIN: devel/xtensa-esp32s2-elf
         PD_ALLOW_MAKE_JOBS_PACKAGES: "xtensa-esp32s2-elf*"
+
+    - compute_engine_instance:
+        image_project: freebsd-org-cloud-dev
+        image: family/freebsd-12-2
+        platform: freebsd
+        cpu: 4
+        memory: 8
+        disk: 80
+      env:
+        PD_ORIGIN: devel/xtensa-esp32s3-elf
+        PD_ALLOW_MAKE_JOBS_PACKAGES: "xtensa-esp32s3-elf*"
 
     - compute_engine_instance:
         image_project: freebsd-org-cloud-dev
@@ -518,7 +540,7 @@ test_task:
     done
     echo "${PATH}"
 
-    PD_GCC_FILES="riscv32-esp-elf-gcc xtensa-esp32-elf-gcc xtensa-esp32s2-elf-gcc"
+    PD_GCC_FILES="riscv32-esp-elf-gcc xtensa-esp32-elf-gcc xtensa-esp32s2-elf-gcc xtensa-esp32s3-elf-gcc"
     PD_AS_FILES="esp32ulp-elf-as esp32s2ulp-elf-as"
     for F in ${PD_GCC_FILES} ${PD_AS_FILES}; do
       which "${F}"
