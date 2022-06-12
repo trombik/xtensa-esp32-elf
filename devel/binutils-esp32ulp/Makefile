@@ -1,5 +1,6 @@
 PORTNAME=	binutils-${ESPRESSIF_CHIP}ulp
 PORTVERSION=	${ESPRESSIF_VERSION:S/-esp-/./}
+PORTREVISION=	1
 CATEGORIES=	devel
 MASTER_SITES=	#
 
@@ -27,6 +28,8 @@ HAS_CONFIGURE=	yes
 ESPRESSIF_TARGET=	${ESPRESSIF_CHIP}ulp-elf
 ESPRESSIF_MANDIR=	${PREFIX}/${PORTNAME}/share/man
 MANDIRS+=	${ESPRESSIF_MANDIR}
+PLATFORMIO_TOOLCHAIN_NAME=	toolchain-esp32ulp
+PLATFORMIO_TOOLCHAIN_VERSION=	1.22851.0
 
 # see https://github.com/espressif/binutils-esp32ulp/blob/master/.gitlab-ci.yml
 ESPRESSIF_CONFIGURE_ARGS=	\
@@ -51,5 +54,13 @@ pre-configure:
 		${WRKSRC}/bfd/Makefile.in
 post-configure:
 	${ECHO} "MAKEINFO = :" >> ${WRKSRC}/Makefile
+
+post-install:
+	# install metadata file for platformio
+	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${PORTNAME}/.piopm
+	${REINPLACE_CMD} \
+	    -e 's|%%PLATFORMIO_TOOLCHAIN_NAME%%|${PLATFORMIO_TOOLCHAIN_NAME}|' \
+	    -e 's|%%PLATFORMIO_TOOLCHAIN_VERSION%%|${PLATFORMIO_TOOLCHAIN_VERSION}|' \
+		${STAGEDIR}${PREFIX}/${PORTNAME}/.piopm
 
 .include <bsd.port.post.mk>
