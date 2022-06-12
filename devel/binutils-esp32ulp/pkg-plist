@@ -1,3 +1,4 @@
+%%PORTNAME%%/.piopm
 %%PORTNAME%%/bin/%%ESPRESSIF_CHIP%%ulp-elf-addr2line
 %%PORTNAME%%/bin/%%ESPRESSIF_CHIP%%ulp-elf-ar
 %%PORTNAME%%/bin/%%ESPRESSIF_CHIP%%ulp-elf-as
