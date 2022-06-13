@@ -34,7 +34,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf44 idf43 idf42 idf41
+FLAVORS=	idf44 idf43 idf42
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
 FLAVORS=	idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s3-elf
@@ -66,29 +66,6 @@ DISTFILES+=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.11.tar.gz:source11
-.elif ${FLAVOR} == idf41
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-3.1.3/:source5 \
-		GNU/mpfr/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
-DISTFILES+=	\
-		expat-2.2.5.tar.bz2:source1 \
-		gmp-6.1.2.tar.xz:source2 \
-		isl-0.19.tar.xz:source3 \
-		mpc-1.1.0.tar.gz:source4 \
-		mpfr-4.0.1.tar.xz:source5 \
-		ncurses-6.1.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.11.tar.gz:source11
 .elif ${FLAVOR} == idf42
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
@@ -117,11 +94,9 @@ DISTFILES+=	\
 idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf41_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf44_PKGNAMESUFFIX=	-idf44
 idf43_PKGNAMESUFFIX=	-idf43
 idf42_PKGNAMESUFFIX=	-idf42
-idf41_PKGNAMESUFFIX=	-idf41
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
@@ -152,11 +127,11 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	a5ab689
 
-.elif ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+.elif ${FLAVOR} == idf42
 ESPRESSIF_VERSION=	esp-2020r3
 TAGNAME=	${ESPRESSIF_VERSION}
 .if ${PORTNAME} == riscv32-esp-elf
-IGNORE=	ESP-IDF 4.1 does not support riscv32-esp-elf
+IGNORE=	ESP-IDF 4.2 does not support riscv32-esp-elf
 .else
 XTENSA_GDB_VERSION=	gdb
 .endif
@@ -257,7 +232,7 @@ pre-configure:
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
-.if ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+.if ${FLAVOR} == idf42
 	${PRINTF} "#!/bin/sh\necho '${SUBDIR:tl}-${TAGNAME}'\n" > \
 	    ${BUILD_WRKSRC}/version.sh
 	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
@@ -275,7 +250,7 @@ do-configure:
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
-.if ${FLAVOR} == idf41 || ${FLAVOR} == idf42
+.if ${FLAVOR} == idf42
 	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
 	${CP} ${PATCHDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
 .endif
