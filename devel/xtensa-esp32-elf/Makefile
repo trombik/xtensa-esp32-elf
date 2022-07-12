@@ -123,7 +123,7 @@ GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-gcc-${TAGNAME}_GH0.tar.gz \
 	espressif-binutils-gdb-${TAGNAME}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${TAGNAME}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${TAGNAME}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	a5ab689
 
@@ -142,10 +142,10 @@ GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
 	espressif:crosstool-NG:${TAGNAME}
 
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
-	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
+	espressif-gcc-${TAGNAME}_GH0.tar.gz \
+	espressif-binutils-gdb-${TAGNAME}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${TAGNAME}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
+	espressif-newlib-esp32-${TAGNAME}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	4d8c98d
 .endif
 
