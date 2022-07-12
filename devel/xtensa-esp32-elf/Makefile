@@ -1,8 +1,8 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
 PORTNAME?=	xtensa-esp32-elf
-PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/}
-PORTREVISION=	2
+PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/:S/-//}
+#PORTREVISION=	3
 CATEGORIES=	devel
 MASTER_SITES=
 DISTFILES=
@@ -108,23 +108,23 @@ LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
 .if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 # XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2021r2
-TAGNAME=	${ESPRESSIF_VERSION}
+ESPRESSIF_VERSION=	esp-2021r2-patch3
+TAGNAME=	esp-2021r2
 XTENSA_GDB_VERSION=	gdb
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${TAGNAME}-${XTENSA_GDB_VERSION}:source101 \
+	espressif:binutils-gdb:${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}:source101 \
 	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
 	espressif:newlib-esp32:${TAGNAME}:source103 \
-	espressif:crosstool-NG:${TAGNAME}
+	espressif:crosstool-NG:${ESPRESSIF_VERSION}
 
 # crosstool-NG supports custom location to archive files, but it also assumes
 # that top directoy of an archive is same as its file name without suffix. due
 # to this, arvhives from espressif github repositories must be extracted.
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
-	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
+	espressif-gcc-${TAGNAME}_GH0.tar.gz \
+	espressif-binutils-gdb-${TAGNAME}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${TAGNAME}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
+	espressif-newlib-esp32-${TAGNAME}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	a5ab689
 
 .elif ${FLAVOR} == idf42
@@ -190,16 +190,16 @@ BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
 XTENSA_PLATFORMIO_TOOLCHAIN_OWNER=	espressif
 .if ${PORTNAME} == xtensa-esp32-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa-esp32
-XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	8.4.0+2021r2-patch2
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	8.4.0+2021r2-patch3
 .elif ${PORTNAME} == xtensa-esp32s2-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa-esp32s2
-XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	8.4.0+2021r2-patch2
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	8.4.0+2021r2-patch3
 .elif ${PORTNAME} == xtensa-esp32s3-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-xtensa-esp32s3
-XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	1.80400.0
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	8.4.0+2021r2-patch3
 .elif ${PORTNAME} == riscv32-esp-elf
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	toolchain-riscv32-esp
-XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	8.4.0+2021r2-patch2
+XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	8.4.0+2021r2-patch3
 .endif
 
 post-extract:
