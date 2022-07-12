@@ -220,6 +220,7 @@ pre-configure:
 	    -e 's|%%WRKDIR%%|${WRKDIR}|g' \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
+		-e 's|%%TAGNAME%%|${TAGNAME}|g' \
 		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 .if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
