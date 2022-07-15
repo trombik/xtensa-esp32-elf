@@ -1,7 +1,7 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
 PORTNAME?=	xtensa-esp32-elf
-PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/:S/-//}
+PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/:S/-//:S/patch/.p/}
 #PORTREVISION=	3
 CATEGORIES=	devel
 MASTER_SITES=
