@@ -268,7 +268,7 @@ pre-configure:
 		-e 's|%%TAGNAME%%|${TAGNAME}|g' \
 		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
-.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
+.if ${FLAVOR} == idf50 || ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 	${REINPLACE_CMD} \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    ${WRKSRC}/maintainer/git-version-gen
