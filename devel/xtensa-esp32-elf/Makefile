@@ -42,7 +42,31 @@ FLAVORS=	df50 idf44
 .endif
 FLAVOR?=	${FLAVORS:[1]}
 
-.if ${FLAVOR} == idf50 || ${FLAVOR} == idf43 || ${FLAVOR} == idf44
+.if ${FLAVOR} == idf50
+MASTER_SITES+= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
+		SF/expat/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-3.1.3/:source5 \
+		GNU/mpfr/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8 \
+		https://sourceforge.net/projects/libpng/files/zlib/1.2.12/:source11
+DISTFILES+=	\
+		expat-2.4.1.tar.gz:source1 \
+		gmp-6.2.0.tar.xz:source2 \
+		isl-0.19.tar.xz:source3 \
+		mpc-1.1.0.tar.gz:source4 \
+		mpfr-4.0.2.tar.xz:source5 \
+		ncurses-6.2.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.2.12.tar.gz:source11
+.elif ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
