@@ -133,6 +133,7 @@ LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
 .if ${FLAVOR} == idf50
 ESPRESSIF_VERSION=	esp-2022r1
+ESPRESSIF_GCC_VERSION=	11.2.0
 TAGNAME=	esp-2022r1
 XTENSA_GDB_VERSION=	gdb
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
@@ -154,6 +155,7 @@ XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 .elif ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r2-patch3
+ESPRESSIF_GCC_VERSION=	8.4.0
 TAGNAME=	esp-2021r2
 XTENSA_GDB_VERSION=	gdb
 GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
@@ -174,6 +176,7 @@ XTENSA_OVERLAYS_TAGNAME=	a5ab689
 
 .elif ${FLAVOR} == idf42
 ESPRESSIF_VERSION=	esp-2020r3
+ESPRESSIF_GCC_VERSION=	8.4.0
 TAGNAME=	${ESPRESSIF_VERSION}
 .if ${PORTNAME} == riscv32-esp-elf
 IGNORE=	ESP-IDF 4.2 does not support riscv32-esp-elf
@@ -326,11 +329,13 @@ do-install:
 			share/doc/crosstool-ng \
 			share/man/man1/ct-ng.1.gz \
 			share/bash-completion
+.if ${ESPRESSIF_GCC_VERSION} == 8.4.0
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcc1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/8.4.0/plugin/libcp1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/8.4.0/plugin/gengtype
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcc1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcp1plugin.so.0.0.0 \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/gengtype
+.endif
 	# install metadata file for platformio
 	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
 	${REINPLACE_CMD} \
