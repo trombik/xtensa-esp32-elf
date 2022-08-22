@@ -49,8 +49,7 @@ MASTER_SITES+= \
 		GNU/gmp/:source2 \
 		http://isl.gforge.inria.fr/:source3 \
 		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-3.1.3/:source5 \
-		GNU/mpfr/:source5 \
+		http://www.mpfr.org/mpfr-4.1.0/:source5 \
 		ftp://ftp.invisible-island.net/ncurses/:source6 \
 		GNU/ncurses/:source6 \
 		GNU/autoconf/:source7 \
@@ -61,7 +60,7 @@ DISTFILES+=	\
 		gmp-6.2.1.tar.xz:source2 \
 		isl-0.19.tar.xz:source3 \
 		mpc-1.1.0.tar.gz:source4 \
-		mpfr-4.0.2.tar.xz:source5 \
+		mpfr-4.1.0.tar.xz:source5 \
 		ncurses-6.2.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
