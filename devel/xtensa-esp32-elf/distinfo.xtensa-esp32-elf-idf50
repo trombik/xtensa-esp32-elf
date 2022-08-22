@@ -1,4 +1,4 @@
-TIMESTAMP = 1661142516
+TIMESTAMP = 1661144649
 SHA256 (expat-2.4.1.tar.gz) = a00ae8a6b96b63a3910ddc1100b1a7ef50dc26dceb65ced18ded31ab392f132b
 SIZE (expat-2.4.1.tar.gz) = 697439
 SHA256 (gmp-6.2.0.tar.xz) = 258e6cd51b3fbdfc185c716d55f82c08aff57df0c6fbd143cf6ed561267a1526
@@ -15,8 +15,8 @@ SHA256 (autoconf-2.69.tar.gz) = 954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b
 SIZE (autoconf-2.69.tar.gz) = 1927468
 SHA256 (automake-1.16.1.tar.gz) = 608a97523f97db32f1f5d5615c98ca69326ced2054c9f82e65bade7fc4c9dea8
 SIZE (automake-1.16.1.tar.gz) = 2300906
-SHA256 (zlib-1.2.11.tar.gz) = c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
-SIZE (zlib-1.2.11.tar.gz) = 607698
+SHA256 (zlib-1.2.12.tar.gz) = 91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9
+SIZE (zlib-1.2.12.tar.gz) = 1490071
 SHA256 (espressif-crosstool-NG-2022.r1-esp-2022r1_GH0.tar.gz) = d72120fd3804827acf3d3e3d4b78a0557630d6d7fab05f43b9529325096d89b2
 SIZE (espressif-crosstool-NG-2022.r1-esp-2022r1_GH0.tar.gz) = 1857708
 SHA256 (espressif-gcc-esp-2022r1_GH0.tar.gz) = f5f4796b8885bba60594138832e522be9f70d9e846a3b367220863ac9c6e41f6

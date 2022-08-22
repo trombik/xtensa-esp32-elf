@@ -55,7 +55,7 @@ MASTER_SITES+= \
 		GNU/ncurses/:source6 \
 		GNU/autoconf/:source7 \
 		GNU/automake/:source8 \
-		https://sourceforge.net/projects/libpng/files/zlib/1.2.12/:source11
+		https://www.zlib.net/:source11
 DISTFILES+=	\
 		expat-2.4.1.tar.gz:source1 \
 		gmp-6.2.0.tar.xz:source2 \
