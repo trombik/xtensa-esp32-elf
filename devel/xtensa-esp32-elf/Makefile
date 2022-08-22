@@ -58,7 +58,7 @@ MASTER_SITES+= \
 		https://www.zlib.net/:source11
 DISTFILES+=	\
 		expat-2.4.1.tar.gz:source1 \
-		gmp-6.2.0.tar.xz:source2 \
+		gmp-6.2.1.tar.xz:source2 \
 		isl-0.19.tar.xz:source3 \
 		mpc-1.1.0.tar.gz:source4 \
 		mpfr-4.0.2.tar.xz:source5 \
