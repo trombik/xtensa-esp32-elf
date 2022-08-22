@@ -59,7 +59,7 @@ DISTFILES+=	\
 		expat-2.4.1.tar.gz:source1 \
 		gmp-6.2.1.tar.xz:source2 \
 		isl-0.24.tar.xz:source3 \
-		mpc-1.1.0.tar.gz:source4 \
+		mpc-1.2.1.tar.gz:source4 \
 		mpfr-4.1.0.tar.xz:source5 \
 		ncurses-6.2.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
