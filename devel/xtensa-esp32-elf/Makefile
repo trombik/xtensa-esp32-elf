@@ -34,15 +34,15 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf44 idf43 idf42
+FLAVORS=	idf50 idf44 idf43 idf42
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
-FLAVORS=	idf44 idf43
+FLAVORS=	idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s3-elf
-FLAVORS=	idf44
+FLAVORS=	df50 idf44
 .endif
 FLAVOR?=	${FLAVORS:[1]}
 
-.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
+.if ${FLAVOR} == idf50 || ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
@@ -91,9 +91,11 @@ DISTFILES+=	\
 		zlib-1.2.11.tar.gz:source11
 .endif
 
+idf50_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf50_PKGNAMESUFFIX=	-idf50
 idf44_PKGNAMESUFFIX=	-idf44
 idf43_PKGNAMESUFFIX=	-idf43
 idf42_PKGNAMESUFFIX=	-idf42
@@ -106,7 +108,27 @@ USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
-.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
+.if ${FLAVOR} == idf50
+ESPRESSIF_VERSION=	esp-2022r1
+TAGNAME=	esp-2022r1
+XTENSA_GDB_VERSION=	gdb
+GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}:source101 \
+	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
+	espressif:newlib-esp32:${TAGNAME}:source103 \
+	espressif:crosstool-NG:${ESPRESSIF_VERSION}
+
+# crosstool-NG supports custom location to archive files, but it also assumes
+# that top directoy of an archive is same as its file name without suffix. due
+# to this, arvhives from espressif github repositories must be extracted.
+EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
+	espressif-gcc-${TAGNAME}_GH0.tar.gz \
+	espressif-binutils-gdb-${TAGNAME}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
+	espressif-newlib-esp32-${TAGNAME}_GH0.tar.gz
+XTENSA_OVERLAYS_TAGNAME=	dd1cf19
+
+.elif ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r2-patch3
 TAGNAME=	esp-2021r2

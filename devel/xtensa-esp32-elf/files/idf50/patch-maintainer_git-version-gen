@@ -1,0 +1,11 @@
+--- maintainer/git-version-gen.orig	2022-02-11 05:27:51 UTC
++++ maintainer/git-version-gen
+@@ -216,7 +216,7 @@ fi
+ fi
+ 
+ # Omit the trailing newline, so that m4_esyscmd can use the result directly.
+-printf %s "$v"
++printf %s "%%ESPRESSIF_VERSION%%"
+ 
+ # Local variables:
+ # eval: (add-hook 'before-save-hook 'time-stamp)
