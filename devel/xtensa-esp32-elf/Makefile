@@ -38,7 +38,7 @@ FLAVORS=	idf50 idf44 idf43 idf42
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
 FLAVORS=	idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s3-elf
-FLAVORS=	df50 idf44
+FLAVORS=	idf50 idf44
 .endif
 FLAVOR?=	${FLAVORS:[1]}
 
