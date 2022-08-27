@@ -258,6 +258,14 @@ post-extract:
 	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
 .endif
 
+post-patch:
+.if ${FLAVOR} == idf50
+	# patch gdb to fix SEGV with python 3.10.x
+	# obtained from:
+	# https://src.fedoraproject.org/rpms/gdb/blob/28b99d9981ec195cc7dfedc33f8ec859607af381/f/gdb-rhbz1829702-fix-python39.patch
+	${PATCH} -p1 -d ${WRKDIR}/binutils-gdb-${ESPRESSIF_VERSION}-gdb < ${PATCHDIR}/gdb-rhbz1829702-fix-python39.patch
+.endif
+
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
 	    ${WRKSRC}/configure.ac
