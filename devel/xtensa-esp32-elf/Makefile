@@ -27,12 +27,6 @@ BUILD_DEPENDS=	bash:shells/bash \
 		help2man:misc/help2man \
 		makeinfo:print/texinfo
 
-# XXX use iconv:wchar_t.
-# configure scripts picks -liconv during gcc build from converters/libiconv
-# installed by dependencies. fixes error in stage-qa
-# XXX use ncurses, which is required by gdb (libtinfow)
-USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
-
 .if ${PORTNAME} == xtensa-esp32-elf
 FLAVORS=	idf50 idf44 idf43 idf42
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
@@ -41,6 +35,12 @@ FLAVORS=	idf50 idf44 idf43
 FLAVORS=	idf50 idf44
 .endif
 FLAVOR?=	${FLAVORS:[1]}
+
+# XXX use iconv:wchar_t.
+# configure scripts picks -liconv during gcc build from converters/libiconv
+# installed by dependencies. fixes error in stage-qa
+# XXX use ncurses, which is required by gdb (libtinfow)
+USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${FLAVOR} == idf50
 MASTER_SITES+= \
@@ -189,9 +189,6 @@ ESPRESSIF_GCC_TAG=	esp-2020r3
 ESPRESSIF_GDB_TAG=	esp-2020r3-gdb
 ESPRESSIF_NEWLIB_TAG=	esp-2020r3
 ESPRESSIF_BINUTILS_TAG=	esp-2020r3-binutils
-.if ${PORTNAME} == riscv32-esp-elf
-IGNORE=	ESP-IDF 4.2 does not support riscv32-esp-elf
-.endif
 GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
 	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
 	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
