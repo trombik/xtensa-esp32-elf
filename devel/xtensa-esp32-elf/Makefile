@@ -135,65 +135,74 @@ LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 ESPRESSIF_VERSION=	esp-2022r1
 ESPRESSIF_GCC_VERSION=	11.2.0
 TAGNAME=	esp-2022r1
-XTENSA_GDB_VERSION=	gdb
-GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}:source101 \
-	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
-	espressif:newlib-esp32:${TAGNAME}:source103 \
+ESPRESSIF_GCC_TAG=	esp-2022r1
+ESPRESSIF_GDB_TAG=	esp-2022r1-gdb
+ESPRESSIF_NEWLIB_TAG=	esp-2022r1
+ESPRESSIF_BINUTILS_TAG=	esp-2022r1-binutils
+GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
+	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
+	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
 	espressif:crosstool-NG:${ESPRESSIF_VERSION}
 
 # crosstool-NG supports custom location to archive files, but it also assumes
 # that top directoy of an archive is same as its file name without suffix. due
 # to this, arvhives from espressif github repositories must be extracted.
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${TAGNAME}_GH0.tar.gz \
-	espressif-binutils-gdb-${TAGNAME}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
-	espressif-newlib-esp32-${TAGNAME}_GH0.tar.gz
+	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
+	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 
 .elif ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 # XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2021r2-patch3
+ESPRESSIF_VERSION=	esp-2021r2-patch5
 ESPRESSIF_GCC_VERSION=	8.4.0
-TAGNAME=	esp-2021r2
-XTENSA_GDB_VERSION=	gdb
-GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}:source101 \
-	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
-	espressif:newlib-esp32:${TAGNAME}:source103 \
+TAGNAME=	esp-2021r2-patch4
+ESPRESSIF_GCC_TAG=	esp-2021r2-patch4
+ESPRESSIF_GDB_TAG=	esp-2021r2-patch5-gdb
+ESPRESSIF_NEWLIB_TAG=	esp-2021r2-patch5
+ESPRESSIF_BINUTILS_TAG=	esp-2021r2-patch4-binutils
+
+GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
+	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
+	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
 	espressif:crosstool-NG:${ESPRESSIF_VERSION}
 
 # crosstool-NG supports custom location to archive files, but it also assumes
 # that top directoy of an archive is same as its file name without suffix. due
 # to this, arvhives from espressif github repositories must be extracted.
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${TAGNAME}_GH0.tar.gz \
-	espressif-binutils-gdb-${TAGNAME}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
-	espressif-newlib-esp32-${TAGNAME}_GH0.tar.gz
-XTENSA_OVERLAYS_TAGNAME=	a5ab689
+	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
+	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
+XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 
 .elif ${FLAVOR} == idf42
 ESPRESSIF_VERSION=	esp-2020r3
 ESPRESSIF_GCC_VERSION=	8.4.0
 TAGNAME=	${ESPRESSIF_VERSION}
+ESPRESSIF_GCC_TAG=	esp-2020r3
+ESPRESSIF_GDB_TAG=	esp-2020r3-gdb
+ESPRESSIF_NEWLIB_TAG=	esp-2020r3
+ESPRESSIF_BINUTILS_TAG=	esp-2020r3-binutils
 .if ${PORTNAME} == riscv32-esp-elf
 IGNORE=	ESP-IDF 4.2 does not support riscv32-esp-elf
-.else
-XTENSA_GDB_VERSION=	gdb
 .endif
-GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${TAGNAME}-${XTENSA_GDB_VERSION}:source101 \
-	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
-	espressif:newlib-esp32:${TAGNAME}:source103 \
-	espressif:crosstool-NG:${TAGNAME}
+GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
+	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
+	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
+	espressif:crosstool-NG:${ESPRESSIF_VERSION}
 
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${TAGNAME}_GH0.tar.gz \
-	espressif-binutils-gdb-${TAGNAME}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${TAGNAME}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
-	espressif-newlib-esp32-${TAGNAME}_GH0.tar.gz
+	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
+	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	4d8c98d
 .endif
 
@@ -272,7 +281,10 @@ pre-configure:
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 		-e 's|%%PYTHON_VERSION%%|${PYTHON_VERSION}|g' \
 		-e 's|%%TAGNAME%%|${TAGNAME}|g' \
-		-e 's|%%XTENSA_GDB_VERSION%%|${XTENSA_GDB_VERSION}|g' \
+		-e 's|%%ESPRESSIF_NEWLIB_TAG%%|${ESPRESSIF_NEWLIB_TAG}|' \
+		-e 's|%%ESPRESSIF_GCC_TAG%%|${ESPRESSIF_GCC_TAG}|' \
+		-e 's|%%ESPRESSIF_BINUTILS_TAG%%|${ESPRESSIF_BINUTILS_TAG}|' \
+		-e 's|%%ESPRESSIF_GDB_TAG%%|${ESPRESSIF_GDB_TAG}|' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 .if ${FLAVOR} == idf50 || ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 	${REINPLACE_CMD} \
