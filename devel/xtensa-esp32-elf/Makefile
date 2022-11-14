@@ -150,7 +150,7 @@ GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
 # to this, arvhives from espressif github repositories must be extracted.
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
