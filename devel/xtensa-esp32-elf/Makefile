@@ -1,7 +1,7 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
 PORTNAME?=	xtensa-esp32-elf
-PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/}
+PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/:S/-patch/.p/}
 CATEGORIES=	devel
 MASTER_SITES=
 DISTFILES=
@@ -33,7 +33,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf44 idf43 idf42 idf41
+FLAVORS=	idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
 FLAVORS=	idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s3-elf
@@ -65,81 +65,30 @@ DISTFILES+=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.11.tar.gz:source11
-.elif ${FLAVOR} == idf41
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-3.1.3/:source5 \
-		GNU/mpfr/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
-DISTFILES+=	\
-		expat-2.2.5.tar.bz2:source1 \
-		gmp-6.1.2.tar.xz:source2 \
-		isl-0.19.tar.xz:source3 \
-		mpc-1.1.0.tar.gz:source4 \
-		mpfr-4.0.1.tar.xz:source5 \
-		ncurses-6.1.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.11.tar.gz:source11
-.elif ${FLAVOR} == idf42
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-3.1.3/:source5 \
-		GNU/mpfr/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
-DISTFILES+=	\
-		expat-2.2.5.tar.bz2:source1 \
-		gmp-6.1.2.tar.xz:source2 \
-		isl-0.19.tar.xz:source3 \
-		mpc-1.1.0.tar.gz:source4 \
-		mpfr-4.0.1.tar.xz:source5 \
-		ncurses-6.1.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.11.tar.gz:source11
 .endif
 
 idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf41_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf44_PKGNAMESUFFIX=	-idf44
 idf43_PKGNAMESUFFIX=	-idf43
-idf42_PKGNAMESUFFIX=	-idf42
-idf41_PKGNAMESUFFIX=	-idf41
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
 
-USE_GCC=	9+
+USE_GCC=	yes
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/8.2.0
 LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
 .if ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 # XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2021r2
-TAGNAME=	${ESPRESSIF_VERSION}
+ESPRESSIF_VERSION=	esp-2021r2-patch4
 XTENSA_GDB_VERSION=	gdb
-GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${TAGNAME}-${XTENSA_GDB_VERSION}:source101 \
-	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
-	espressif:newlib-esp32:${TAGNAME}:source103 \
-	espressif:crosstool-NG:${TAGNAME}
+GH_TUPLE=	espressif:gcc:${ESPRESSIF_VERSION}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_VERSION:S/-patch*//}-${XTENSA_GDB_VERSION}:source101 \
+	espressif:binutils-gdb:${ESPRESSIF_VERSION:S/-patch*//}-binutils:source102 \
+	espressif:newlib-esp32:${ESPRESSIF_VERSION:S/-patch*//}:source103 \
+	espressif:crosstool-NG:${ESPRESSIF_VERSION}
 
 # crosstool-NG supports custom location to archive files, but it also assumes
 # that top directoy of an archive is same as its file name without suffix. due
@@ -149,33 +98,12 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
-XTENSA_OVERLAYS_TAGNAME=	a5ab689
-
-.elif ${FLAVOR} == idf41 || ${FLAVOR} == idf42
-ESPRESSIF_VERSION=	esp-2020r3
-TAGNAME=	${ESPRESSIF_VERSION}
-.if ${PORTNAME} == riscv32-esp-elf
-IGNORE=	ESP-IDF 4.1 does not support riscv32-esp-elf
-.else
-XTENSA_GDB_VERSION=	gdb
-.endif
-GH_TUPLE=	espressif:gcc:${TAGNAME}:source100 \
-	espressif:binutils-gdb:${TAGNAME}-${XTENSA_GDB_VERSION}:source101 \
-	espressif:binutils-gdb:${TAGNAME}-binutils:source102 \
-	espressif:newlib-esp32:${TAGNAME}:source103 \
-	espressif:crosstool-NG:${TAGNAME}
-
-EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
-	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
-XTENSA_OVERLAYS_TAGNAME=	4d8c98d
+XTENSA_OVERLAYS_ESPRESSIF_VERSION=	a5ab689
 .endif
 
-.if defined(XTENSA_OVERLAYS_TAGNAME)
-GH_TUPLE+=	espressif:xtensa-overlays:${XTENSA_OVERLAYS_TAGNAME}:source104
-EXTRACT_ONLY+=	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz
+.if defined(XTENSA_OVERLAYS_ESPRESSIF_VERSION)
+GH_TUPLE+=	espressif:xtensa-overlays:${XTENSA_OVERLAYS_ESPRESSIF_VERSION}:source104
+EXTRACT_ONLY+=	espressif-xtensa-overlays-${XTENSA_OVERLAYS_ESPRESSIF_VERSION}_GH0.tar.gz
 .endif
 
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
@@ -231,9 +159,9 @@ post-extract:
 	${LN} -s ${DISTDIR}/${F:C/:source[0-9]+$//} \
 	    ${BUILD_WRKSRC}/.build/tarballs
 .endfor
-.if defined(XTENSA_OVERLAYS_TAGNAME)
+.if defined(XTENSA_OVERLAYS_ESPRESSIF_VERSION)
 	${RMDIR} ${BUILD_WRKSRC}/overlays
-	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
+	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_ESPRESSIF_VERSION} ${BUILD_WRKSRC}/overlays
 .endif
 
 pre-configure:
@@ -255,11 +183,6 @@ pre-configure:
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
-.if ${FLAVOR} == idf41 || ${FLAVOR} == idf42
-	${PRINTF} "#!/bin/sh\necho '${SUBDIR:tl}-${TAGNAME}'\n" > \
-	    ${BUILD_WRKSRC}/version.sh
-	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
-.endif
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} GREP=${LOCALBASE}/bin/grep \
 		EGREP="${LOCALBASE}/bin/egrep" \
@@ -273,11 +196,6 @@ do-configure:
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
-.if ${FLAVOR} == idf41 || ${FLAVOR} == idf42
-	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
-	${CP} ${PATCHDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
-.endif
-
 	${RM} ${WRKSRC}/scripts/functions.orig \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.bak \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
