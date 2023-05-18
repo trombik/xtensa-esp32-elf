@@ -28,7 +28,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf50 idf44 idf43 idf42
+FLAVORS=	idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
 FLAVORS=	idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s3-elf
@@ -89,44 +89,19 @@ DISTFILES+=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.12.tar.gz:source11
-.elif ${FLAVOR} == idf42
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_2_5/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-3.1.3/:source5 \
-		GNU/mpfr/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
-DISTFILES+=	\
-		expat-2.2.5.tar.bz2:source1 \
-		gmp-6.1.2.tar.xz:source2 \
-		isl-0.19.tar.xz:source3 \
-		mpc-1.1.0.tar.gz:source4 \
-		mpfr-4.0.1.tar.xz:source5 \
-		ncurses-6.1.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.11.tar.gz:source11
 .endif
 
 idf50_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf42_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf50_PKGNAMESUFFIX=	-idf50
 idf44_PKGNAMESUFFIX=	-idf44
 idf43_PKGNAMESUFFIX=	-idf43
-idf42_PKGNAMESUFFIX=	-idf42
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
 
-USE_GCC=	9+
+USE_GCC=	yes
 USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}
 LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
@@ -180,27 +155,6 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
-
-.elif ${FLAVOR} == idf42
-ESPRESSIF_VERSION=	esp-2020r3
-ESPRESSIF_GCC_VERSION=	8.4.0
-TAGNAME=	${ESPRESSIF_VERSION}
-ESPRESSIF_GCC_TAG=	esp-2020r3
-ESPRESSIF_GDB_TAG=	esp-2020r3-gdb
-ESPRESSIF_NEWLIB_TAG=	esp-2020r3
-ESPRESSIF_BINUTILS_TAG=	esp-2020r3-binutils
-GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
-	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
-	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
-	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
-	espressif:crosstool-NG:${ESPRESSIF_VERSION}
-
-EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
-	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
-XTENSA_OVERLAYS_TAGNAME=	4d8c98d
 .endif
 
 .if defined(XTENSA_OVERLAYS_TAGNAME)
@@ -293,11 +247,6 @@ pre-configure:
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
-.if ${FLAVOR} == idf42
-	${PRINTF} "#!/bin/sh\necho '${SUBDIR:tl}-${TAGNAME}'\n" > \
-	    ${BUILD_WRKSRC}/version.sh
-	${CHMOD} -w+x ${BUILD_WRKSRC}/version.sh
-.endif
 	cd ${BUILD_WRKSRC} && \
 	    ${SETENV} GREP=${LOCALBASE}/bin/grep \
 		EGREP="${LOCALBASE}/bin/egrep" \
@@ -311,11 +260,6 @@ do-configure:
 	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
-.if ${FLAVOR} == idf42
-	# obtained from math/gmp/files/patch-configure, fixes build on CURRENT
-	${CP} ${PATCHDIR}/configure.patch ${WRKSRC}/packages/gmp/6.1.2/
-.endif
-
 	${RM} ${WRKSRC}/scripts/functions.orig \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.bak \
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
