@@ -33,11 +33,11 @@ BUILD_DEPENDS=	bash:shells/bash \
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf44 idf43
+FLAVORS=	idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
-FLAVORS=	idf44 idf43
+FLAVORS=	idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s3-elf
-FLAVORS=	idf44
+FLAVORS=	idf50 idf44
 .endif
 FLAVOR?=	${FLAVORS:[1]}
 
@@ -65,10 +65,36 @@ DISTFILES+=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.11.tar.gz:source11
+.elif ${FLAVOR} == idf50
+MASTER_SITES+= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
+		SF/expat/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-3.1.3/:source5 \
+		GNU/mpfr/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8 \
+		https://sourceforge.net/projects/libpng/files/zlib/1.2.11/:source11
+DISTFILES+=	\
+		expat-2.4.1.tar.gz:source1 \
+		gmp-6.2.0.tar.xz:source2 \
+		isl-0.19.tar.xz:source3 \
+		mpc-1.1.0.tar.gz:source4 \
+		mpfr-4.0.2.tar.xz:source5 \
+		ncurses-6.2.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.2.11.tar.gz:source11
 .endif
 
+idf50_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf50_PKGNAMESUFFIX=	-idf50
 idf44_PKGNAMESUFFIX=	-idf44
 idf43_PKGNAMESUFFIX=	-idf43
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
@@ -99,6 +125,20 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
 XTENSA_OVERLAYS_ESPRESSIF_VERSION=	a5ab689
+.elif ${FLAVOR} == idf50
+ESPRESSIF_VERSION=	 esp-2022r1
+XTENSA_GDB_VERSION=	gdb
+GH_TUPLE=	espressif:gcc:${ESPRESSIF_VERSION}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_VERSION:S/-patch*//}-${XTENSA_GDB_VERSION}:source101 \
+	espressif:binutils-gdb:${ESPRESSIF_VERSION:S/-patch*//}-binutils:source102 \
+	espressif:newlib-esp32:${ESPRESSIF_VERSION:S/-patch*//}:source103 \
+	espressif:crosstool-NG:${ESPRESSIF_VERSION}
+EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
+	espressif-gcc-${ESPRESSIF_VERSION}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-binutils_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_VERSION}-${XTENSA_GDB_VERSION}_GH0.tar.gz \
+	espressif-newlib-esp32-${ESPRESSIF_VERSION}_GH0.tar.gz
+XTENSA_OVERLAYS_ESPRESSIF_VERSION=	dd1cf19
 .endif
 
 .if defined(XTENSA_OVERLAYS_ESPRESSIF_VERSION)
