@@ -54,7 +54,7 @@ MASTER_SITES+= \
 		GNU/ncurses/:source6 \
 		GNU/autoconf/:source7 \
 		GNU/automake/:source8 \
-		https://www.zlib.net/:source11
+		https://www.zlib.net/fossils/:source11
 DISTFILES+=	\
 		expat-2.4.1.tar.gz:source1 \
 		gmp-6.2.1.tar.xz:source2 \
@@ -78,7 +78,7 @@ MASTER_SITES+= \
 		GNU/ncurses/:source6 \
 		GNU/autoconf/:source7 \
 		GNU/automake/:source8 \
-		https://www.zlib.net/:source11
+		https://www.zlib.net/fossils/:source11
 DISTFILES+=	\
 		expat-2.4.1.tar.gz:source1 \
 		gmp-6.2.1.tar.xz:source2 \
