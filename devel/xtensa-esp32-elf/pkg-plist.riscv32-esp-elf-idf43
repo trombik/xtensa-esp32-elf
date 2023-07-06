@@ -1,4 +1,5 @@
 riscv32-esp-elf-idf43/.piopm
+riscv32-esp-elf-idf43/package.json
 riscv32-esp-elf-idf43/bin/riscv32-esp-elf-addr2line
 riscv32-esp-elf-idf43/bin/riscv32-esp-elf-ar
 riscv32-esp-elf-idf43/bin/riscv32-esp-elf-as

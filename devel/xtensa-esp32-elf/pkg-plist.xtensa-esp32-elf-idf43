@@ -1,4 +1,5 @@
 xtensa-esp32-elf-idf43/.piopm
+xtensa-esp32-elf-idf43/package.json
 xtensa-esp32-elf-idf43/bin/xtensa-esp32-elf-addr2line
 xtensa-esp32-elf-idf43/bin/xtensa-esp32-elf-ar
 xtensa-esp32-elf-idf43/bin/xtensa-esp32-elf-as
