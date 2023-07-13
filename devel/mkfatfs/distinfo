@@ -1,0 +1,5 @@
+TIMESTAMP = 1689210047
+SHA256 (labplus-cn-mkfatfs-2.0.1-v2.0.1_GH0.tar.gz) = e28a912dab035c6cd022e0e4ea28ac5fbe57b081d2b89992e24c2eec47161788
+SIZE (labplus-cn-mkfatfs-2.0.1-v2.0.1_GH0.tar.gz) = 126898
+SHA256 (ARMmbed-mbed-littlefs-70aa179_GH0.tar.gz) = 47df31dbd8f4f86821aee16b33db04875f23326b7bc709ba70509607041093f1
+SIZE (ARMmbed-mbed-littlefs-70aa179_GH0.tar.gz) = 139909
