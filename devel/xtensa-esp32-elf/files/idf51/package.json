@@ -1,0 +1,20 @@
+{
+  "name": "%%XTENSA_PLATFORMIO_TOOLCHAIN_NAME%%",
+  "version": "%%XTENSA_PLATFORMIO_TOOLCHAIN_VERSION%%",
+  "description": "GCC Toolchain for ESP32 microcontrollers",
+  "keywords": [
+    "toolchain",
+    "build tools",
+    "compiler",
+    "assembler",
+    "linker",
+    "preprocessor",
+    "microchip",
+    "esp32"
+  ],
+  "homepage": "https://github.com/trombik/xtensa-esp32-elf",
+  "license": "GPL-2.0-or-later",
+  "system": [
+    "freebsd_amd64"
+  ]
+}
