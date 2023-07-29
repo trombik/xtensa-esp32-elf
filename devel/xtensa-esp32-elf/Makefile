@@ -1,7 +1,7 @@
 # Created by: Craig Leres <leres@freebsd.org>
 
 PORTNAME?=	xtensa-esp32-elf
-PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/:S/-//:S/patch/.p/}
+PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/crosstool-ng-//:S/r/.r/:S/-//:S/patch/.p/:S/_//}
 #PORTREVISION=	3
 CATEGORIES=	devel
 MASTER_SITES=
@@ -28,11 +28,11 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo
 
 .if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf50 idf44 idf43
+FLAVORS=	idf51 idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
-FLAVORS=	idf50 idf44 idf43
+FLAVORS=	idf51 idf50 idf44 idf43
 .elif ${PORTNAME} == xtensa-esp32s3-elf
-FLAVORS=	idf50 idf44
+FLAVORS=	idf51 idf50 idf44
 .endif
 FLAVOR?=	${FLAVORS:[1]}
 
@@ -42,7 +42,30 @@ FLAVOR?=	${FLAVORS:[1]}
 # XXX use ncurses, which is required by gdb (libtinfow)
 USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
 
-.if ${FLAVOR} == idf50
+.if ${FLAVOR} == idf51
+MASTER_SITES+= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
+		SF/expat/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-4.1.0/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8 \
+		https://www.zlib.net/fossils/:source11
+DISTFILES+=	\
+		expat-2.4.1.tar.gz:source1 \
+		gmp-6.2.1.tar.xz:source2 \
+		isl-0.24.tar.xz:source3 \
+		mpc-1.2.1.tar.gz:source4 \
+		mpfr-4.1.0.tar.xz:source5 \
+		ncurses-6.2.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.2.12.tar.gz:source11
+.elif ${FLAVOR} == idf50
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
@@ -91,9 +114,11 @@ DISTFILES+=	\
 		zlib-1.2.12.tar.gz:source11
 .endif
 
+idf51_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf50_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf51_PKGNAMESUFFIX=	-idf51
 idf50_PKGNAMESUFFIX=	-idf50
 idf44_PKGNAMESUFFIX=	-idf44
 idf43_PKGNAMESUFFIX=	-idf43
@@ -106,7 +131,31 @@ USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}
 LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
-.if ${FLAVOR} == idf50
+.if ${FLAVOR} == idf51
+ESPRESSIF_VERSION=	esp-12.2.0_20230208
+ESPRESSIF_GCC_VERSION=	12.2.0
+TAGNAME=	esp-12.2.0_20230208
+ESPRESSIF_GCC_TAG=	esp-12.2.0_20230208
+ESPRESSIF_GDB_TAG=	esp-gdb-v12.1_20221002
+ESPRESSIF_NEWLIB_TAG=	esp-4.1.0_20230208
+ESPRESSIF_BINUTILS_TAG=	esp-2.39.0_20230208
+GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
+	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
+	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
+	espressif:crosstool-NG:${ESPRESSIF_VERSION}
+
+# crosstool-NG supports custom location to archive files, but it also assumes
+# that top directoy of an archive is same as its file name without suffix. due
+# to this, arvhives from espressif github repositories must be extracted.
+EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
+	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
+	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
+XTENSA_OVERLAYS_TAGNAME=	dd1cf19
+
+.elif ${FLAVOR} == idf50
 ESPRESSIF_VERSION=	esp-2022r1
 ESPRESSIF_GCC_VERSION=	11.2.0
 TAGNAME=	esp-2022r1
@@ -219,10 +268,14 @@ post-extract:
 .endif
 
 post-patch:
+.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44 || ${FLAVOR} == idf50
 	# patch gdb to fix SEGV with python 3.10.x
 	# obtained from:
 	# https://src.fedoraproject.org/rpms/gdb/blob/28b99d9981ec195cc7dfedc33f8ec859607af381/f/gdb-rhbz1829702-fix-python39.patch
+	#
+	# only patch idf < 51 because idf51 dropped gdb build
 	${PATCH} -p1 -d ${WRKDIR}/binutils-gdb-${ESPRESSIF_VERSION}-gdb < ${PATCHDIR}/gdb-rhbz1829702-fix-python39.patch
+.endif
 
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
