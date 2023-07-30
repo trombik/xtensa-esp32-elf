@@ -51,7 +51,6 @@ ESP_FILE_PROGRAMS= \
 	riscv32-esp-elf-gprof
 .endif
 
-
 GH_TUPLE=	espressif:binutils-gdb:${ESP_PORTNAME}-v${ESP_GDB_VERSION}_${ESP_REL_DATE} \
 	espressif:esp-xtensaconfig-lib:${ESP_XTENSACONFIG_LIB_TAG}:xtensaconfig/xtensaconfig \
 	espressif:xtensa-overlays:${ESP_XTENSA_OVERLAY_TAG}:xtensaoverlay/xtensaconfig/config
