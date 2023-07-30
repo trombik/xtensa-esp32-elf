@@ -10,6 +10,7 @@ EXTRACT_ONLY=
 
 MAINTAINER=	y@trombik.org
 COMMENT?=	Espressif ESP32 toolchain
+WWW=	https://github.com/trombik/xtensa-esp32-elf
 
 LICENSE=	GPLv2 LGPL21
 LICENSE_COMB=	multi

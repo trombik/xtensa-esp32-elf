@@ -1,3 +1,2 @@
 The Espressif ESP32 toolchain to support Arduino and FreeRTOS projects.
-
-WWW: https://github.com/espressif/crosstool-NG
+Unofficial FreeBSD port of Espressif ESP32 toolchain.
