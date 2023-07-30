@@ -1,0 +1,3 @@
+esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-add-index
+esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-no-python
+esp-gdb-riscv32/bin/riscv32-esp-elf-gprof
