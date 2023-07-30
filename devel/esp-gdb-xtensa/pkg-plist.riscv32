@@ -1,3 +1,79 @@
+esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-%%PYTHON_VER%%
 esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-add-index
-esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-no-python
 esp-gdb-riscv32/bin/riscv32-esp-elf-gprof
+esp-gdb-riscv32/bin/riscv32-esp32-elf-gdb
+esp-gdb-riscv32/bin/riscv32-esp32s2-elf-gdb
+esp-gdb-riscv32/bin/riscv32-esp32s3-elf-gdb
+esp-gdb-riscv32/include/gdb/jit-reader.h
+esp-gdb-riscv32/lib/riscv32config-risc32.so
+esp-gdb-riscv32/share/gdb/python/gdb/__init__.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/__init__.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/explore.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/frame_filters.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/pretty_printers.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/prompt.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/type_printers.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/unwinders.py
+esp-gdb-riscv32/share/gdb/python/gdb/command/xmethods.py
+esp-gdb-riscv32/share/gdb/python/gdb/FrameDecorator.py
+esp-gdb-riscv32/share/gdb/python/gdb/FrameIterator.py
+esp-gdb-riscv32/share/gdb/python/gdb/frames.py
+esp-gdb-riscv32/share/gdb/python/gdb/function/__init__.py
+esp-gdb-riscv32/share/gdb/python/gdb/function/as_string.py
+esp-gdb-riscv32/share/gdb/python/gdb/function/caller_is.py
+esp-gdb-riscv32/share/gdb/python/gdb/function/strfns.py
+esp-gdb-riscv32/share/gdb/python/gdb/printer/__init__.py
+esp-gdb-riscv32/share/gdb/python/gdb/printer/bound_registers.py
+esp-gdb-riscv32/share/gdb/python/gdb/printing.py
+esp-gdb-riscv32/share/gdb/python/gdb/prompt.py
+esp-gdb-riscv32/share/gdb/python/gdb/styling.py
+esp-gdb-riscv32/share/gdb/python/gdb/types.py
+esp-gdb-riscv32/share/gdb/python/gdb/unwinder.py
+esp-gdb-riscv32/share/gdb/python/gdb/xmethod.py
+esp-gdb-riscv32/share/gdb/syscalls/aarch64-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/amd64-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/arm-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/freebsd.xml
+esp-gdb-riscv32/share/gdb/syscalls/gdb-syscalls.dtd
+esp-gdb-riscv32/share/gdb/syscalls/i386-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/mips-n32-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/mips-n64-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/mips-o32-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/netbsd.xml
+esp-gdb-riscv32/share/gdb/syscalls/ppc-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/ppc64-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/s390-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/s390x-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/sparc-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/sparc64-linux.xml
+esp-gdb-riscv32/share/gdb/system-gdbinit/elinos.py
+esp-gdb-riscv32/share/gdb/system-gdbinit/wrs-linux.py
+esp-gdb-riscv32/share/info/annotate.info
+esp-gdb-riscv32/share/info/bfd.info
+esp-gdb-riscv32/share/info/dir
+esp-gdb-riscv32/share/info/gdb.info
+esp-gdb-riscv32/share/info/gprof.info
+esp-gdb-riscv32/share/info/stabs.info
+esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb-add-index.1
+esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb.1
+esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdbserver.1
+esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gprof.1
+esp-gdb-riscv32/share/man/man5/riscv32-esp-elf-gdbinit.5
+@dir esp-gdb-riscv32/share/man/man5
+@dir esp-gdb-riscv32/share/man/man1
+@dir esp-gdb-riscv32/share/man
+@dir esp-gdb-riscv32/share/info
+@dir esp-gdb-riscv32/share/gdb/system-gdbinit
+@dir esp-gdb-riscv32/share/gdb/syscalls
+@dir esp-gdb-riscv32/share/gdb/python/gdb/printer
+@dir esp-gdb-riscv32/share/gdb/python/gdb/function
+@dir esp-gdb-riscv32/share/gdb/python/gdb/command
+@dir esp-gdb-riscv32/share/gdb/python/gdb
+@dir esp-gdb-riscv32/share/gdb/python
+@dir esp-gdb-riscv32/share/gdb
+@dir esp-gdb-riscv32/share
+@dir esp-gdb-riscv32/lib
+@dir esp-gdb-riscv32/include/gdb
+@dir esp-gdb-riscv32/include
+@dir esp-gdb-riscv32/bin
+@dir esp-gdb-riscv32
