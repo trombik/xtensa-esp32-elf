@@ -1,0 +1,7 @@
+TIMESTAMP = 1690681878
+SHA256 (espressif-binutils-gdb-12.1.20221002-esp-gdb-v12.1_20221002_GH0.tar.gz) = 63e613c35df620f32e2801845fd255a037bb5701e97ef7b4942196c226ac4064
+SIZE (espressif-binutils-gdb-12.1.20221002-esp-gdb-v12.1_20221002_GH0.tar.gz) = 68216167
+SHA256 (espressif-esp-xtensaconfig-lib-6b5601c_GH0.tar.gz) = 21127ca1a7fe5179f65589b6269ad20f9333caed6f5bf686bdfb271354974451
+SIZE (espressif-esp-xtensaconfig-lib-6b5601c_GH0.tar.gz) = 40891
+SHA256 (espressif-xtensa-overlays-dd1cf19_GH0.tar.gz) = 68c3aecd9ae9884cc15be27e4fd06915f8b76a07586a6cb1c635e89447a46bc3
+SIZE (espressif-xtensa-overlays-dd1cf19_GH0.tar.gz) = 385131

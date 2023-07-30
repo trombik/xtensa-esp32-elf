@@ -1,0 +1,6 @@
+esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-add-index
+esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-no-python
+esp-gdb-xtensa/bin/xtensa-esp-elf-gprof
+esp-gdb-xtensa/bin/xtensa-esp32-elf-gdb
+esp-gdb-xtensa/bin/xtensa-esp32s2-elf-gdb
+esp-gdb-xtensa/bin/xtensa-esp32s3-elf-gdb

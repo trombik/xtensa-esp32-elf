@@ -1,0 +1,15 @@
+--- xtensaconfig/Makefile.orig	2022-11-01 16:17:14 UTC
++++ xtensaconfig/Makefile
+@@ -9,9 +9,9 @@ CROSS_COMPILE ?= ""
+ TARGET_ESP_ARCH ?= xtensa
+ 
+ CROSS_COMPILE ?= ""
+-CC = $(CROSS_COMPILE)gcc
+-CXX = $(CROSS_COMPILE)g++
+-AR = $(CROSS_COMPILE)ar
++CC = $(CROSS_COMPILE)%%CC%%
++CXX = $(CROSS_COMPILE)%%CXX%%
++AR = $(CROSS_COMPILE)gcc-ar%%USE_GCC%%
+ 
+ ifeq ($(TARGET_ESP_ARCH), xtensa)
+ TARGET_ESP_ARCH_NUM = 0
