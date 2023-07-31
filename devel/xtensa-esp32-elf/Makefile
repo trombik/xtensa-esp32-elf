@@ -344,7 +344,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcc1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcp1plugin.so.0.0.0 \
-		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/gengtype
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/gengtype \
+		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/bfd-plugins/libdep.so
 	# install metadata files for platformio
 	${INSTALL_DATA} ${PATCHDIR}/piopm ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/.piopm
 	${INSTALL_DATA} ${PATCHDIR}/package.json ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/package.json
