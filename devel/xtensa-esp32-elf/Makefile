@@ -142,7 +142,6 @@ ESPRESSIF_GDB_TAG=	esp-gdb-v12.1_20221002
 ESPRESSIF_NEWLIB_TAG=	esp-4.1.0_20230208
 ESPRESSIF_BINUTILS_TAG=	esp-2.39.0_20230208
 GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
-	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
 	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
 	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
 	espressif:crosstool-NG:${ESPRESSIF_VERSION}
@@ -153,7 +152,6 @@ GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
 EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
 	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 
