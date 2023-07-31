@@ -292,11 +292,9 @@ pre-configure:
 		-e 's|%%ESPRESSIF_BINUTILS_TAG%%|${ESPRESSIF_BINUTILS_TAG}|' \
 		-e 's|%%ESPRESSIF_GDB_TAG%%|${ESPRESSIF_GDB_TAG}|' \
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
-.if ${FLAVOR} == idf50 || ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 	${REINPLACE_CMD} \
 	    -e 's|%%ESPRESSIF_VERSION%%|${ESPRESSIF_VERSION}|g' \
 	    ${WRKSRC}/maintainer/git-version-gen
-.endif
 	${ECHO} ${XTENSA_CT_CONFIG} | ${TR} '[[:space:]]' '\n' \
 		>> ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 
