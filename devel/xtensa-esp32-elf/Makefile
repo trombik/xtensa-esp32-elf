@@ -308,7 +308,7 @@ do-configure:
 	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV ${MAKE_ENV} \
 	    ${MAKE_CMD} ${MAKE_ARGS} install
 	cd ${BUILD_WRKSRC} && \
-	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
+	    ${SETENVI} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
 	${RM} ${WRKSRC}/scripts/functions.orig \
@@ -316,7 +316,7 @@ pre-build:
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
 
 do-build:
-	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
+	cd ${BUILD_WRKSRC} && ${SETENVI} ${BUILD_ENV} ./ct-ng build
 
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} +w
 	${RM} ${BUILD_WRKSRC}/builds/${PORTNAME}/build.log.bz2 \
