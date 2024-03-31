@@ -73,7 +73,7 @@ pre-configure:
 		${WRKSRC}/build_esp_gdb.sh
 
 do-build:
-	(cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} bash ${WRKSRC}/build_esp_gdb.sh ${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL} ${ESP_ARCH} ${PYTHON_VERSION})
+	(cd ${WRKSRC} && ${SETENVI} ${MAKE_ENV} bash ${WRKSRC}/build_esp_gdb.sh ${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL} ${ESP_ARCH} ${PYTHON_VERSION})
 
 do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin \
