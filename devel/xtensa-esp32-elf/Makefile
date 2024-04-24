@@ -65,7 +65,7 @@ DISTFILES+=	\
 		ncurses-6.2.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.12.tar.gz:source11
+		zlib-1.2.13.tar.gz:source11
 .elif ${FLAVOR} == idf50
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
@@ -88,7 +88,7 @@ DISTFILES+=	\
 		ncurses-6.2.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.12.tar.gz:source11
+		zlib-1.2.13.tar.gz:source11
 .elif ${FLAVOR} == idf43 || ${FLAVOR} == idf44
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
@@ -112,7 +112,7 @@ DISTFILES+=	\
 		ncurses-6.2.tar.gz:source6 \
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.12.tar.gz:source11
+		zlib-1.2.13.tar.gz:source11
 .endif
 
 idf51_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
@@ -308,7 +308,7 @@ do-configure:
 	    ${SETENV} -uMAKELEVEL -uMAKEFLAGS -u.MAKE.LEVEL.ENV ${MAKE_ENV} \
 	    ${MAKE_CMD} ${MAKE_ARGS} install
 	cd ${BUILD_WRKSRC} && \
-	    ${SETENV} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
+	    ${SETENVI} ${BUILD_ENV} PREFIX=${PREFIX} ./ct-ng ${PORTNAME}
 
 pre-build:
 	${RM} ${WRKSRC}/scripts/functions.orig \
@@ -316,7 +316,7 @@ pre-build:
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
 
 do-build:
-	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
+	cd ${BUILD_WRKSRC} && ${SETENVI} ${BUILD_ENV} ./ct-ng build
 
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} +w
 	${RM} ${BUILD_WRKSRC}/builds/${PORTNAME}/build.log.bz2 \
