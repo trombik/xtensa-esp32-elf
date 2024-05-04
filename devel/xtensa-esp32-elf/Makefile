@@ -28,22 +28,39 @@ BUILD_DEPENDS=	bash:shells/bash \
 		help2man:misc/help2man \
 		makeinfo:print/texinfo
 
-.if ${PORTNAME} == xtensa-esp32-elf
-FLAVORS=	idf51 idf50 idf44 idf43
-.elif ${PORTNAME} == xtensa-esp32s2-elf || ${PORTNAME} == riscv32-esp-elf
-FLAVORS=	idf51 idf50 idf44 idf43
-.elif ${PORTNAME} == xtensa-esp32s3-elf
-FLAVORS=	idf51 idf50 idf44
-.endif
+FLAVORS=	idf52 idf51 idf50 idf44
 FLAVOR?=	${FLAVORS:[1]}
 
 # XXX use iconv:wchar_t.
 # configure scripts picks -liconv during gcc build from converters/libiconv
 # installed by dependencies. fixes error in stage-qa
 # XXX use ncurses, which is required by gdb (libtinfow)
-USES=		autoreconf:build bison gmake libtool python:3.5+ gettext-runtime iconv:wchar_t ncurses:port
+USES=		autoreconf:build bison gmake libtool python:3.8+ gettext-runtime iconv:wchar_t ncurses:port
 
-.if ${FLAVOR} == idf51
+.if ${FLAVOR} == idf52
+MASTER_SITES+= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
+		SF/expat/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-4.1.0/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8 \
+		https://www.zlib.net/fossils/:source11
+DISTFILES+=	\
+		expat-2.4.1.tar.gz:source1 \
+		gmp-6.2.1.tar.xz:source2 \
+		isl-0.24.tar.xz:source3 \
+		mpc-1.2.1.tar.gz:source4 \
+		mpfr-4.1.0.tar.xz:source5 \
+		ncurses-6.2.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.2.13.tar.gz:source11
+.elif ${FLAVOR} == idf51
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
@@ -89,7 +106,7 @@ DISTFILES+=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.12.tar.gz:source11
-.elif ${FLAVOR} == idf43 || ${FLAVOR} == idf44
+.elif ${FLAVOR} == idf44
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
@@ -115,14 +132,14 @@ DISTFILES+=	\
 		zlib-1.2.12.tar.gz:source11
 .endif
 
+idf52_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf51_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf50_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf43_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf52_PKGNAMESUFFIX=	-idf52
 idf51_PKGNAMESUFFIX=	-idf51
 idf50_PKGNAMESUFFIX=	-idf50
 idf44_PKGNAMESUFFIX=	-idf44
-idf43_PKGNAMESUFFIX=	-idf43
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
@@ -132,7 +149,42 @@ USE_GITHUB=	yes
 USE_LDCONFIG=	${PREFIX}/${PORTNAME}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}
 LDFLAGS+=	-L${LOCALBASE}/lib ${TINFO_LIB}
 
-.if ${FLAVOR} == idf51
+.if ${FLAVOR} == idf52
+LIB_DEPENDS+=	libzstd.so:archivers/zstd
+ESPRESSIF_VERSION=	esp-13.2.0_20230928
+
+# in this release, espressif uses different GCC versions for riscv32 and
+# xtensa.
+.if ${PORTNAME} == riscv32-esp-elf
+ESPRESSIF_GCC_VERSION=	13.2.0
+ESPRESSIF_GCC_TAG=	esp-13.2.0_20230928
+ESPRESSIF_NEWLIB_TAG=	esp-4.3.0_20230928
+ESPRESSIF_BINUTILS_TAG=	esp-2.41.0_20230928
+.else
+ESPRESSIF_GCC_VERSION=	12.2.0
+ESPRESSIF_GCC_TAG=	esp-12.2.0_20230208
+ESPRESSIF_NEWLIB_TAG=	esp-4.1.0_20230208
+ESPRESSIF_BINUTILS_TAG=	esp-2.39.0_20230208
+.endif
+TAGNAME=	esp-13.2.0_20230928
+ESPRESSIF_GDB_TAG=	esp-2.39.0_20230208
+GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
+	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
+	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
+	espressif:crosstool-NG:${ESPRESSIF_VERSION}
+
+# crosstool-NG supports custom location to archive files, but it also assumes
+# that top directoy of an archive is same as its file name without suffix. due
+# to this, arvhives from espressif github repositories must be extracted.
+EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
+	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
+	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
+	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
+XTENSA_OVERLAYS_TAGNAME=	dd1cf19
+XTENSA_DYNCONFIG_TAGNAME=	c545876
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	b86a356
+
+.elif ${FLAVOR} == idf51
 LIB_DEPENDS+=	libzstd.so:archivers/zstd
 ESPRESSIF_VERSION=	esp-12.2.0_20230208
 ESPRESSIF_GCC_VERSION=	12.2.0
@@ -179,7 +231,7 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 
-.elif ${FLAVOR} == idf43 || ${FLAVOR} == idf44
+.elif ${FLAVOR} == idf44
 # XXX the upstream versioning does not match one of the ports
 ESPRESSIF_VERSION=	esp-2021r2-patch5
 ESPRESSIF_GCC_VERSION=	8.4.0
@@ -209,6 +261,16 @@ XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 .if defined(XTENSA_OVERLAYS_TAGNAME)
 GH_TUPLE+=	espressif:xtensa-overlays:${XTENSA_OVERLAYS_TAGNAME}:source104
 EXTRACT_ONLY+=	espressif-xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME}_GH0.tar.gz
+.endif
+
+.if defined(XTENSA_DYNCONFIG_TAGNAME)
+GH_TUPLE+=	espressif:xtensa-dynconfig:${XTENSA_DYNCONFIG_TAGNAME}:source105
+EXTRACT_ONLY+=	espressif-xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME}_GH0.tar.gz
+.endif
+
+.if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
+GH_TUPLE+=	espressif:esp-toolchain-bin-wrappers:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}:source106
+EXTRACT_ONLY+=	espressif-esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}_GH0.tar.gz
 .endif
 
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
@@ -266,9 +328,17 @@ post-extract:
 	${RMDIR} ${BUILD_WRKSRC}/overlays
 	${LN} -s ${WRKDIR}/xtensa-overlays-${XTENSA_OVERLAYS_TAGNAME} ${BUILD_WRKSRC}/overlays
 .endif
+.if defined(XTENSA_DYNCONFIG_TAGNAME)
+	${RMDIR} ${BUILD_WRKSRC}/xtensa-dynconfig
+	${LN} -s ${WRKDIR}/xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME} ${BUILD_WRKSRC}/xtensa-dynconfig
+.endif
+.if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
+	${RMDIR} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
+	${LN} -s ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
+.endif
 
 post-patch:
-.if ${FLAVOR} == idf43 || ${FLAVOR} == idf44 || ${FLAVOR} == idf50
+.if ${FLAVOR} == idf44 || ${FLAVOR} == idf50
 	# patch gdb to fix SEGV with python 3.10.x
 	# obtained from:
 	# https://src.fedoraproject.org/rpms/gdb/blob/28b99d9981ec195cc7dfedc33f8ec859607af381/f/gdb-rhbz1829702-fix-python39.patch
