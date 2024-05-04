@@ -39,8 +39,8 @@ Arduino version requires).
 
 ```console
 cd /usr/ports/devel/xtensa-esp32-elf
-make FLAVOR="idf43"
-make install FLAVOR="idf43"
+make FLAVOR="idf44"
+make install FLAVOR="idf44"
 ```
 
 The files are installed under `${PREFIX}/xtensa-esp32-elf-${FLAVOR}`, usually
