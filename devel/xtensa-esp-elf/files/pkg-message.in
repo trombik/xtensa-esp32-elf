@@ -1,0 +1,17 @@
+[
+{ type: install
+  message: <<__EOM__
+To use the toolchain, add %%PREFIX%%/%%PORTNAME%%%%PKGNAMESUFFIX%%/bin to PATH environment
+variable.
+
+export PATH=%%PREFIX%%/%%PORTNAME%%%%PKGNAMESUFFIX%%/bin:${PATH}
+
+To use the toolchain with platformio, create a symlink.
+
+mkdir -p ~/.platformio/packages
+cd ~/.platformio/packages
+ln -s %%PREFIX%%/%%PORTNAME%%%%PKGNAMESUFFIX%% toolchain-xtensa32
+
+__EOM__
+}
+]
