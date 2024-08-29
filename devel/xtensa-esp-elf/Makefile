@@ -187,6 +187,15 @@ pre-configure:
 	    ${WRKSRC}/samples/${PORTNAME}/crosstool.config
 	${ECHO} ${XTENSA_CT_CONFIG} | ${TR} '[[:space:]]' '\n' \
 		>> ${WRKSRC}/samples/${PORTNAME}/crosstool.config
+	${REINPLACE_CMD} \
+		-e 's|%%PREFIX%%|${PREFIX}|g' \
+		${WRKSRC}/scripts/crosstool-NG.sh
+
+	# remove leading `/` from prefix as it replaces the path instead of
+	# joining it. see PathBuf::join.
+	${REINPLACE_CMD} \
+		-e 's|%%PREFIX%%|${PREFIX:S/\///1}|g' \
+		${WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/main.rs
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
