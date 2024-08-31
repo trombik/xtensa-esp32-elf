@@ -28,7 +28,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		help2man:misc/help2man \
 		makeinfo:print/texinfo
 
-FLAVORS=	idf52 idf51 idf50 idf44
+FLAVORS=	idf52 idf51 idf50
 FLAVOR?=	${FLAVORS:[1]}
 
 # XXX use iconv:wchar_t.
@@ -106,40 +106,14 @@ DISTFILES+=	\
 		autoconf-2.69.tar.gz:source7 \
 		automake-1.16.1.tar.gz:source8 \
 		zlib-1.2.12.tar.gz:source11
-.elif ${FLAVOR} == idf44
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
-		SF/expat/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-3.1.3/:source5 \
-		GNU/mpfr/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://www.zlib.net/fossils/:source11
-DISTFILES+=	\
-		expat-2.4.1.tar.gz:source1 \
-		gmp-6.2.1.tar.xz:source2 \
-		isl-0.19.tar.xz:source3 \
-		mpc-1.2.1.tar.gz:source4 \
-		mpfr-4.1.0.tar.xz:source5 \
-		ncurses-6.2.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.12.tar.gz:source11
 .endif
 
 idf52_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf51_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf50_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf44_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf52_PKGNAMESUFFIX=	-idf52
 idf51_PKGNAMESUFFIX=	-idf51
 idf50_PKGNAMESUFFIX=	-idf50
-idf44_PKGNAMESUFFIX=	-idf44
 DISTINFO_FILE=	${MASTERDIR}/distinfo.${PORTNAME}-${FLAVOR}
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX} PORTNAME=${PORTNAME} PKGNAMESUFFIX=${PKGNAMESUFFIX}
@@ -215,32 +189,6 @@ ESPRESSIF_GCC_TAG=	esp-2022r1
 ESPRESSIF_GDB_TAG=	esp-2022r1-gdb
 ESPRESSIF_NEWLIB_TAG=	esp-2022r1
 ESPRESSIF_BINUTILS_TAG=	esp-2022r1-binutils
-GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
-	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
-	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
-	espressif:newlib-esp32:${ESPRESSIF_NEWLIB_TAG}:source103 \
-	espressif:crosstool-NG:${ESPRESSIF_VERSION}
-
-# crosstool-NG supports custom location to archive files, but it also assumes
-# that top directoy of an archive is same as its file name without suffix. due
-# to this, arvhives from espressif github repositories must be extracted.
-EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
-	espressif-gcc-${ESPRESSIF_GCC_TAG}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
-	espressif-binutils-gdb-${ESPRESSIF_GDB_TAG}_GH0.tar.gz \
-	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
-XTENSA_OVERLAYS_TAGNAME=	dd1cf19
-
-.elif ${FLAVOR} == idf44
-# XXX the upstream versioning does not match one of the ports
-ESPRESSIF_VERSION=	esp-2021r2-patch5
-ESPRESSIF_GCC_VERSION=	8.4.0
-TAGNAME=	esp-2021r2-patch4
-ESPRESSIF_GCC_TAG=	esp-2021r2-patch4
-ESPRESSIF_GDB_TAG=	esp-2021r2-patch5-gdb
-ESPRESSIF_NEWLIB_TAG=	esp-2021r2-patch5
-ESPRESSIF_BINUTILS_TAG=	esp-2021r2-patch4-binutils
-
 GH_TUPLE=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
 	espressif:binutils-gdb:${ESPRESSIF_GDB_TAG}:source101 \
 	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
@@ -338,7 +286,7 @@ post-extract:
 .endif
 
 post-patch:
-.if ${FLAVOR} == idf44 || ${FLAVOR} == idf50
+.if ${FLAVOR} == idf50
 	# patch gdb to fix SEGV with python 3.10.x
 	# obtained from:
 	# https://src.fedoraproject.org/rpms/gdb/blob/28b99d9981ec195cc7dfedc33f8ec859607af381/f/gdb-rhbz1829702-fix-python39.patch
@@ -413,7 +361,7 @@ do-install:
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcp1plugin.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/gengtype \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/bfd-plugins/libdep.so
-.elif ${FLAVOR} == idf50 || ${FLAVOR} == idf44
+.elif ${FLAVOR} == idf50
 	@${STRIP_CMD} \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0 \
 		${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcc1plugin.so.0.0.0 \
