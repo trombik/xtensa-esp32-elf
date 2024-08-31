@@ -1,10 +1,13 @@
-## `devel/xtensa-esp32-elf`
+## `devel/xtensa-esp32-elf` and `devel/xtensa-esp-elf`
 
 Updated port of `devel/xtensa-esp32-elf`. This port will not be merged to the
 official ports tree. See bug [251659](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=251659).
 
 For `openocd` debugger, use
 [trombik/freebsd-ports-openocd-esp32](https://github.com/trombik/freebsd-ports-openocd-esp32).
+
+For `esp-idf` 5.3 and later, use `devel/xtensa-esp-elf` for all xtensa-based
+chips, i.e. `esp32`, `esp32s2`, and `esp32s3`.
 
 ## Status
 
