@@ -1,4 +1,4 @@
-TIMESTAMP = 1724629766
+TIMESTAMP = 1725247582
 SHA256 (expat-2.4.1.tar.gz) = a00ae8a6b96b63a3910ddc1100b1a7ef50dc26dceb65ced18ded31ab392f132b
 SIZE (expat-2.4.1.tar.gz) = 697439
 SHA256 (gmp-6.2.1.tar.xz) = fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2
@@ -33,3 +33,7 @@ SHA256 (espressif-xtensa-dynconfig-c545876_GH0.tar.gz) = 477e6ef5b97a77527be6e85
 SIZE (espressif-xtensa-dynconfig-c545876_GH0.tar.gz) = 29819
 SHA256 (espressif-esp-toolchain-bin-wrappers-62776e9_GH0.tar.gz) = b981f9ca4f36570b3a5d81dd2384c96a05da95bb8ac502b561a66a5847a6704c
 SIZE (espressif-esp-toolchain-bin-wrappers-62776e9_GH0.tar.gz) = 10109
+SHA256 (rust-lang-nursery-lazy-static.rs-1.4.0_GH0.tar.gz) = 5406a4419f29ee33130944e9c94429ca7fbe6c9d419a941d3179f1e1c49e71fc
+SIZE (rust-lang-nursery-lazy-static.rs-1.4.0_GH0.tar.gz) = 12594
+SHA256 (rust-lang-libc-0.2.147_GH0.tar.gz) = ab28e9829134e4cfe0ece8d8d5a007aed6feb1ddbd57ff5f0333127f1b9e5664
+SIZE (rust-lang-libc-0.2.147_GH0.tar.gz) = 851357
