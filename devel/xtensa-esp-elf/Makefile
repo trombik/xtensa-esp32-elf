@@ -15,10 +15,6 @@ WWW=	https://github.com/trombik/xtensa-esp32-elf
 LICENSE=	GPLv2 LGPL21
 LICENSE_COMB=	multi
 
-BROKEN_aarch64=		fails to configure: cannot compute suffix of object files: cannot compile
-BROKEN_armv6=		fails to build: failed in step 'Installing pass-2 core C gcc compiler'
-BROKEN_armv7=		fails to build: failed in step 'Installing pass-2 core C gcc compiler'
-
 BUILD_DEPENDS=	bash:shells/bash \
 		gawk:lang/gawk \
 		gpatch:devel/patch \
@@ -36,6 +32,10 @@ FLAVOR?=	${FLAVORS:[1]}
 # installed by dependencies. fixes error in stage-qa
 # XXX use ncurses, which is required by gdb (libtinfow)
 USES=		autoreconf:build bison gmake libtool python:3.8+ gettext-runtime iconv:wchar_t ncurses:port
+
+BUILD_DEPENDS+=	${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
+CARGO?=		${LOCALBASE}/bin/cargo
+CARGO_BUILD_TARGET=	x86_64-unknown-freebsd
 
 .if ${FLAVOR} == idf53
 ESPRESSIF_VERSION=	esp-13.2.0_20240530
@@ -102,8 +102,22 @@ EXTRACT_ONLY+=	espressif-xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME}_GH0.tar.gz
 .endif
 
 .if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
+
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${BUILD_WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/vendor
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/target/release/xtensa-toolchian-wrapper
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS=	esp32 esp32s2 esp32s3
+
+# see esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/Cargo.toml
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES=	\
+	rust-lang-nursery:lazy-static.rs:1.4.0:source107:lazy_static \
+	rust-lang:libc:0.2.147:source108:libc
 GH_TUPLE+=	espressif:esp-toolchain-bin-wrappers:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}:source106
 EXTRACT_ONLY+=	espressif-esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}_GH0.tar.gz
+.for _org _project _tag _src_group _name in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES:C/:/ /g}
+GH_TUPLE+=	${_org}:${_project}:${_tag}:${_src_group}
+EXTRACT_ONLY+=	${_org}-${_project}-${_tag}_GH0.tar.gz
+.endfor
 .endif
 
 # crosstool-NG supports custom location to archive files, but it also assumes
@@ -197,6 +211,22 @@ pre-configure:
 		-e 's|%%PREFIX%%|${PREFIX:S/\///1}|g' \
 		${WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/main.rs
 
+# vendor the creates
+	@${ECHO_MSG} "===>   Cargo config:"
+	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}
+	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo
+.for _org _project _tag _src_group _name in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES:C/:/ /g}
+	${MV} ${WRKDIR}/${_project}-${_tag} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}
+	${PRINTF} '{"package":"%s","files":{}}' \
+		$$(${SHA256} -q ${DISTDIR}/${_org}-${_project}-${_tag}_GH0.tar.gz) \
+		> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}/.cargo-checksum.json
+.endfor
+	${ECHO_CMD} "[source.crates-io]" >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+	${ECHO_CMD} 'replace-with = "vendored-sources"' >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+	${ECHO_CMD} "[source.vendored-sources]" >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+	${ECHO_CMD} 'directory = "vendor"' >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+	${CAT} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
 	cd ${BUILD_WRKSRC} && \
@@ -218,6 +248,20 @@ pre-build:
 
 do-build:
 	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
+
+# see .gitlab-ci.yml
+.if ${PORTNAME} == xtensa-esp-elf
+	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
+	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR} && \
+		${SETENVI} \
+			${WRK_ENV} \
+			CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
+			CARGO_TARGET_${CARGO_BUILD_TARGET:S/-/_/g:tu}_LINKER="${CC}" \
+			${CARGO} build --release --verbose --verbose)
+.for XTENSA_CHIP in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS}
+	${FIND} ${WRKSRC}/builds/${PORTNAME}/bin  -type f | ${SED} -e 's/xtensa-esp-elf-/xtensa-${XTENSA_CHIP}-elf-/' | ${XARGS} -J % -n 1 ${CP} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE} %
+.endfor
+.endif
 
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} +w
 	${RM} ${BUILD_WRKSRC}/builds/${PORTNAME}/build.log.bz2 \
