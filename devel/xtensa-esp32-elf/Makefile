@@ -28,7 +28,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		help2man:misc/help2man \
 		makeinfo:print/texinfo
 
-FLAVORS=	idf52 idf51 idf50
+FLAVORS?=	idf52 idf51 idf50
 FLAVOR?=	${FLAVORS:[1]}
 
 # XXX use iconv:wchar_t.
