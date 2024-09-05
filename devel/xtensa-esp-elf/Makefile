@@ -24,7 +24,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		help2man:misc/help2man \
 		makeinfo:print/texinfo
 
-FLAVORS=	idf53
+FLAVORS?=	idf53
 FLAVOR?=	${FLAVORS:[1]}
 
 # XXX use iconv:wchar_t.
@@ -250,8 +250,8 @@ do-build:
 	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
 
 # see .gitlab-ci.yml
-.if ${PORTNAME} == xtensa-esp-elf
 	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
+.if ${PORTNAME} == xtensa-esp-elf
 	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR} && \
 		${SETENVI} \
 			${WRK_ENV} \
