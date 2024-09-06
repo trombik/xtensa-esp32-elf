@@ -1,4 +1,4 @@
---- build_esp_gdb.sh.orig	2022-11-01 16:32:48 UTC
+--- build_esp_gdb.sh.orig	2024-04-02 08:31:37 UTC
 +++ build_esp_gdb.sh
 @@ -1,5 +1,5 @@
  #!/bin/bash
@@ -25,7 +25,16 @@
  fi
  PYTHON_CROSS_DIR_LIB=
  PYTHON_CROSS_LINK_FLAG=
-@@ -65,16 +67,10 @@ if [ $BUILD_PYTHON_VERSION != "without_python" ]; then
+@@ -59,7 +61,7 @@ if [ $ESP_CHIP_ARCHITECTURE == "xtensa" ]; then
+   # Build xtensa-config libs
+   pushd xtensa-dynconfig
+   make clean
+-  make CC=${TARGET_HOST}-gcc CONF_DIR="${GDB_REPO_ROOT}/xtensa-overlays"
++  make -j %%MAKE_JOBS_NUMBER%% CC=${TARGET_HOST}-${CC} CONF_DIR="${GDB_REPO_ROOT}/xtensa-overlays"
+   make install DESTDIR="${GDB_DIST}"
+   popd
+ fi
+@@ -83,16 +85,10 @@ if [ $BUILD_PYTHON_VERSION != "without_python" ]; then
  
  PYTHON_CONFIG_OPTS=
  if [ $BUILD_PYTHON_VERSION != "without_python" ]; then
@@ -45,7 +54,7 @@
  else
  	PYTHON_CONFIG_OPTS="--without-python"
  fi
-@@ -87,10 +83,9 @@ --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
+@@ -100,10 +96,9 @@ --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
  CONFIG_OPTS=" \
  --host=$TARGET_HOST \
  --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
@@ -57,7 +66,7 @@
  --disable-threads \
  --disable-sim \
  --disable-nls \
-@@ -98,16 +93,12 @@ --disable-source-highlight \
+@@ -111,15 +106,13 @@ --disable-source-highlight \
  --disable-ld \
  --disable-gas \
  --disable-source-highlight \
@@ -65,20 +74,26 @@
 ---with-gmp=/opt/gmp-$TARGET_HOST \
 ---with-libgmp-prefix=/opt/gmp-$TARGET_HOST \
 ---with-mpc=/opt/mpc-$TARGET_HOST \
+---with-mpfr=/opt/mpfr-$TARGET_HOST \
 +--prefix=%%PREFIX%% \
-+--with-gmp \
-+--with-mpc \
- --without-mpfr \
++--with-gmp=%%PREFIX%% \
++--with-mpc=%%PREFIX%% \
++--with-mpfr=%%PREFIX%% \
++--with-zstd=%%PREFIX%% \
++--with-debuginfod=%%PREFIX%% \
  ${PYTHON_CONFIG_OPTS} \
- ${WITH_XTENSACONFIG_OPTS} \
 ---with-libexpat-type=static \
 ---with-liblzma-type=static \
 ---with-libgmp-type=static \
  --with-static-standard-libraries \
  --with-pkgversion="esp-gdb" \
  --with-curses \
-@@ -135,19 +126,15 @@ make install DESTDIR=$GDB_DIST
- make
+@@ -144,18 +137,14 @@ eval "$GDB_REPO_ROOT/configure $CONFIG_OPTS"
+ 
+ # Build GDB
+ 
+-make
++make -j %%MAKE_JOBS_NUMBER%%
  make install DESTDIR=$GDB_DIST
  
 -#strip binaries. Save user's disc space
@@ -93,10 +108,23 @@
 +  GDB_PROGRAM_SUFFIX=%%PYTHON_VER%%
  fi
  
+ # Change path to the libpython for macos
+@@ -170,13 +159,13 @@ fi
+ fi
+ 
  # rename gdb to have python version in filename
 -mv $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE} $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb-${GDB_PROGRAM_SUFFIX}${EXE}
 +mv ${GDB_DIST}${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE} ${GDB_DIST}${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb-${GDB_PROGRAM_SUFFIX}${EXE}
  
  # rename wrapper to original gdb name
--mv $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb-wrapper${EXE} $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE} 2> /dev/null || true
-+mv ${GDB_DIST}${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb-wrapper${EXE} ${GDB_DIST}${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE} 2> /dev/null || true
+ if [ $ESP_CHIP_ARCHITECTURE == "xtensa" ]; then
+-  cp $GDB_DIST/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp32-elf-gdb${EXE} 2> /dev/null || true
+-  cp $GDB_DIST/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp32s2-elf-gdb${EXE} 2> /dev/null || true
+-  mv $GDB_DIST/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp32s3-elf-gdb${EXE} 2> /dev/null || true
++  cp $GDB_DIST${PREFIX}/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp32-elf-gdb${EXE} 2> /dev/null || true
++  cp $GDB_DIST${PREFIX}/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp32s2-elf-gdb${EXE} 2> /dev/null || true
++  mv $GDB_DIST${PREFIX}/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp32s3-elf-gdb${EXE} 2> /dev/null || true
+ else
+-  mv $GDB_DIST/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE} 2> /dev/null || true
++  mv $GDB_DIST${PREFIX}/bin/esp-elf-gdb-wrapper${EXE} $GDB_DIST${PREFIX}/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE} 2> /dev/null || true
+ fi

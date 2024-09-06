@@ -1,7 +1,9 @@
-TIMESTAMP = 1690681878
-SHA256 (espressif-binutils-gdb-12.1.20221002-esp-gdb-v12.1_20221002_GH0.tar.gz) = 63e613c35df620f32e2801845fd255a037bb5701e97ef7b4942196c226ac4064
-SIZE (espressif-binutils-gdb-12.1.20221002-esp-gdb-v12.1_20221002_GH0.tar.gz) = 68216167
-SHA256 (espressif-esp-xtensaconfig-lib-6b5601c_GH0.tar.gz) = 21127ca1a7fe5179f65589b6269ad20f9333caed6f5bf686bdfb271354974451
-SIZE (espressif-esp-xtensaconfig-lib-6b5601c_GH0.tar.gz) = 40891
+TIMESTAMP = 1725587117
+SHA256 (espressif-binutils-gdb-14.2.20240403-esp-gdb-v14.2_20240403_GH0.tar.gz) = 7f11e7f8a23521513867c91dec57eafd9ae3baa5e8f624f0c74b928573ade9da
+SIZE (espressif-binutils-gdb-14.2.20240403-esp-gdb-v14.2_20240403_GH0.tar.gz) = 71907434
+SHA256 (espressif-xtensa-dynconfig-905b913_GH0.tar.gz) = a26369e09117d19067f0aa9c5ba88ee4d3dd4b4a53eafba3b78c5b7a85bf326b
+SIZE (espressif-xtensa-dynconfig-905b913_GH0.tar.gz) = 30458
 SHA256 (espressif-xtensa-overlays-dd1cf19_GH0.tar.gz) = 68c3aecd9ae9884cc15be27e4fd06915f8b76a07586a6cb1c635e89447a46bc3
 SIZE (espressif-xtensa-overlays-dd1cf19_GH0.tar.gz) = 385131
+SHA256 (espressif-esp-toolchain-bin-wrappers-62776e9_GH0.tar.gz) = b981f9ca4f36570b3a5d81dd2384c96a05da95bb8ac502b561a66a5847a6704c
+SIZE (espressif-esp-toolchain-bin-wrappers-62776e9_GH0.tar.gz) = 10109
