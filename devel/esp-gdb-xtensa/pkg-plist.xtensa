@@ -1,13 +1,13 @@
 esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-%%PYTHON_VER%%
 esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-add-index
 esp-gdb-xtensa/bin/xtensa-esp-elf-gprof
-esp-gdb-xtensa/bin/xtensa-esp32-elf-gdb
-esp-gdb-xtensa/bin/xtensa-esp32s2-elf-gdb
-esp-gdb-xtensa/bin/xtensa-esp32s3-elf-gdb
 esp-gdb-xtensa/include/gdb/jit-reader.h
-esp-gdb-xtensa/lib/xtensaconfig-esp32.so
-esp-gdb-xtensa/lib/xtensaconfig-esp32s2.so
-esp-gdb-xtensa/lib/xtensaconfig-esp32s3.so
+esp-gdb-xtensa/lib/xtensa_esp32.so
+esp-gdb-xtensa/lib/xtensa_esp32s2.so
+esp-gdb-xtensa/lib/xtensa_esp32s3.so
+esp-gdb-xtensa/lib/xtensa_esp8266.so
+esp-gdb-xtensa/share/gdb/python/gdb/FrameDecorator.py
+esp-gdb-xtensa/share/gdb/python/gdb/FrameIterator.py
 esp-gdb-xtensa/share/gdb/python/gdb/__init__.py
 esp-gdb-xtensa/share/gdb/python/gdb/command/__init__.py
 esp-gdb-xtensa/share/gdb/python/gdb/command/explore.py
@@ -17,8 +17,29 @@ esp-gdb-xtensa/share/gdb/python/gdb/command/prompt.py
 esp-gdb-xtensa/share/gdb/python/gdb/command/type_printers.py
 esp-gdb-xtensa/share/gdb/python/gdb/command/unwinders.py
 esp-gdb-xtensa/share/gdb/python/gdb/command/xmethods.py
-esp-gdb-xtensa/share/gdb/python/gdb/FrameDecorator.py
-esp-gdb-xtensa/share/gdb/python/gdb/FrameIterator.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/__init__.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/breakpoint.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/bt.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/disassemble.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/evaluate.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/events.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/frames.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/io.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/launch.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/locations.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/memory.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/modules.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/next.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/pause.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/scopes.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/server.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/sources.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/startup.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/state.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/threads.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/typecheck.py
+esp-gdb-xtensa/share/gdb/python/gdb/dap/varref.py
+esp-gdb-xtensa/share/gdb/python/gdb/disassembler.py
 esp-gdb-xtensa/share/gdb/python/gdb/frames.py
 esp-gdb-xtensa/share/gdb/python/gdb/function/__init__.py
 esp-gdb-xtensa/share/gdb/python/gdb/function/as_string.py
@@ -52,30 +73,14 @@ esp-gdb-xtensa/share/gdb/system-gdbinit/elinos.py
 esp-gdb-xtensa/share/gdb/system-gdbinit/wrs-linux.py
 esp-gdb-xtensa/share/info/annotate.info
 esp-gdb-xtensa/share/info/bfd.info
+esp-gdb-xtensa/share/info/ctf-spec.info
 esp-gdb-xtensa/share/info/dir
 esp-gdb-xtensa/share/info/gdb.info
 esp-gdb-xtensa/share/info/gprof.info
+esp-gdb-xtensa/share/info/sframe-spec.info
 esp-gdb-xtensa/share/info/stabs.info
 esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gdb-add-index.1
 esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gdb.1
 esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gdbserver.1
 esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gprof.1
 esp-gdb-xtensa/share/man/man5/xtensa-esp-elf-gdbinit.5
-@dir esp-gdb-xtensa/share/man/man5
-@dir esp-gdb-xtensa/share/man/man1
-@dir esp-gdb-xtensa/share/man
-@dir esp-gdb-xtensa/share/info
-@dir esp-gdb-xtensa/share/gdb/system-gdbinit
-@dir esp-gdb-xtensa/share/gdb/syscalls
-@dir esp-gdb-xtensa/share/gdb/python/gdb/printer
-@dir esp-gdb-xtensa/share/gdb/python/gdb/function
-@dir esp-gdb-xtensa/share/gdb/python/gdb/command
-@dir esp-gdb-xtensa/share/gdb/python/gdb
-@dir esp-gdb-xtensa/share/gdb/python
-@dir esp-gdb-xtensa/share/gdb
-@dir esp-gdb-xtensa/share
-@dir esp-gdb-xtensa/lib
-@dir esp-gdb-xtensa/include/gdb
-@dir esp-gdb-xtensa/include
-@dir esp-gdb-xtensa/bin
-@dir esp-gdb-xtensa
