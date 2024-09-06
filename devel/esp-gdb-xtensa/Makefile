@@ -75,16 +75,21 @@ do-build:
 do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin \
 		${STAGEDIR}${PREFIX}/${PORTNAME}/share \
-		${STAGEDIR}${PREFIX}/${PORTNAME}/include \
-		${STAGEDIR}${PREFIX}/${PORTNAME}/lib
+		${STAGEDIR}${PREFIX}/${PORTNAME}/include
+.if ${ESP_ARCH} == xtensa
+	${MKDIR} ${STAGEDIR}${PREFIX}/${PORTNAME}/lib
+.endif
+
 .for F in ${ESP_FILE_SCRIPTS}
 	${INSTALL_SCRIPT} ${WRKSRC}/dist${PREFIX}/bin/${F} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin/
 .endfor
 .for F in ${ESP_FILE_PROGRAMS}
 	${INSTALL_PROGRAM} ${WRKSRC}/dist${PREFIX}/bin/${F} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin/
 .endfor
+.if ${ESP_ARCH} == xtensa
 	${STRIP_CMD} ${WRKSRC}/dist${PREFIX}/lib/*
 	(cd ${WRKSRC}/dist${PREFIX}/lib && ${COPYTREE_BIN} . ${STAGEDIR}${PREFIX}/${PORTNAME}/lib)
+.endif
 	(cd ${WRKSRC}/dist${PREFIX}/share && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/share)
 	(cd ${WRKSRC}/dist${PREFIX}/include && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/include)
 

@@ -1,11 +1,7 @@
 esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-%%PYTHON_VER%%
 esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-add-index
 esp-gdb-riscv32/bin/riscv32-esp-elf-gprof
-esp-gdb-riscv32/bin/riscv32-esp32-elf-gdb
-esp-gdb-riscv32/bin/riscv32-esp32s2-elf-gdb
-esp-gdb-riscv32/bin/riscv32-esp32s3-elf-gdb
 esp-gdb-riscv32/include/gdb/jit-reader.h
-esp-gdb-riscv32/lib/riscv32config-risc32.so
 esp-gdb-riscv32/share/gdb/python/gdb/__init__.py
 esp-gdb-riscv32/share/gdb/python/gdb/command/__init__.py
 esp-gdb-riscv32/share/gdb/python/gdb/command/explore.py
@@ -15,6 +11,29 @@ esp-gdb-riscv32/share/gdb/python/gdb/command/prompt.py
 esp-gdb-riscv32/share/gdb/python/gdb/command/type_printers.py
 esp-gdb-riscv32/share/gdb/python/gdb/command/unwinders.py
 esp-gdb-riscv32/share/gdb/python/gdb/command/xmethods.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/__init__.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/breakpoint.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/bt.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/disassemble.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/evaluate.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/events.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/frames.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/io.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/launch.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/locations.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/memory.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/modules.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/next.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/pause.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/scopes.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/server.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/sources.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/startup.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/state.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/threads.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/typecheck.py
+esp-gdb-riscv32/share/gdb/python/gdb/dap/varref.py
+esp-gdb-riscv32/share/gdb/python/gdb/disassembler.py
 esp-gdb-riscv32/share/gdb/python/gdb/FrameDecorator.py
 esp-gdb-riscv32/share/gdb/python/gdb/FrameIterator.py
 esp-gdb-riscv32/share/gdb/python/gdb/frames.py
@@ -50,9 +69,11 @@ esp-gdb-riscv32/share/gdb/system-gdbinit/elinos.py
 esp-gdb-riscv32/share/gdb/system-gdbinit/wrs-linux.py
 esp-gdb-riscv32/share/info/annotate.info
 esp-gdb-riscv32/share/info/bfd.info
+esp-gdb-riscv32/share/info/ctf-spec.info
 esp-gdb-riscv32/share/info/dir
 esp-gdb-riscv32/share/info/gdb.info
 esp-gdb-riscv32/share/info/gprof.info
+esp-gdb-riscv32/share/info/sframe-spec.info
 esp-gdb-riscv32/share/info/stabs.info
 esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb-add-index.1
 esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb.1
@@ -72,7 +93,6 @@ esp-gdb-riscv32/share/man/man5/riscv32-esp-elf-gdbinit.5
 @dir esp-gdb-riscv32/share/gdb/python
 @dir esp-gdb-riscv32/share/gdb
 @dir esp-gdb-riscv32/share
-@dir esp-gdb-riscv32/lib
 @dir esp-gdb-riscv32/include/gdb
 @dir esp-gdb-riscv32/include
 @dir esp-gdb-riscv32/bin
