@@ -25,25 +25,23 @@ chips, i.e. `esp32`, `esp32s2`, and `esp32s3`.
 * `devel/binutils-esp32ulp` compiles an example in `esp-idf` fine
 * `devel/binutils-esp32s2ulp` should work but no example in `esp-idf` `master`
   branch
-* A package repository is now available at [Releases](../releases).
 
 ## Usage
 
-You can install packages either by building from source, or using a package
-repository.
+You can install packages by building from source.
 
 ### Building from source
 
 Copy the repository to your ports tree (use [`ports-mgmt/portshaker`](https://www.freshports.org/ports-mgmt/portshaker/)).
 
-The port has `FLAVOR`s, `idf4`, `idf41`, and `idf42` Choose one (if
-you are trying to build an Arduino project, choose the esp-idf version your
-Arduino version requires).
+The port has `FLAVOR`s, such as `idf53`. Choose one (if you are trying to
+build an Arduino project, choose the esp-idf version your Arduino version
+requires).
 
 ```console
 cd /usr/ports/devel/xtensa-esp32-elf
-make FLAVOR="idf44"
-make install FLAVOR="idf44"
+make FLAVOR="idf52"
+make install FLAVOR="idf52"
 ```
 
 The files are installed under `${PREFIX}/xtensa-esp32-elf-${FLAVOR}`, usually
