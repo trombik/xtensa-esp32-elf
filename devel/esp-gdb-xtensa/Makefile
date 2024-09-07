@@ -19,7 +19,7 @@ LIB_DEPENDS= \
 		libxxhash.so:devel/xxhash
 
 WWW=	https://github.com/espressif/binutils-gdb
-USES=	gmake ncurses iconv python gettext-runtime
+USES=	gmake ncurses iconv python gettext-runtime pkgconfig
 USE_GITHUB=	yes
 USE_GCC=	yes
 
