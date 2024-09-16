@@ -1,5 +1,3 @@
-# Created by: Craig Leres <leres@freebsd.org>
-
 PORTNAME?=	xtensa-esp-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/_/./}
 CATEGORIES=	devel
