@@ -2,7 +2,6 @@
 
 PORTNAME?=	xtensa-esp-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/_/./}
-#PORTREVISION=	3
 CATEGORIES=	devel
 MASTER_SITES=
 DISTFILES=
@@ -22,7 +21,8 @@ BUILD_DEPENDS=	bash:shells/bash \
 		gperf:devel/gperf \
 		gsed:textproc/gsed \
 		help2man:misc/help2man \
-		makeinfo:print/texinfo
+		makeinfo:print/texinfo \
+		${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
 
 FLAVORS?=	idf53
 FLAVOR?=	${FLAVORS:[1]}
@@ -33,16 +33,26 @@ FLAVOR?=	${FLAVORS:[1]}
 # XXX use ncurses, which is required by gdb (libtinfow)
 USES=		autoreconf:build bison gmake libtool python:3.8+ gettext-runtime iconv:wchar_t ncurses:port
 
-BUILD_DEPENDS+=	${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
+# esp-toolchain-bin-wrappers requires rust and cargo. USES=cargo cannot be
+# used because the build process is significantly different from regular cargo
+# build.
 CARGO?=		${LOCALBASE}/bin/cargo
 CARGO_BUILD_TARGET=	x86_64-unknown-freebsd
 
 .if ${FLAVOR} == idf53
+# the version of the toolchain. see tools/tools.json in espressif/esp-idf.
 ESPRESSIF_VERSION=	esp-13.2.0_20240530
+
+# the version of gcc
 ESPRESSIF_GCC_VERSION=	13.2.0
+
+# the git tags to use crosstool.config. see
+# samples/xtensa-esp-elf/crosstool.config in espressif/crosstool-NG
 ESPRESSIF_GCC_TAG=	esp-13.2.0_20240530
 ESPRESSIF_NEWLIB_TAG=	esp-4.3.0_20240530
 ESPRESSIF_BINUTILS_TAG=	esp-2.41.0_20240530
+
+# git submodules tags to use. see .gitmodules in espressif/crosstool-NG.
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 XTENSA_DYNCONFIG_TAGNAME=	c545876
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	62776e9
@@ -108,7 +118,8 @@ XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPER
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/target/release/xtensa-toolchian-wrapper
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS=	esp32 esp32s2 esp32s3
 
-# see esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/Cargo.toml
+# cargo crates for esp-toolchain-bin-wrappers. see
+# esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/Cargo.toml
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES=	\
 	rust-lang-nursery:lazy-static.rs:1.4.0:source107:lazy_static \
 	rust-lang:libc:0.2.147:source108:libc
@@ -161,6 +172,7 @@ BUILD_ENV+=	CT_ALLOW_BUILD_AS_ROOT_SURE=y
 # execution of bash fails. this workaround is obtained from devel/ncurses
 BUILD_ENV+=	cf_cv_ld_searchpath="${LOCALBASE}/lib /usr/lib /lib"
 
+# variables for platformio metadata.
 XTENSA_PLATFORMIO_TOOLCHAIN_OWNER=	espressif
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	${PORTNAME}
 XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	${ESPRESSIF_GCC_VERSION}_${ESPRESSIF_VERSION:S/esp-//}
@@ -249,7 +261,7 @@ pre-build:
 do-build:
 	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
 
-# see .gitlab-ci.yml
+# see .gitlab-ci.yml in espressif/crosstool-NG
 	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
 .if ${PORTNAME} == xtensa-esp-elf
 	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR} && \
