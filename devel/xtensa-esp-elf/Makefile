@@ -283,10 +283,10 @@ do-install:
 		${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
 	${MV} ${STAGEDIR}${PREFIX}/${PORTNAME} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}
 	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/bfd-plugins/libdep.so
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/xtensa-esp-elf/${ESPRESSIF_GCC_VERSION}/plugin/libcc1plugin.so.0.0.0
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/xtensa-esp-elf/${ESPRESSIF_GCC_VERSION}/plugin/libcp1plugin.so.0.0.0
+	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcc1plugin.so.0.0.0
+	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcp1plugin.so.0.0.0
 	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/xtensa-esp-elf/${ESPRESSIF_GCC_VERSION}/plugin/gengtype
+	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/gengtype
 .if ${PORTNAME} == xtensa-esp-elf
 	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}${PREFIX}/lib/xtensa_*.so
 .endif
