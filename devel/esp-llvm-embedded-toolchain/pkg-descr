@@ -1,0 +1,4 @@
+This repository contains build scripts and auxiliary material for building a
+bare-metal LLVM based toolchain targeting ESP.
+
+The port is required to build Rust for ESP.
