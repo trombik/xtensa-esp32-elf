@@ -1,0 +1,277 @@
+---
+name: Build all ports in the repository
+on:
+  - push
+env:
+   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  list-ports:
+    runs-on: ubuntu-latest
+    outputs:
+      PORTS_TO_BUILD_JSON: ${{ steps.list_ports_to_build.outputs.PORTS_TO_BUILD_JSON }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create a list of ports to build
+        id: list_ports_to_build
+        shell: sh
+        run: |
+          # find ports in the repository and make it a list of one line
+          # separated by a space.
+          PORTS_TO_BUILD=`find * -type d -maxdepth 1 -mindepth 1 | tr '\n' ' ' | sed -e 's/ $//'`
+
+          # create a JSON from the list
+          PORTS_TO_BUILD_JSON=`jq -n -c -M --arg V "${PORTS_TO_BUILD}" '{ PORT: ($V | split(" ")) }'`
+
+          # pass the JSON to other jobs
+          echo "PORTS_TO_BUILD_JSON=${PORTS_TO_BUILD_JSON}" >> "${GITHUB_OUTPUT}"
+          cat "${GITHUB_OUTPUT}"
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - list-ports
+    strategy:
+      # use matrix so that the total time of build does not exceed max job (6
+      # hours) and workflow time (35 days).
+      # https://docs.github.com/en/actions/administering-github-actions/usage-limits-billing-and-administration
+      #
+      # each job builds one port in the repository
+      matrix: ${{ fromJSON(needs.list-ports.outputs.PORTS_TO_BUILD_JSON) }}
+
+      # do not cancel other jobs in the matrix when a job fails.
+      fail-fast: false
+    steps:
+      - name: Maximize build space
+        if: runner.os == 'Linux'
+        uses: AdityaGarg8/remove-unwanted-software@8831c82abf29b34eb2caac48d5f999ecfc0d8eef
+        with:
+          remove-android: 'true'
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          remove-large-packages: 'true'
+          remove-cached-tools: 'true'
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create a safe port name from matrix.PORT
+        shell: sh
+        run: |
+          SAFE_PORT_NAME=`echo -n "${{ matrix.PORT }}" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g'`
+          echo "SAFE_PORT_NAME=${SAFE_PORT_NAME}" >> "${GITHUB_ENV}"
+
+      - name: Download packages
+        id: download-packages
+        uses: dawidd6/action-download-artifact@v6
+        with:
+
+          # download packages cache from previous workflow run
+          workflow: poudriere.yml
+          workflow_conclusion: completed
+          name: packages-cache
+          path: packages
+          if_no_artifact_found: warn
+
+      - name: Download ccache
+        uses: dawidd6/action-download-artifact@v6
+        with:
+
+          # download ccache cache from previous workflow run
+          workflow: poudriere.yml
+          workflow_conclusion: completed
+          name: ccache-cache-${{ env.SAFE_PORT_NAME }}
+          path: ccache
+          if_no_artifact_found: warn
+
+      - name: poudriere bulk
+        id: make
+        uses: cross-platform-actions/action@v0.25.0
+        with:
+          operating_system: freebsd
+          version: '14.1'
+          image_url: https://github.com/trombik/freebsd-builder-poudriere/releases/download/v1.0.7/freebsd-14.1-x86-64.qcow2
+          sync_files: true
+          run: |
+            set -x
+            set -e
+
+            df -h -tufs
+            tree .
+            poudriere ports -l
+            poudriere jail -l
+
+            JAIL_NAME_VERSION=`uname -r | sed -E -e 's/-(CURRENT|RELEASE).*//' -e 's/\.//'`
+            JAIL_NAME_ARCH=`uname -m`
+            JAIL_NAME="${JAIL_NAME_VERSION}${JAIL_NAME_ARCH}"
+            PORTS_NAME="default"
+            OVERLAY_DIR=`realpath .`
+            PORT_TO_BUILD=${{ matrix.PORT }}
+            CCACHE_DIR=/var/cache/ccache
+
+            # disable tmpfs to save memory
+            echo USE_TMPFS=no | sudo tee -a /usr/local/etc/poudriere.conf
+            echo "===> /usr/local/etc/poudriere.conf"
+            cat /usr/local/etc/poudriere.conf
+
+            # avoid crushing guest OS due to running out of disk space and
+            # memory
+            MAX_JOBS=1
+
+            # avoid "fatal: detected dubious ownership in repository at ..."
+            sudo chown -R root:wheel "${OVERLAY_DIR}"
+
+            # create an overlay
+            sudo poudriere ports -c -p overlay -B "${{ env.BRANCH_NAME }}" -m git+file -U "${OVERLAY_DIR}"
+            poudriere ports -l
+
+            # build pkg, which creates data/packages/${JAIL_NAME}-${PORTS_NAME}/All
+            # so that packages cache can be extracted under the directory.
+            # the `All` directory is a symlink and computed by poudriere.
+            sudo poudriere bulk -j "${JAIL_NAME}" -b latest -J "${MAX_JOBS}" ports-mgmt/pkg
+            tree "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All"
+
+            # pre-fill packages cache
+            if [ -d packages ]; then
+              ls -al packages
+              cp -R packages/* "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All/"
+              rm -rf packages
+            fi
+
+            # pre-fill ccache cache
+            if [ -d ccache ]; then
+              ls -al ccache
+              sudo rm -rf "${CCACHE_DIR}"
+              sudo mv ccache "${CCACHE_DIR}"
+              sudo chmod -R root:wheel "${CCACHE_DIR}"
+
+              # set max_size to less than 2GB.
+              # dawidd6/action-download-artifact has 2GB limit in size.
+              # https://github.com/dawidd6/action-download-artifact/issues/201
+              sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -o max_size=1.9G
+              sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
+              sudo cat "${CCACHE_DIR}/ccache.conf"
+            else
+              sudo mkdir -p "${CCACHE_DIR}"
+            fi
+
+            # build the ports with the overlay (-o) and binary packages from
+            # PACKAGE_FETCH_URL (-b). Test the port with Q/A checks (-Ct). use
+            # `true` to prevent failure on build failures. the job will fail
+            # later if any build fails. limit the number of job to MAX_JOBS.
+            sudo poudriere bulk -j "${JAIL_NAME}" -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD} || true
+
+            # collect the logs. freebsd-vm will copy them back to the host OS.
+            tree "/usr/local/poudriere/data/logs/bulk/${JAIL_NAME}-${PORTS_NAME}/latest/logs"
+            sudo cp -R "/usr/local/poudriere/data/logs/bulk/${JAIL_NAME}-${PORTS_NAME}/latest/logs" ${OVERLAY_DIR}/logs
+
+            # collect the built packages
+            sudo cp -RL "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All" "${OVERLAY_DIR}/packages"
+
+            # collect ccache cache
+            sudo cp -R "${CCACHE_DIR}" ccache
+            tree ccache
+
+            df -h -tufs
+
+      - name: upload logs
+        id: logs-upload-step
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ env.SAFE_PORT_NAME }}
+          path: logs/
+
+      - name: upload packages
+        id: packages-upload-step
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ env.SAFE_PORT_NAME }}
+          path: packages/
+
+      - name: upload ccache cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: ccache-${{ env.SAFE_PORT_NAME }}
+          path: ccache
+
+      - name: Fail if any build failed
+        shell: sh
+        run: |
+          tree .
+          # logs under `errors` are symlink, not file
+          ERROR_LOG_FILES=`find logs/errors -type l -name '*.log'`
+          echo "ERROR_LOG_FILES: ${ERROR_LOG_FILES}"
+          FAILED_PACKAGES=""
+          for F in ${ERROR_LOG_FILES}; do
+            FAILED_PACKAGE=`basename "${F}" | sed -e 's/\.log//'`
+            FAILED_PACKAGES="${FAILED_PACKAGES} ${FAILED_PACKAGE}"
+          done
+          echo "${FAILED_PACKAGES}" > failed_packages.txt
+          echo "===> Failed package"
+          cat failed_packages.txt
+
+          echo "Logs are available in an artifact. ID: ${{ steps.logs-upload-step.outputs.artifact-id }}"
+          echo "Packages are available in an artifact. ID: ${{ steps.packages-upload-step.outputs.artifact-id }}"
+
+          if [ ! -z "${FAILED_PACKAGES}" ]; then
+            echo "::warning building ${{ matrix.PORT }} failed to build"
+          fi
+
+  store-packages:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Download built packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: packages-*
+          merge-multiple: true
+
+      - name: List package cache
+        shell: sh
+        run: |
+          tree packages
+
+      - name: Upload packages cache for future builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-cache
+          path: packages
+
+  conclude-result:
+    runs-on: ubuntu-latest
+    needs:
+      - store-packages
+    steps:
+      - name: Download logs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: logs-*
+          merge-multiple: true
+
+      - name: Fail if any build failed
+        shell: sh
+        run: |
+          EXIT_STATUS=0
+          tree logs
+
+          # logs under `errors` are symlink, not file
+          ERROR_LOG_FILES=`find logs/errors -type l -name '*.log'`
+          echo "ERROR_LOG_FILES: ${ERROR_LOG_FILES}"
+          FAILED_PACKAGES=""
+          for F in ${ERROR_LOG_FILES}; do
+            FAILED_PACKAGE=`basename "${F}" | sed -e 's/\.log//'`
+            FAILED_PACKAGES="${FAILED_PACKAGES} ${FAILED_PACKAGE}"
+          done
+          echo "${FAILED_PACKAGES}" > failed_packages.txt
+          echo "===> Failed package"
+          cat failed_packages.txt
+          if [ ! -z "${FAILED_PACKAGES}" ]; then
+            echo "::error building ${{ matrix.PORT }} failed to build"
+            EXIT_STATUS=1
+          fi
+          exit "${EXIT_STATUS}"
