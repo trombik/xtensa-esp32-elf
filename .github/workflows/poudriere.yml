@@ -114,6 +114,29 @@ jobs:
 
             # disable tmpfs to save memory
             echo USE_TMPFS=no | sudo tee -a /usr/local/etc/poudriere.conf
+
+            # about ALLOW_MAKE_JOBS_PACKAGES and MAX_JOBS:
+            #
+            # with ALLOW_MAKE_JOBS_PACKAGES, it becomes hard to debug builds.
+            # logs from parallel jobs are mixed and hard to identify issues.
+            #
+            # in some cases, builds fail when MAX_JOBS is greater than 1. an
+            # example is esp-llvm-embedded-toolchain-* and xtensa-esp-elf-*.
+            #
+            # when a build fails because of out-of-memory or "No space left on
+            # device", the GitHub Actions job is killed abruptly, meaning the
+            # commands after the running command in the job will not be
+            # executed. that also means packages and ccache cache created in
+            # the job will not be used in future workflows.
+            #
+            # tweak them carefully if ALLOW_MAKE_JOBS_PACKAGES="" and
+            # MAX_JOBS=1 do not work until all the jobs in the workflow
+            # complete. it does not matter if a port fails to built. the point
+            # is, all the jobs in the workflow must finish.  after that,
+            # packages and ccache cache might help future builds.
+
+            # allow MAX_JOBS in ports which take longer to build
+            echo ALLOW_MAKE_JOBS_PACKAGES="\"cmake-core-* esp-llvm-embedded-toolchain-* xtensa-esp32-elf-* xtensa-esp-elf-* riscv32-esp-elf-*\"" | sudo tee -a /usr/local/etc/poudriere.conf
             echo "===> /usr/local/etc/poudriere.conf"
             cat /usr/local/etc/poudriere.conf
 
