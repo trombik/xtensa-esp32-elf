@@ -6,7 +6,7 @@ FLAVOR?=	${FLAVORS:[1]}
 .if ${FLAVOR} == idf53
 MASTERDIR=	${.CURDIR}/../xtensa-esp-elf
 .else
-MASTERDIR=	${.CURDIR}/../xtensa-esp32-elf
+MASTERDIR=	${.CURDIR}/../xtensa-esp32-elf-legacy
 .endif
 
 .include "${MASTERDIR}/Makefile"
