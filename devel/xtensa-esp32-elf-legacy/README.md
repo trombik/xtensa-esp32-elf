@@ -1,4 +1,4 @@
-## `devel/xtensa-esp32-elf` and `devel/xtensa-esp-elf`
+## `devel/xtensa-esp32-elf-legacy` and `devel/xtensa-esp-elf`
 
 Updated port of `devel/xtensa-esp32-elf`. This port will not be merged to the
 official ports tree. See bug [251659](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=251659).
@@ -39,7 +39,7 @@ build an Arduino project, choose the esp-idf version your Arduino version
 requires).
 
 ```console
-cd /usr/ports/devel/xtensa-esp32-elf
+cd /usr/ports/devel/xtensa-esp32-elf-legacy
 make FLAVOR="idf52"
 make install FLAVOR="idf52"
 ```
@@ -94,7 +94,7 @@ Set relevant environment variables, such as `IDF_PATH`.
 Add `bin` directory of the package to `PATH` environment variable.
 
 ```console
-export PATH=${PATH}:/usr/local/xtensa-esp32-elf-idf4/bin
+export PATH=${PATH}:/usr/local/xtensa-esp32-elf-idf52/bin
 ```
 
 If you have used the old (without `FLAVOR`) port, make sure to clean the
