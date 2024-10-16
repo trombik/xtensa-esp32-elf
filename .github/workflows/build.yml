@@ -45,3 +45,10 @@ jobs:
           # pass the JSON to other jobs
           echo "PORTS_TO_BUILD_JSON=${PORTS_TO_BUILD_JSON}" >> "${GITHUB_OUTPUT}"
           cat "${GITHUB_OUTPUT}"
+
+  build-ports:
+    runs-on: ubuntu-latest
+      - name: Build ports
+        needs: list-ports
+        run: |
+          echo "${{ fromJSON(needs.list-ports.outputs.PORTS_TO_BUILD_JSON }}"
