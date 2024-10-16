@@ -299,8 +299,8 @@ jobs:
           EXIT_STATUS=0
           tree logs
 
-          # logs under `errors` are symlink, not file
-          ERROR_LOG_FILES=`find logs/errors -type l -name '*.log'`
+          # logs under `errors` are files, not symlinks
+          ERROR_LOG_FILES=`[ -d logs/errors ] && find logs/errors -type f -name '*.log'`
           echo "ERROR_LOG_FILES: ${ERROR_LOG_FILES}"
           FAILED_PACKAGES=""
           for F in ${ERROR_LOG_FILES}; do
