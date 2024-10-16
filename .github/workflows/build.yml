@@ -1,0 +1,133 @@
+---
+name: Look for changed ports and built them
+on:
+  - push
+
+jobs:
+  list-ports:
+    runs-on: ubuntu-latest
+    outputs:
+      PORTS_TO_BUILD: ${{ steps.list-ports-to-build.outputs.PORTS_TO_BUILD }}
+      BUILD_ALL_PORTS: ${{ steps.build-all-ports.outputs.BUILD_ALL_PORTS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Filter changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          list-files: shell
+          filters: |
+            ports-to-build:
+              - "[0-9a-zA-Z]*/**"
+            ci:
+              - ".github/workflows/*.yml"
+
+      - name: Build all ports in the repository
+        if: steps.filter.outputs.ci == 'true'
+        id: build-all-ports
+        run: |
+          echo "steps.filter.outputs.ci_files: '${{ steps.filter.outputs.ci_files }}'"
+          echo "::notice ::Building all the ports in the repository"
+
+          # find ports in the repository and make it a list of one line
+          # separated by a space.
+          PORTS_TO_BUILD=`find * -type d -maxdepth 1 -mindepth 1 | tr '\n' ' ' | sed -e 's/ $//'`
+
+          # pass the JSON to other jobs
+          echo "BUILD_ALL_PORTS=${PORTS_TO_BUILD}" >> "${GITHUB_OUTPUT}"
+          cat "${GITHUB_OUTPUT}"
+
+      - name: List ports-to-build
+        if: steps.filter.outputs.ports-to-build == 'true' && steps.filter.outputs.ci != 'true'
+        id: list-ports-to-build
+        run: |
+          echo "steps.filter.outputs.ports-to-build_files: '${{ steps.filter.outputs.ports-to-build_files }}'"
+
+          # find changed ports in the repository and make it a list of one
+          # line separated by a space.
+          for F in ${{ steps.filter.outputs.ports-to-build_files }}; do
+            PORTS_TO_BUILD="${PORTS_TO_BUILD} `echo ${F} | cut -f 1,2 -d '/' | sort -u | grep '/'`
+          done
+          PORTS_TO_BUILD=`echo ${PORTS_TO_BUILD} | tr '\n' ' ' | sed -e 's/ $//'`
+          echo "::notice ::Building ${PORTS_TO_BUILD}"
+
+          # pass the JSON to other jobs
+          echo "PORTS_TO_BUILD=${PORTS_TO_BUILD}" >> "${GITHUB_OUTPUT}"
+          cat "${GITHUB_OUTPUT}"
+
+  filter-devel-esp-llvm-embedded-toolchain:
+
+    # XXX devel/esp-llvm-embedded-toolchain depends on riscv32-esp-elf and xtensa-esp-elf.
+    # that means the two dependencies must be built before
+    # devel/esp-llvm-embedded-toolchain.  it takes more than 6 hours and the
+    # build is canceled. to avoid it, it is necessary:
+    #
+    # * to build the two
+    # * to cache the built packages
+    # * to build devel/esp-llvm-embedded-toolchain with the cache pre-filled
+    #
+    # in the first run, build all packages. in the second run, build
+    # devel/esp-llvm-embedded-toolchain
+    runs-on: ubuntu-latest
+    needs: list-ports
+    outputs:
+      PORTS_TO_BUILD: ${{ steps.filter.outputs.PORTS_TO_BUILD }}
+      PORTS_TO_BUILD_ORIG: ${{ steps.filter.outputs.PORTS_TO_BUILD_ORIG }}
+    steps:
+      - name: Filter devel/esp-llvm-embedded-toolchain from PORTS_TO_BUILD
+        id: filter
+        shell: sh
+        run: |
+          if [ ! -z "${{ needs.list-ports.outputs.BUILD_ALL_PORTS }}" ]; then
+            PORTS_TO_BUILD="${{ needs.list-ports.outputs.BUILD_ALL_PORTS }}"
+          elif [ ! -z "${{ needs.list-ports.outputs.PORTS_TO_BUILD }}" ]; then
+            PORTS_TO_BUILD="${{ needs.list-ports.outputs.PORTS_TO_BUILD }}"
+          else
+            echo "Building none"
+          fi
+          PORTS_TO_BUILD_ORIG="${PORTS_TO_BUILD}"
+          PORTS_TO_BUILD=`echo "${PORTS_TO_BUILD}" | \
+            tr ' ' '\n' | \
+            grep -v "devel/esp-llvm-embedded-toolchain" | \
+            tr '\n' ' ' | \
+            sed -e 's/ $//'`
+          echo "::notice ::Building ${PORTS_TO_BUILD}"
+          echo "PORTS_TO_BUILD=${PORTS_TO_BUILD}" >> "${GITHUB_OUTPUT}"
+          echo "PORTS_TO_BUILD_ORIG=${PORTS_TO_BUILD_ORIG}" >> "${GITHUB_OUTPUT}"
+          cat "${GITHUB_OUTPUT}"
+
+  build-ports:
+    name: Build ports (1st run)
+    needs: filter-devel-esp-llvm-embedded-toolchain
+    uses: ./.github/workflows/poudriere.yml
+    with:
+      ports-to-build: ${{ needs.filter-devel-esp-llvm-embedded-toolchain.outputs.PORTS_TO_BUILD }}
+
+  see-if-devel-esp-llvm-embedded-toolchain-needs-to-be-built:
+    name: See if devel/esp-llvm-embedded-toolchain needs to built
+    runs-on: ubuntu-latest
+    needs: filter-devel-esp-llvm-embedded-toolchain
+    outputs:
+      RESULT: ${{ steps.see-if-devel-esp-llvm-embedded-toolchain-needs-to-be-built.outputs.RESULT }}
+    steps:
+      - name: See if devel/esp-llvm-embedded-toolchain needs to be built
+        id: see-if-devel-esp-llvm-embedded-toolchain-needs-to-be-built
+        shell: sh
+        run: |
+          PORTS_TO_BUILD_ORIG="${{ needs.filter-devel-esp-llvm-embedded-toolchain.outputs.PORTS_TO_BUILD_ORIG }}"
+          RESULT=`echo "${PORTS_TO_BUILD_ORIG}" | tr ' ' '\n' | grep devel/esp-llvm-embedded-toolchain`
+          if [ -z "${RESULT}" ]; then
+            echo "RESULT=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+  build-devel-esp-llvm-embedded-toolchain:
+    name: Build devel/esp-llvm-embedded-toolchain (2nd run)
+    needs:
+      - see-if-devel-esp-llvm-embedded-toolchain-needs-to-be-built
+      - build-ports
+    if: ${{ needs.see-if-devel-esp-llvm-embedded-toolchain-needs-to-be-built.outputs.RESULT }}
+    uses: ./.github/workflows/poudriere.yml
+    with:
+      ports-to-build: devel/esp-llvm-embedded-toolchain

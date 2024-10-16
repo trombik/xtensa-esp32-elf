@@ -1,5 +1,5 @@
 ---
-name: Build all ports in the repository
+name: Build ports in the repository
 
 # this workflow works when:
 #
@@ -15,38 +15,35 @@ name: Build all ports in the repository
 # the VM image and the script to build it can be found at:
 # https://github.com/trombik/freebsd-builder-poudriere
 on:
-  - push
+  workflow_call:
+    inputs:
+      ports-to-build:
+        description: space separated `category/name`
+        required: true
+        type: string
+
 env:
    BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
-  list-ports:
+  convert:
     runs-on: ubuntu-latest
     outputs:
-      PORTS_TO_BUILD_JSON: ${{ steps.list_ports_to_build.outputs.PORTS_TO_BUILD_JSON }}
+      PORTS_TO_BUILD_JSON: ${{ steps.to-json.outputs.PORTS_TO_BUILD_JSON }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create a list of ports to build
-        id: list_ports_to_build
+      - name: Convert input to JSON
+        id: to-json
         shell: sh
         run: |
-
-          # find ports in the repository and make it a list of one line
-          # separated by a space.
-          PORTS_TO_BUILD=`find * -type d -maxdepth 1 -mindepth 1 | tr '\n' ' ' | sed -e 's/ $//'`
-
-          # create a JSON from the list
-          PORTS_TO_BUILD_JSON=`jq -n -c -M --arg V "${PORTS_TO_BUILD}" '{ PORT: ($V | split(" ")) }'`
-
-          # pass the JSON to other jobs
+          echo "${{ inputs.ports-to-build }}"
+          PORTS_TO_BUILD_JSON=`jq -n -c -M --arg V "${{ inputs.ports-to-build }}" '{ PORT: ($V | split(" ")) }'`
           echo "PORTS_TO_BUILD_JSON=${PORTS_TO_BUILD_JSON}" >> "${GITHUB_OUTPUT}"
           cat "${GITHUB_OUTPUT}"
+
   build:
     runs-on: ubuntu-latest
     needs:
-      - list-ports
+      - convert
     strategy:
 
       # use matrix so that the total time of build does not exceed max job (6
@@ -54,7 +51,7 @@ jobs:
       # https://docs.github.com/en/actions/administering-github-actions/usage-limits-billing-and-administration
       #
       # each job builds one port in the repository
-      matrix: ${{ fromJSON(needs.list-ports.outputs.PORTS_TO_BUILD_JSON) }}
+      matrix: ${{ fromJSON(needs.convert.outputs.PORTS_TO_BUILD_JSON) }}
 
       # do not cancel other jobs in the matrix when a job fails.
       fail-fast: false
