@@ -85,7 +85,8 @@ jobs:
           # download packages cache from previous workflow run
           workflow: poudriere.yml
           workflow_conclusion: completed
-          name: packages-cache
+          name: packages-cache-.*
+          name_is_regexp: true
           path: packages
           if_no_artifact_found: warn
 
@@ -275,10 +276,17 @@ jobs:
         run: |
           tree packages
 
+      - name: Create unique SHA-256 of inputs
+        id: sha256
+        shell: sh
+        run: |
+          PORTS_TO_BUILD_SHA256=`echo -n ${{ github.inputs.ports-to-build }} | sha256sum`
+          echo "$PORTS_TO_BUILD_SHA256=${PORTS_TO_BUILD_SHA256}" >> "${GITHUB_OUTPUT}"
+
       - name: Upload packages cache for future builds
         uses: actions/upload-artifact@v4
         with:
-          name: packages-cache
+          name: packages-cache--${{ steps.sha256.outputs.PORTS_TO_BUILD_SHA256 }}
           path: packages
 
   conclude-result:
