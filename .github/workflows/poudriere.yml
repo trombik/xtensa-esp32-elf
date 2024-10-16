@@ -1,5 +1,19 @@
 ---
 name: Build all ports in the repository
+
+# this workflow works when:
+#
+# * each port in the repository takes less than 6 hours to build, including
+# dependencies
+# * each port in the repository does not use a large amount of memory
+# * each port in the repository does not require a large disk space (around 20
+# GB)
+#
+# because ports are built in a QEMU VM. It probably works on a large GitHub
+# runner without above limitations.
+#
+# the VM image and the script to build it can be found at:
+# https://github.com/trombik/freebsd-builder-poudriere
 on:
   - push
 env:
@@ -18,6 +32,7 @@ jobs:
         id: list_ports_to_build
         shell: sh
         run: |
+
           # find ports in the repository and make it a list of one line
           # separated by a space.
           PORTS_TO_BUILD=`find * -type d -maxdepth 1 -mindepth 1 | tr '\n' ' ' | sed -e 's/ $//'`
@@ -33,6 +48,7 @@ jobs:
     needs:
       - list-ports
     strategy:
+
       # use matrix so that the total time of build does not exceed max job (6
       # hours) and workflow time (35 days).
       # https://docs.github.com/en/actions/administering-github-actions/usage-limits-billing-and-administration
@@ -119,6 +135,7 @@ jobs:
             #
             # with ALLOW_MAKE_JOBS_PACKAGES, it becomes hard to debug builds.
             # logs from parallel jobs are mixed and hard to identify issues.
+            # you will have to resort to local poudriere run.
             #
             # in some cases, builds fail when MAX_JOBS is greater than 1. an
             # example is esp-llvm-embedded-toolchain-* and xtensa-esp-elf-*.
@@ -224,6 +241,7 @@ jobs:
         shell: sh
         run: |
           tree .
+
           # logs under `errors` are symlink, not file
           ERROR_LOG_FILES=`find logs/errors -type l -name '*.log'`
           echo "ERROR_LOG_FILES: ${ERROR_LOG_FILES}"
@@ -248,7 +266,7 @@ jobs:
     needs:
       - build
     steps:
-      - name: Download built packages
+      - name: Download built packages and merge them
         uses: actions/download-artifact@v4
         with:
           pattern: packages-*
