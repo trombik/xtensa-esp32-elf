@@ -271,6 +271,7 @@ jobs:
         with:
           pattern: packages-*
           merge-multiple: true
+          path: packages
 
       - name: List package cache
         shell: sh
@@ -293,6 +294,7 @@ jobs:
         with:
           pattern: logs-*
           merge-multiple: true
+          path: logs
 
       - name: Fail if any build failed
         shell: sh
