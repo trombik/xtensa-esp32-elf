@@ -52,4 +52,4 @@ jobs:
     steps:
       - name: Build ports
         run: |
-          echo "${{ fromJSON(needs.list-ports.outputs.PORTS_TO_BUILD_JSON) }}"
+          echo "${{ needs.list-ports.outputs.PORTS_TO_BUILD_JSON }}"
