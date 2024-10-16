@@ -1,5 +1,5 @@
 ---
-name: Build all ports in the repository
+name: Build ports in the repository
 
 # this workflow works when:
 #
@@ -18,7 +18,7 @@ on:
   workflow_call:
     inputs:
       ports-to-build:
-        description: A space separated string of ports, in the format of category/name
+        description: A JSON with '{ "PORT": [ "category/name", "category/another" ] }'
         required: false
         type: string
 
@@ -26,25 +26,6 @@ env:
    BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
-  list-ports:
-    runs-on: ubuntu-latest
-    outputs:
-      PORTS_TO_BUILD_JSON: ${{ steps.list_ports_to_build.outputs.PORTS_TO_BUILD_JSON }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create a list of ports to build
-        id: list_ports_to_build
-        shell: sh
-        run: |
-
-          # create a JSON from the list
-          PORTS_TO_BUILD_JSON=`jq -n -c -M --arg V "${{ inputs.ports-to-build }}" '{ PORT: ($V | split(" ")) }'`
-
-          # pass the JSON to other jobs
-          echo "PORTS_TO_BUILD_JSON=${PORTS_TO_BUILD_JSON}" >> "${GITHUB_OUTPUT}"
-          cat "${GITHUB_OUTPUT}"
   build:
     runs-on: ubuntu-latest
     needs:
@@ -56,7 +37,7 @@ jobs:
       # https://docs.github.com/en/actions/administering-github-actions/usage-limits-billing-and-administration
       #
       # each job builds one port in the repository
-      matrix: ${{ fromJSON(needs.list-ports.outputs.PORTS_TO_BUILD_JSON) }}
+      matrix: ${{ fromJSON(inputs.ports-to-build) }}
 
       # do not cancel other jobs in the matrix when a job fails.
       fail-fast: false
