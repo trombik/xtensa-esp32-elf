@@ -64,10 +64,11 @@ jobs:
       - name: Build ports
         shell: sh
         run: |
-          if [ ! -z ${{ needs.list-ports.outputs.BUILD_ALL_PORTS }} ]; then
-            echo "Building ${{ needs.list-ports.outputs.BUILD_ALL_PORTS}}"
-          elif [ -z ${{ needs.list-ports.outputs.PORTS_TO_BUILD }} ]; then
-            echo "Building ${{ needs.list-ports.outputs.PORTS_TO_BUILD}}"
+          set -x
+          if [ ! -z "${{ needs.list-ports.outputs.BUILD_ALL_PORTS }}" ]; then
+            echo "Building ${{ needs.list-ports.outputs.BUILD_ALL_PORTS }}"
+          elif [ -z "${{ needs.list-ports.outputs.PORTS_TO_BUILD }}" ]; then
+            echo "Building ${{ needs.list-ports.outputs.PORTS_TO_BUILD }}"
           else
             echo "Building none"
           fi
