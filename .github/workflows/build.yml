@@ -16,7 +16,8 @@ jobs:
         with:
           list-files: shell
           filters: |
-            ports-to-build: "*/**"
+            ports-to-build:
+              - "[0-9a-zA-Z]/**"
             ci: ".github/workflows/*.yml"
 
       - name: Build all ports in the repository
