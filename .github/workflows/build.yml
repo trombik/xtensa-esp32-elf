@@ -4,7 +4,7 @@ on:
   - push
 
 jobs:
-  list-posts:
+  list-ports:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,7 +16,7 @@ jobs:
         with:
           list-files: shell
           filters: |
-            ports-to-build: "*"
+            ports-to-build: "**"
             ci: ".github/workflows/*.yml"
 
       - name: Build all ports in the repository
