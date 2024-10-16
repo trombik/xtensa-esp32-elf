@@ -48,6 +48,7 @@ jobs:
 
   build-ports:
     runs-on: ubuntu-latest
+    steps:
       - name: Build ports
         needs: list-ports
         run: |
