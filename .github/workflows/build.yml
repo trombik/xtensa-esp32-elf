@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       PORTS_TO_BUILD: ${{ steps.list-ports-to-build.outputs.PORTS_TO_BUILD }}
-      BUILD_ALL_PORTS_JSON: ${{ steps.build-all-ports.outputs.BUILD_ALL_PORTS }}
+      BUILD_ALL_PORTS: ${{ steps.build-all-ports.outputs.BUILD_ALL_PORTS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,10 +64,10 @@ jobs:
       - name: Build ports
         shell: sh
         run: |
-          if [ ! -z needs.list-ports.outputs.BUILD_ALL_PORTS_JSON ]; then
-            echo "Building ${{ needs.list-ports.outputs.BUILD_ALL_PORTS_JSON }}"
-          elif [ -z ${{ needs.list-ports.outputs.PORTS_TO_BUILD_JSON }}; then
-            echo "Building ${{ needs.list-ports.outputs.PORTS_TO_BUILD_JSON }}"
+          if [ ! -z needs.list-ports.outputs.BUILD_ALL_PORTS]; then
+            echo "Building ${{ needs.list-ports.outputs.BUILD_ALL_PORTS}}"
+          elif [ -z ${{ needs.list-ports.outputs.PORTS_TO_BUILD}}; then
+            echo "Building ${{ needs.list-ports.outputs.PORTS_TO_BUILD}}"
           else
             echo "Building none"
           fi
