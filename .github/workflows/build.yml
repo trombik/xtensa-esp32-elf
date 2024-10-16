@@ -37,6 +37,7 @@ jobs:
 
           # pass the JSON to other jobs
           echo "BUILD_ALL_PORTS=${PORTS_TO_BUILD}" >> "${GITHUB_OUTPUT}"
+          cat "${GITHUB_OUTPUT}"
 
       - name: List ports-to-build
         if: steps.filter.outputs.ports-to-build == 'true' && steps.filter.outputs.ci != 'true'
