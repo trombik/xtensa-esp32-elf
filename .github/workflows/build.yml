@@ -23,6 +23,7 @@ jobs:
         if: steps.filter.outputs.ci == 'true'
         run: |
           echo "::notice ::'${{ steps.filter.outputs.ci_files }}'"
+          echo "::notice ::'${{ steps.filter.outputs.ports-to-build_files }}'"
 
       - name: Build ports-to-build
         if: steps.filter.outputs.ports-to-build == 'true' && steps.filter.outputs.ci != 'true'
