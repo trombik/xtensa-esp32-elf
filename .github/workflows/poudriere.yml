@@ -258,7 +258,7 @@ jobs:
           echo "Packages are available in an artifact. ID: ${{ steps.packages-upload-step.outputs.artifact-id }}"
 
           if [ ! -z "${FAILED_PACKAGES}" ]; then
-            echo "::warning building ${{ matrix.PORT }} failed to build"
+          echo "::warning ::building ${{ matrix.PORT }} failed to build. the logs are available at: https://github.com/${{ github.repository }}/actions/runs/${{ github.github.run_id }}/artifacts/${{ steps.packages-upload-step.outputs.artifact-id }}"
           fi
 
   store-packages:
@@ -312,7 +312,7 @@ jobs:
           echo "===> Failed package"
           cat failed_packages.txt
           if [ ! -z "${FAILED_PACKAGES}" ]; then
-            echo "::error building ${{ matrix.PORT }} failed to build"
+            echo "::error ::building ${{ matrix.PORT }} failed to build"
             EXIT_STATUS=1
           fi
           exit "${EXIT_STATUS}"
