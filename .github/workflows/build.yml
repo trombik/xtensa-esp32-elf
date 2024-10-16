@@ -48,8 +48,8 @@ jobs:
 
   build-ports:
     runs-on: ubuntu-latest
+    needs: list-ports
     steps:
       - name: Build ports
-        needs: list-ports
         run: |
           echo "${{ fromJSON(needs.list-ports.outputs.PORTS_TO_BUILD_JSON }}"
