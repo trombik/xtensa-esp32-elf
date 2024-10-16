@@ -84,7 +84,7 @@ jobs:
 
           # download packages cache from previous workflow run
           workflow: poudriere.yml
-          workflow_conclusion: completed
+          workflow_conclusion: in_progress
           name: packages-cache
           path: packages
           if_no_artifact_found: warn
