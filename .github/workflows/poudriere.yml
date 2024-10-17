@@ -97,7 +97,7 @@ jobs:
           # download ccache cache from previous workflow run
           workflow: poudriere.yml
           workflow_conclusion: completed
-          name: ccache-cache-${{ env.SAFE_PORT_NAME }}
+          name: ccache-${{ env.SAFE_PORT_NAME }}
           path: ccache
           if_no_artifact_found: warn
 
