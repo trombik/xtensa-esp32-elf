@@ -284,7 +284,8 @@ jobs:
         shell: sh
         run: |
           PORTS_TO_BUILD_SHA256=`echo -n ${{ github.inputs.ports-to-build }} | sha256sum`
-          echo "$PORTS_TO_BUILD_SHA256=${PORTS_TO_BUILD_SHA256}" >> "${GITHUB_OUTPUT}"
+          echo "PORTS_TO_BUILD_SHA256=${PORTS_TO_BUILD_SHA256}" >> "${GITHUB_OUTPUT}"
+          cat "${GITHUB_OUTPUT}"
 
       - name: Upload packages cache for future builds
         uses: actions/upload-artifact@v4
@@ -308,12 +309,15 @@ jobs:
         shell: sh
         run: |
           EXIT_STATUS=0
+          ERROR_LOG_FILES=""
+          FAILED_PACKAGES=""
           tree logs
 
           # logs under `errors` are files, not symlinks
-          ERROR_LOG_FILES=`[ -d logs/errors ] && find logs/errors -type f -name '*.log'`
+          if [ -d logs/errors ]; then
+            ERROR_LOG_FILES=`find logs/errors -type f -name '*.log'`
+          fi
           echo "ERROR_LOG_FILES: ${ERROR_LOG_FILES}"
-          FAILED_PACKAGES=""
           for F in ${ERROR_LOG_FILES}; do
             FAILED_PACKAGE=`basename "${F}" | sed -e 's/\.log//'`
             FAILED_PACKAGES="${FAILED_PACKAGES} ${FAILED_PACKAGE}"
