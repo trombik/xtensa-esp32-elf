@@ -180,6 +180,9 @@ jobs:
             fi
 
             # pre-fill ccache cache
+            #
+            # TQODO install ccache when building the VM image
+            ASSUME_ALWAYS_YES=yes pkg install ccache
             if [ -d ccache ]; then
               ls -al ccache
               sudo rm -rf "${CCACHE_DIR}"
