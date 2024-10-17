@@ -290,7 +290,7 @@ jobs:
       - name: Upload packages cache for future builds
         uses: actions/upload-artifact@v4
         with:
-          name: packages-cache--${{ steps.sha256.outputs.PORTS_TO_BUILD_SHA256 }}
+          name: packages-cache-${{ steps.sha256.outputs.PORTS_TO_BUILD_SHA256 }}
           path: packages
 
   conclude-result:
