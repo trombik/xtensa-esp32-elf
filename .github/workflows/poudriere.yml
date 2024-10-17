@@ -283,7 +283,7 @@ jobs:
         id: sha256
         shell: sh
         run: |
-          PORTS_TO_BUILD_SHA256=`echo -n ${{ github.inputs.ports-to-build }} | sha256sum`
+          PORTS_TO_BUILD_SHA256=`echo -n ${{ github.inputs.ports-to-build }} | sha256sum | cut -f 1 -d ' '`
           echo "PORTS_TO_BUILD_SHA256=${PORTS_TO_BUILD_SHA256}" >> "${GITHUB_OUTPUT}"
           cat "${GITHUB_OUTPUT}"
 
