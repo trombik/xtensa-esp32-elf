@@ -85,10 +85,16 @@ jobs:
           # download packages cache from previous workflow run
           workflow: poudriere.yml
           workflow_conclusion: completed
-          name: packages-cache-.*
+          name: packages-.*
           name_is_regexp: true
           path: packages
           if_no_artifact_found: warn
+
+      - name: tree packages
+        run: |
+          if [ -d packages ]; then
+            tree packages
+          fi
 
       - name: Download ccache
         uses: dawidd6/action-download-artifact@v6
