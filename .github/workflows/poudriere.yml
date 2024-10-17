@@ -184,7 +184,7 @@ jobs:
               ls -al ccache
               sudo rm -rf "${CCACHE_DIR}"
               sudo mv ccache "${CCACHE_DIR}"
-              sudo chmod -R root:wheel "${CCACHE_DIR}"
+              sudo chown -R root:wheel "${CCACHE_DIR}"
 
               # set max_size to less than 2GB.
               # dawidd6/action-download-artifact has 2GB limit in size.
