@@ -108,7 +108,9 @@ jobs:
   see-if-devel-esp-llvm-embedded-toolchain-needs-to-be-built:
     name: See if devel/esp-llvm-embedded-toolchain needs to built
     runs-on: ubuntu-latest
-    needs: build-ports
+    needs:
+      - build-ports
+      - filter-devel-esp-llvm-embedded-toolchain
     outputs:
       RESULT: ${{ steps.see-if-devel-esp-llvm-embedded-toolchain-needs-to-be-built.outputs.RESULT }}
     steps:
