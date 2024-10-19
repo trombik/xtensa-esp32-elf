@@ -137,6 +137,14 @@ EXTRACT_ONLY+=	${DISTNAME}${EXTRACT_SUFX} \
 	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG}_GH0.tar.gz \
 	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}_GH0.tar.gz
 
+# directories under ${WRKDIR} to remove before do-install target.
+# XXX on GitHub Actions runners, disk space is limited and the build fails
+# during do-install. Remeving these directories saves 1.6 GB.
+ESP_REMOVE_BEFORE_DO_INSTALL=	\
+	espressif-gcc-${ESPRESSIF_GCC_TAG} \
+	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG} \
+	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}
+
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
 XTENSA_ROOT_DIR=	${PORTNAME}-${FLAVOR}
 
@@ -277,6 +285,18 @@ do-build:
 	${RM} ${BUILD_WRKSRC}/builds/${PORTNAME}/build.log.bz2 \
 		${BUILD_WRKSRC}/builds/${PORTNAME}/lib/charset.alias
 	${FIND} ${BUILD_WRKSRC}/builds/${PORTNAME} -type d | ${XARGS} ${CHMOD} -w
+
+pre-install:
+	@${ECHO_MSG} "===>   Removing ESP_REMOVE_BEFORE_DO_INSTALL"
+	@${ECHO_MSG} "===>   Before"
+	@/bin/df -h -t ufs
+.for D in ${ESP_REMOVE_BEFORE_DO_INSTALL}
+	@if [ -d ${WRKDIR}/${D} ]; then \
+		${RM} -r ${WRKDIR}/${D}; \
+	fi
+.endfor
+	@${ECHO_MSG} "===>   After"
+	@/bin/df -h -t ufs
 
 do-install:
 	cd ${BUILD_WRKSRC}/builds && \
