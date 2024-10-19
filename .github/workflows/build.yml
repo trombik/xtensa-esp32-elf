@@ -26,6 +26,7 @@ jobs:
       - name: List CI files
         if: steps.filter.outputs.ci == 'true'
         id: build-all-ports
+        shell: sh
         run: |
           echo "steps.filter.outputs.ci_files: '${{ steps.filter.outputs.ci_files }}'"
           echo "::notice ::Building all the ports in the repository"
@@ -41,13 +42,14 @@ jobs:
       - name: List changed ports
         if: steps.filter.outputs.ports-to-build == 'true' && steps.filter.outputs.ci != 'true'
         id: list-ports-to-build
+        shell: sh
         run: |
           echo "steps.filter.outputs.ports-to-build_files: '${{ steps.filter.outputs.ports-to-build_files }}'"
 
           # find changed ports in the repository and make it a list of one
           # line separated by a space.
           for F in ${{ steps.filter.outputs.ports-to-build_files }}; do
-            PORTS_TO_BUILD="${PORTS_TO_BUILD} `echo ${F} | cut -f 1,2 -d '/' | sort -u | grep '/'`
+            PORTS_TO_BUILD="${PORTS_TO_BUILD} `echo ${F} | cut -f 1,2 -d '/' | sort -u | grep '/'`"
           done
           PORTS_TO_BUILD=`echo ${PORTS_TO_BUILD} | tr '\n' ' ' | sed -e 's/ $//'`
           echo "::notice ::Building ${PORTS_TO_BUILD}"
