@@ -1,0 +1,4 @@
+rust-src component to build Rust applications for the Espressif chips based on
+RISC-V architecture.
+
+https://docs.esp-rs.org/book/installation/riscv.html

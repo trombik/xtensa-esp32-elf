@@ -4,6 +4,7 @@ COMMENT=	Rust source component for ESP
 
 LIB_DEPENDS=
 NO_ARCH=	yes
+DESCR=	${.CURDIR}/pkg-descr
 
 # see .github/workflows/build-rust-src.yaml in esp-rs/rust-build
 ESPRUST_BUILD_ARGS=	dist rust-src
