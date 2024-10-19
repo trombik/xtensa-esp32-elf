@@ -51,7 +51,7 @@ jobs:
           for F in ${{ steps.filter.outputs.ports-to-build_files }}; do
             PORTS_TO_BUILD="${PORTS_TO_BUILD} `echo ${F} | cut -f 1,2 -d '/' | sort -u | grep '/'`"
           done
-          PORTS_TO_BUILD=`echo ${PORTS_TO_BUILD} | tr '\n' ' ' | sed -e 's/ $//'`
+          PORTS_TO_BUILD=`echo ${PORTS_TO_BUILD} | sort -u | tr '\n' ' ' | sed -e 's/ $//'`
           echo "::notice ::Building ${PORTS_TO_BUILD}"
 
           # pass the JSON to other jobs
