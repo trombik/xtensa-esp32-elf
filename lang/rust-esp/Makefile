@@ -1,10 +1,10 @@
-PORTNAME=	rust-esp
+PORTNAME?=	rust-esp
 DISTVERSION=	${ESPRUST_VERSION}
 CATEGORIES=	lang
 MASTER_SITES=
 
 MAINTAINER=	y@trombik.org
-COMMENT=	Rust for the xtensa architecture by espressif
+COMMENT?=	Rust for the xtensa architecture by espressif
 WWW=	https://github.com/esp-rs/rust
 
 LICENSE=	MIT
@@ -14,19 +14,24 @@ DISTVERSIONPREFIX=	esp-
 
 # the build process uses features only available in nightly.
 BUILD_DEPENDS=	rust-nightly>0:lang/rust-nightly
-LIB_DEPENDS=	libonig.so:devel/oniguruma \
+LIB_DEPENDS?=	libonig.so:devel/oniguruma \
 	libssh2.so:security/libssh2 \
 	libgit2.so:devel/libgit2
 
-USES+=	python:3.0+ cargo ninja ssl
+USES=	python:3.0+ cargo ninja
+.if ${PORTNAME} == "rust-esp"
+USES+=	ssl
+.endif
+MASTERDIR?=	${.CURDIR}
+
 USE_GITHUB=	yes
 GH_TUPLE=	esp-rs:rust:02368e9
 WITHOUT_LTO=	yes
 
 # to update GH_TUPLE for submodules, run:
 # make patch && make makesubmodule
-MAKEFILE_SUBMODULES=	${.CURDIR}/Makefile.submodule
-.include "${MAKEFILE_SUBMODULES}"
+MAKEFILE_SUBMODULES=	Makefile.submodule
+.include "${MASTERDIR}/${MAKEFILE_SUBMODULES}"
 
 ONLY_FOR_ARCHS=	amd64
 ESPRUST_ARCH=	x86_64
@@ -37,16 +42,16 @@ ESPRUST_COMPONENTS_VERSION=	nightly
 ESPRUST_RUSTUP_COMPONENT=	rust-${ESPRUST_COMPONENTS_VERSION}-${ESPRUST_TUPLE}
 
 # the file name rustup expects
-ESPRUST_RUSTUP_COMPONENT_NAME=	rust-${ESPRUST_VERSION}-${ESPRUST_TUPLE}.tar.xz
+ESPRUST_RUSTUP_COMPONENT_NAME?=	rust-${ESPRUST_VERSION}-${ESPRUST_TUPLE}
 
 # use this to find out the path to the artifact and the name for release by:
 # make -V ESPRUST_RUSTUP_COMPONENT_FULLPATH
 # and
 # make -V ESPRUST_RUSTUP_COMPONENT_NAME
-ESPRUST_RUSTUP_COMPONENT_FULLPATH=	${ESPRUST_DIST_DIR}/${ESPRUST_RUSTUP_COMPONENT_NAME}.tar.xz
+ESPRUST_RUSTUP_COMPONENT_FULLPATH?=	${ESPRUST_DIST_DIR}/${ESPRUST_RUSTUP_COMPONENT_NAME}.tar.xz
 
 # components to extract and install
-ESPRUST_COMPONENTS=	\
+ESPRUST_COMPONENTS?=	\
 	cargo-${ESPRUST_COMPONENTS_VERSION}-${ESPRUST_TUPLE} \
 	clippy-${ESPRUST_COMPONENTS_VERSION}-${ESPRUST_TUPLE} \
 	rust-dev-${ESPRUST_COMPONENTS_VERSION}-${ESPRUST_TUPLE} \
@@ -70,8 +75,8 @@ ESPRUST_ROOT_DIR=	${PORTNAME}
 
 # to update the list of crates, run:
 # sh files/update_crates.sh
-MAKEFILE_CRATES=	${.CURDIR}/Makefile.rust.crates
-.include "${MAKEFILE_CRATES}"
+MAKEFILE_CRATES=	Makefile.rust.crates
+.include "${MASTERDIR}/${MAKEFILE_CRATES}"
 
 # XXX remove duplicates
 CARGO_CRATES!=	(${ECHO} ${CARGO_CRATES} | /usr/bin/tr ' ' '\n' | /usr/bin/sort -u) || ${ECHO} ""
@@ -116,7 +121,7 @@ DISTFILES+=	${F}-${ESPRUST_COMPILER_VERSION}-${ESPRUST_TUPLE}.tar.xz:src_${F:S/-
 ESPRUST_CONFIGURE_SCRIPT=	${WRKSRC}/src/bootstrap/configure.py
 
 # the original configure arguments
-ESPRUST_CONFIGURE_ARGS=	--experimental-targets=Xtensa --release-channel=nightly --release-description="${ESPRUST_VERSION}" --enable-extended --enable-cargo-native-static --tools=clippy,cargo,rustfmt,rust-analyzer-proc-macro-srv --dist-compression-formats='xz' --enable-lld
+ESPRUST_CONFIGURE_ARGS?=	--experimental-targets=Xtensa --release-channel=nightly --release-description="${ESPRUST_VERSION}" --enable-extended --enable-cargo-native-static --tools=clippy,cargo,rustfmt,rust-analyzer-proc-macro-srv --dist-compression-formats='xz' --enable-lld
 # our own configure arguments
 ESPRUST_CONFIGURE_ARGS+=	--set=build.verbose=2 \
 	--set=build.python=${PYTHON_CMD} \
@@ -136,7 +141,7 @@ ESPRUST_CONFIGURE_ARGS+= --set=llvm.ccache=false
 .endif
 
 ESPRUST_BUILD_CMD=	${PYTHON_CMD} x.py
-ESPRUST_BUILD_ARGS=	dist --stage 2 --jobs=${MAKE_JOBS_NUMBER}
+ESPRUST_BUILD_ARGS?=	dist --stage 2 --jobs=${MAKE_JOBS_NUMBER}
 
 makesubmodule:
 	${SH} ${FILESDIR}/gh_tuple.sh ${DISTVERSIONFULL} > ${MAKEFILE_SUBMODULES}
@@ -191,18 +196,22 @@ do-install:
 		${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/manifest-* \
 		${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/rust-installer-version \
 		${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/uninstall.sh
+.if ${PORTNAME} == "rust-esp"
 	@${FIND} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/bin ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib \
 		${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/libexec -exec ${FILE} -i {} + | \
 		${AWK} -F: '/executable|sharedlib/ { print $$1 }' | ${XARGS} ${STRIP_CMD}
+.endif
 	@${FIND} ${STAGEDIR}${PREFIX} -not -type d | \
 		${SED} -E -e 's,^${STAGEDIR}${PREFIX}/,,' \
 			-e 's,(share/man/man[1-9]/.*\.[0-9]),\1.gz,' >> ${TMPPLIST}
+.if ${PORTNAME} == "rust-esp"
 	@${FIND} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/share/man -type f -exec ${GZIP_CMD} {} +
 
 # Ignore any left behind empty directories in case some docs fail
 # to build (failures are ignored due to deny-warnings=false).
 	@${FIND} ${STAGEDIR}${DOCSDIR}/html -empty -type d | \
 		${SED} 's,^${STAGEDIR},@comment @dir ,' >> ${TMPPLIST}
+.endif
 
 # Silence stage-qa warnings by sanitizing permissions on sources
 	@${FIND} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/src -type f -exec ${CHMOD} \
