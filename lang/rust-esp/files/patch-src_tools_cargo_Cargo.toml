@@ -1,0 +1,14 @@
+--- src/tools/cargo/Cargo.toml.orig	2024-08-20 18:24:58 UTC
++++ src/tools/cargo/Cargo.toml
+@@ -252,10 +252,8 @@ doc = false
+ doc = false
+ 
+ [features]
+-vendored-openssl = ["openssl/vendored"]
+-vendored-libgit2 = ["libgit2-sys/vendored"]
+ # This is primarily used by rust-lang/rust distributing cargo the executable.
+-all-static = ['vendored-openssl', 'curl/static-curl', 'curl/force-system-lib-on-osx', 'vendored-libgit2']
++all-static = ['curl/static-curl', 'curl/force-system-lib-on-osx']
+ 
+ [lints]
+ workspace = true
