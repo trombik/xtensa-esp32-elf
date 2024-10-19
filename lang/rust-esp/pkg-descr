@@ -1,0 +1,6 @@
+Rust for Xtensa-based ESP32, ESP32-SXX and ESP8266 using Espressif's llvm
+fork (RiscV chips like ESP32-CXX are already supported in stock Rust).
+
+Provides Rust STD support (networking, threads, and filesystem) for all chips
+in the ESP32 family (Xtensa and RiscV), by optionally linking with the ESP-IDF
+framework.

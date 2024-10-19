@@ -1,0 +1,13 @@
+GH_TUPLE+= \
+	rust-lang:backtrace-rs:72265be:rust_lang_backtrace_rs/library/backtrace \
+	rust-lang:stdarch:df3618d:rust_lang_stdarch/library/stdarch \
+	rust-lang:book:67fa536:rust_lang_book/src/doc/book \
+	rust-lang:edition-guide:5454de3:rust_lang_edition_guide/src/doc/edition-guide \
+	rust-embedded:book:019f392:rust_embedded_book/src/doc/embedded-book \
+	rust-lang:nomicon:0ebdaca:rust_lang_nomicon/src/doc/nomicon \
+	rust-lang:reference:e2f0bdc:rust_lang_reference/src/doc/reference \
+	rust-lang:rust-by-example:89aecb6:rust_lang_rust_by_example/src/doc/rust-by-example \
+	rust-lang:rustc-dev-guide:0c4d55c:rust_lang_rustc_dev_guide/src/doc/rustc-dev-guide \
+	espressif:llvm-project:829c5ad:espressif_llvm_project/src/llvm-project \
+	rust-lang:cargo:2dbb1af:rust_lang_cargo/src/tools/cargo \
+	rust-lang:rustc-perf:c64bb60:rust_lang_rustc_perf/src/tools/rustc-perf
