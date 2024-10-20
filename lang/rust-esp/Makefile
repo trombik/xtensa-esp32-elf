@@ -17,6 +17,11 @@ BUILD_DEPENDS=	rust-nightly>0:lang/rust-nightly
 LIB_DEPENDS?=	libonig.so:devel/oniguruma \
 	libssh2.so:security/libssh2 \
 	libgit2.so:devel/libgit2
+RUN_DEPENDS=	${LOCALBASE}/esp-llvm-embedded-toolchain/bin/clang:devel/esp-llvm-embedded-toolchain \
+	${LOCALBASE}/riscv32-esp-elf-${ESP_IDF_FLAVOR}/bin/riscv32-esp-elf-gcc:devel/riscv32-esp-elf@${ESP_IDF_FLAVOR} \
+	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin/xtensa-esp-elf-gcc:devel/xtensa-esp-elf@${ESP_IDF_FLAVOR} \
+	${LOCALBASE}/rust-esp-src/lib/rustlib/src/rust/library/core/src/lib.rs:lang/rust-esp-src
+
 
 USES=	python:3.0+ cargo ninja
 .if ${PORTNAME} == "rust-esp"
@@ -37,6 +42,7 @@ ONLY_FOR_ARCHS=	amd64
 ESPRUST_ARCH=	x86_64
 ESPRUST_TUPLE=	${ESPRUST_ARCH}-unknown-freebsd
 ESPRUST_COMPONENTS_VERSION=	nightly
+ESPRUST_FLAVOR=	idf53
 
 # the component rustup needs
 ESPRUST_RUSTUP_COMPONENT=	rust-${ESPRUST_COMPONENTS_VERSION}-${ESPRUST_TUPLE}
