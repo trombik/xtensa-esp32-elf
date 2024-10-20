@@ -187,6 +187,7 @@ pre-build:
 do-install:
 	(cd ${INSTALL_WRKSRC} && ${SETENVI} ${WRK_ENV} ${MAKE_ENV} ${FAKEROOT} \
 		${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} ${INSTALL_TARGET})
+	${RM} ${STAGEDIR}${ESP_PREFIX}/bin/*.cfg
 
 post-install:
 .for F in ${ESP_STRIP_FILES}
