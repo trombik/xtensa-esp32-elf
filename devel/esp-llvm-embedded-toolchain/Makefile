@@ -76,7 +76,8 @@ ESP_IDF_FLAVOR=	idf53
 ESP_GNU_TOOLCHAIN_VER=	13.2.0_20240305
 ESP_ARCH=	${ARCH:S/amd64/x86_64/}
 
-# see .gitlab-ci.yml in espressif/llvm-project
+# see .gitlab-ci.yml and .github/workflows/release-binaries.yml in
+# espressif/llvm-project
 CMAKE_ARGS=	\
 	-DFETCHCONTENT_QUIET=OFF \
 	-DESP_GNU_TOOLCHAIN_VER=${ESP_GNU_TOOLCHAIN_VER} \
@@ -171,6 +172,20 @@ ESP_SHEBANG_FILES=	\
 	analyze-cc \
 	intercept-c++ \
 	intercept-cc
+
+# build clang only to fill ccache cache. see
+# .github/workflows/release-binaries.yml in espressif/llvm-project.
+#
+# experimental. not used in workflows
+.if defined(ESP_BUILD_CLANG_ONLY)
+INSTALL_TARGET=	clang
+CMAKE_SOURCE_PATH=	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}
+CMAKE_ARGS=	\
+	-C ${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/cmake/caches/Release.cmake \
+	-S ${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/llvm \
+	-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+	-B ${CONFIGURE_WRKSRC}
+.endif
 
 # a helper target to list possible shebang files
 find-shebang-files:
