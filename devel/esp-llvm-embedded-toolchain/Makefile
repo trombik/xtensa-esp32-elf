@@ -96,6 +96,7 @@ CMAKE_ARGS=	\
 # our own CMAKE_ARGS
 CMAKE_ARGS+=	\
 	-DCLANG_REPOSITORY_STRING=${WWW}
+
 # TODO are gcc13 and g++13 necessary?
 BINARY_ALIAS=	gcc13=${CC} g++13=${CXX} \
 				${ESP_ARCH}-unknown-freebsd-gcc=${ESP_ARCH}-portbld-freebsd${OSREL}-${CC} \
@@ -177,6 +178,15 @@ CMAKE_ARGS=	\
 	-B ${CONFIGURE_WRKSRC}
 .endif
 
+.include <bsd.port.pre.mk>
+
+# work around CMAKE/CCACHE flaw (cmake stomps over ccache)
+# obtained from graphics/darktable.
+.if "${WITH_CCACHE_BUILD}" == "yes" && !defined(NO_CCACHE)
+CMAKE_ARGS+=	-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_BIN} \
+		-DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_BIN}
+.endif
+
 pre-configure:
 	@${REINPLACE_CMD} -e 's|%%ESP_TMPDIR%%|${ESP_TMPDIR}|g' \
 		${WRKSRC}/cmake/esp-gnu-components.cmake
@@ -201,8 +211,10 @@ pre-build:
 
 # TODO should be removed
 do-install:
+.if ${INSTALL_TARGET} != clang
 	(cd ${INSTALL_WRKSRC} && ${SETENVI} ${WRK_ENV} ${MAKE_ENV} ${FAKEROOT} \
 		${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} ${INSTALL_TARGET})
+.endif
 
 post-install:
 .for F in ${ESP_STRIP_FILES}
@@ -210,4 +222,4 @@ post-install:
 	@${RM} ${STAGEDIR}${ESP_PREFIX}/bin/*.cfg
 .endfor
 
-.include <bsd.port.mk>
+.include <bsd.port.post.mk>
