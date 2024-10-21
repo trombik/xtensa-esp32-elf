@@ -22,6 +22,25 @@ USE_GITHUB=	yes
 
 GH_TUPLE=	espressif:${PORTNAME}:esp-${ESP_LLVM_VERSION}_${ESP_SNAPDATE}
 
+ESP_TARGET?=	llvm-toolchain
+.if ${ESP_TARGET} == llvm-toolchain
+
+PKGNAMESUFFIX=	-clang
+LIB_DEPENDS+=	libdebuginfod.so:devel/elfutils
+USE_GNOME+=	libxml2
+
+.elif ${ESP_TARGET} == llvm-standalone-libs
+
+PKGNAMESUFFIX=	-libs-clang
+
+.elif ${ESP_TARGET} == llvm-toolchain-target-libs
+
+PKGNAMESUFFIX=	-target-libs-clang
+
+.endif
+INSTALL_TARGET=	install-${ESP_TARGET}
+PLIST=	${PKGDIR}/pkg-plist.${ESP_TARGET}
+
 # see versions.json. ESP_GH_TUPLE is a list of dependencies from espressif's
 # GitHub repositories. in versions.json, some ref is `main` or `master`.
 # checkout the commit SHAs in these branches and use them here.
@@ -53,7 +72,7 @@ ESP_TMPDIR?=	${WRKSRC}/tmp
 # the flavor of gcc toolchains.
 ESP_IDF_FLAVOR=	idf53
 
-ESP_GNU_TOOLCHAIN_VER=13.2.0_20230928
+# TODO document reference
 ESP_GNU_TOOLCHAIN_VER=	13.2.0_20240305
 ESP_ARCH=	${ARCH:S/amd64/x86_64/}
 
@@ -69,7 +88,8 @@ CMAKE_ARGS=	\
 	-DESP_TOOLCHAIN=ON \
 	-DHOST_TRIPLE=x86_64-unknown-freebsd \
 	-DLLVM_TOOLCHAIN_ENABLED_TARGETS="RISCV;Xtensa"  \
-	-DESP_TOOLCHAIN_VER=18.1.2_20240912 \
+	-DESP_TOOLCHAIN_VER=${ESP_LLVM_VERSION}_${ESP_SNAPDATE} \
+	--install-prefix ${STAGEDIR}${ESP_PREFIX} \
 	-DMAKE_JOBS_NUM=${MAKE_JOBS_NUMBER}
 
 # TODO are gcc13 and g++13 necessary?
@@ -90,23 +110,45 @@ PATH:=	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin:${PATH}
 DESTDIRNAME=	__DESTDIR_DISABLED__
 CMAKE_INSTALL_PREFIX=	${STAGEDIR}${ESP_PREFIX}
 
+.if ${ESP_TARGET} == "llvm-toolchain"
 ESP_STRIP_FILES=	\
-	bin/riscv32-esp-elf-clang-objcopy \
+	bin/clang-18 \
+	bin/clang-format \
+	bin/clang-tidy \
+	bin/clangd \
+	bin/dsymutil \
+	bin/llc \
+	bin/lld \
+	bin/llvm-ar \
+	bin/llvm-config \
+	bin/llvm-cov \
+	bin/llvm-cxxfilt \
+	bin/llvm-dwarfdump \
+	bin/llvm-nm \
+	bin/llvm-objcopy \
+	bin/llvm-objdump \
+	bin/llvm-profdata \
+	bin/llvm-readobj \
+	bin/llvm-size \
 	bin/riscv32-esp-elf-clang-as \
 	bin/riscv32-esp-elf-clang-ld \
+	bin/riscv32-esp-elf-clang-objcopy \
 	bin/riscv32-esp-elf-clang-objdump \
-	bin/xtensa-esp32-elf-clang-objcopy \
 	bin/xtensa-esp32-elf-clang-as \
 	bin/xtensa-esp32-elf-clang-ld \
+	bin/xtensa-esp32-elf-clang-objcopy \
 	bin/xtensa-esp32-elf-clang-objdump \
-	bin/xtensa-esp32s2-elf-clang-objcopy \
 	bin/xtensa-esp32s2-elf-clang-as \
 	bin/xtensa-esp32s2-elf-clang-ld \
+	bin/xtensa-esp32s2-elf-clang-objcopy \
 	bin/xtensa-esp32s2-elf-clang-objdump \
-	bin/xtensa-esp32s3-elf-clang-objcopy \
 	bin/xtensa-esp32s3-elf-clang-as \
 	bin/xtensa-esp32s3-elf-clang-ld \
-	bin/xtensa-esp32s3-elf-clang-objdump
+	bin/xtensa-esp32s3-elf-clang-objcopy \
+	bin/xtensa-esp32s3-elf-clang-objdump \
+	lib/libLTO.so.18.1
+
+.endif
 
 ESP_SHEBANG_FILES=	\
 	git-clang-format \
@@ -127,27 +169,6 @@ ESP_SHEBANG_FILES=	\
 	analyze-cc \
 	intercept-c++ \
 	intercept-cc
-
-SHEBANG_FILES=	\
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/clang-format/git-clang-format \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build-py/bin/analyze-build \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build-py/bin/intercept-build \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build-py/bin/scan-build \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build/bin/scan-build \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-view/bin/scan-view \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/utils/hmaptool/hmaptool \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/clang-format/clang-format-diff.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang-tools-extra/clang-tidy/tool/clang-tidy-diff.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang-tools-extra/clang-include-fixer/find-all-symbols/tool/run-find-all-symbols.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/llvm/tools/opt-viewer/opt-diff.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/llvm/tools/opt-viewer/opt-stats.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/llvm/tools/opt-viewer/opt-viewer.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/llvm/tools/opt-viewer/optrecord.py \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build-py/libexec/analyze-c++ \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build-py/libexec/analyze-cc \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build-py/libexec/intercept-c++ \
-	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/scan-build-py/libexec/intercept-cc
 
 # a helper target to list possible shebang files
 find-shebang-files:
