@@ -26,8 +26,8 @@ ESP_TARGET?=	llvm-toolchain
 .if ${ESP_TARGET} == llvm-toolchain
 
 PKGNAMESUFFIX=	-clang
-LIB_DEPENDS+=	libdebuginfod.so:devel/elfutils
-USE_GNOME+=	libxml2
+LIB_DEPENDS+=	libdebuginfod.so:devel/elfutils \
+	libxml2.so:textproc/libxml2
 
 .elif ${ESP_TARGET} == llvm-standalone-libs
 
@@ -131,6 +131,7 @@ ESP_STRIP_FILES=	\
 	bin/llvm-profdata \
 	bin/llvm-readobj \
 	bin/llvm-size \
+	bin/llvm-symbolizer \
 	bin/riscv32-esp-elf-clang-as \
 	bin/riscv32-esp-elf-clang-ld \
 	bin/riscv32-esp-elf-clang-objcopy \
@@ -153,25 +154,11 @@ ESP_STRIP_FILES=	lib/*.so \
 					lib/*.so.*
 .endif
 
-ESP_SHEBANG_FILES=	\
-	git-clang-format \
-	analyze-build \
-	intercept-build \
-	scan-build \
-	scan-view \
-	run-clang-tidy.py \
-	hmaptool \
-	clang-format-diff.py \
-	clang-tidy-diff.py \
-	run-find-all-symbols.py \
-	opt-diff.py \
-	opt-stats.py \
-	opt-viewer.py \
-	optrecord.py \
-	analyze-c++ \
-	analyze-cc \
-	intercept-c++ \
-	intercept-cc
+SHEBANG_FILES=	\
+	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/clang-format/git-clang-format \
+	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py \
+	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang/tools/clang-format/clang-format-diff.py \
+	${WRKDIR}/llvm-project-${ESP_REF_LLVM_PROJECT}/clang-tools-extra/clang-tidy/tool/clang-tidy-diff.py
 
 # build clang only to fill ccache cache. see
 # .github/workflows/release-binaries.yml in espressif/llvm-project.
@@ -186,18 +173,6 @@ CMAKE_ARGS=	\
 	-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
 	-B ${CONFIGURE_WRKSRC}
 .endif
-
-# a helper target to list possible shebang files
-find-shebang-files:
-	@${ECHO_MSG} "# This list is just a guess. You should check the result of check-qa"
-	@${ECHO_MSG} "SHEBANG_FILES=	\\"
-.for F in ${ESP_SHEBANG_FILES}
-	@find ${WRKDIR} -type f -name ${F} | \
-		${SED} -E -e 's|${WRKDIR}|$${WRKDIR}|' \
-			-e 's|llvm-project-${ESP_REF_LLVM_PROJECT}|llvm-project-$${ESP_REF_LLVM_PROJECT}|' \
-			-e 's/$$/ \\/' \
-			-e 's/^/\t/'
-.endfor
 
 pre-configure:
 	@${REINPLACE_CMD} -e 's|%%ESP_TMPDIR%%|${ESP_TMPDIR}|g' \
@@ -229,6 +204,7 @@ do-install:
 post-install:
 .for F in ${ESP_STRIP_FILES}
 	@${STRIP_CMD} ${STAGEDIR}${ESP_PREFIX}/${F}
+	@${RM} ${STAGEDIR}${ESP_PREFIX}/bin/*.cfg
 .endfor
 
 .include <bsd.port.mk>
