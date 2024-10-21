@@ -4,7 +4,7 @@ CATEGORIES=	devel
 DISTFILES=
 
 MAINTAINER=	y@trombik.org
-COMMENT=	LLVM and Clang with support the RISC-V and Xtensa architecture
+COMMENT=	LLVM and Clang with support the RISC-V and Xtensa architecture (clang)
 WWW=		https://github.com/espressif/llvm-project
 
 # XXX the port is beta quality.
@@ -39,7 +39,7 @@ PKGNAMESUFFIX=	-target-libs-clang
 
 .endif
 INSTALL_TARGET=	install-${ESP_TARGET}
-PLIST=	${PKGDIR}/pkg-plist.${ESP_TARGET}
+PLIST=	${MASTERDIR}/pkg-plist.${ESP_TARGET}
 
 # see versions.json. ESP_GH_TUPLE is a list of dependencies from espressif's
 # GitHub repositories. in versions.json, some ref is `main` or `master`.
@@ -147,7 +147,9 @@ ESP_STRIP_FILES=	\
 	bin/xtensa-esp32s3-elf-clang-objcopy \
 	bin/xtensa-esp32s3-elf-clang-objdump \
 	lib/libLTO.so.18.1
-
+.elif ${ESP_TARGET} == "llvm-standalone-libs"
+ESP_STRIP_FILES=	lib/*.so \
+					lib/*.so.*
 .endif
 
 ESP_SHEBANG_FILES=	\
@@ -208,7 +210,6 @@ pre-build:
 do-install:
 	(cd ${INSTALL_WRKSRC} && ${SETENVI} ${WRK_ENV} ${MAKE_ENV} ${FAKEROOT} \
 		${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} ${INSTALL_TARGET})
-	${RM} ${STAGEDIR}${ESP_PREFIX}/bin/*.cfg
 
 post-install:
 .for F in ${ESP_STRIP_FILES}
