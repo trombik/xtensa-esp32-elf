@@ -93,6 +93,9 @@ CMAKE_ARGS=	\
 	--install-prefix ${STAGEDIR}${ESP_PREFIX} \
 	-DMAKE_JOBS_NUM=${MAKE_JOBS_NUMBER}
 
+# our own CMAKE_ARGS
+CMAKE_ARGS+=	\
+	-DCLANG_REPOSITORY_STRING=${WWW}
 # TODO are gcc13 and g++13 necessary?
 BINARY_ALIAS=	gcc13=${CC} g++13=${CXX} \
 				${ESP_ARCH}-unknown-freebsd-gcc=${ESP_ARCH}-portbld-freebsd${OSREL}-${CC} \
