@@ -282,6 +282,10 @@ jobs:
             echo "::warning ::building ${{ matrix.PORT }} failed to build. the logs are available at: https://github.com/${{ github.repository }}/actions/runs/${{ github.github.run_id }}/artifacts/${{ steps.packages-upload-step.outputs.artifact-id }}"
           fi
 
+          if [ ! -z "${{ steps.poudriere-bulk.outputs.FAILED }}" ]; then
+            echo "::warning ::poudriere bulk failed"
+          fi
+
   conclude-result:
     runs-on: ubuntu-latest
     needs:
