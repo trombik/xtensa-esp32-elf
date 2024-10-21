@@ -42,6 +42,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    outputs:
+
+      FAILED: ${{ steps.poudriere-bulk.outputs.FAILED }}
     needs:
       - convert
     strategy:
@@ -112,7 +115,7 @@ jobs:
           if_no_artifact_found: warn
 
       - name: poudriere bulk
-        id: make
+        id: poudriere-bulk
         uses: cross-platform-actions/action@v0.25.0
         with:
           operating_system: freebsd
@@ -210,10 +213,16 @@ jobs:
             fi
 
             # build the ports with the overlay (-o) and binary packages from
-            # PACKAGE_FETCH_URL (-b). Test the port with Q/A checks (-Ct). use
-            # `true` to prevent failure on build failures. the job will fail
-            # later if any build fails. limit the number of job to MAX_JOBS.
-            sudo poudriere bulk -j "${JAIL_NAME}" -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD} || true
+            # PACKAGE_FETCH_URL (-b). Test the port with Q/A checks (-Ct).
+            # the job will fail later if any build fails. limit the number of
+            # job to MAX_JOBS.
+            #
+            # this output catches any failure including crashed poudriere
+            # bulk without logs.
+            FAILED=""
+            if ! sudo poudriere bulk -j "${JAIL_NAME}" -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD}; then
+              FAILED="true"
+            fi
 
             # collect the logs. freebsd-vm will copy them back to the host OS.
             tree "/usr/local/poudriere/data/logs/bulk/${JAIL_NAME}-${PORTS_NAME}/latest/logs"
@@ -227,6 +236,7 @@ jobs:
             tree ccache
 
             df -h -tufs
+            echo "FAILED=${FAILED}" >> "${GITHUB_OUTPUT}"
 
       - name: upload logs
         id: logs-upload-step
@@ -269,7 +279,7 @@ jobs:
           echo "Packages are available in an artifact. ID: ${{ steps.packages-upload-step.outputs.artifact-id }}"
 
           if [ ! -z "${FAILED_PACKAGES}" ]; then
-          echo "::warning ::building ${{ matrix.PORT }} failed to build. the logs are available at: https://github.com/${{ github.repository }}/actions/runs/${{ github.github.run_id }}/artifacts/${{ steps.packages-upload-step.outputs.artifact-id }}"
+            echo "::warning ::building ${{ matrix.PORT }} failed to build. the logs are available at: https://github.com/${{ github.repository }}/actions/runs/${{ github.github.run_id }}/artifacts/${{ steps.packages-upload-step.outputs.artifact-id }}"
           fi
 
   conclude-result:
@@ -306,6 +316,11 @@ jobs:
           cat failed_packages.txt
           if [ ! -z "${FAILED_PACKAGES}" ]; then
             echo "::error ::building ${{ matrix.PORT }} failed to build"
+            EXIT_STATUS=1
+          fi
+
+          if [ ! -z "${{ needs.build.outputs.FAILED }}" ]; then
+            echo "::error ::poudriere bulk failed"
             EXIT_STATUS=1
           fi
           exit "${EXIT_STATUS}"
