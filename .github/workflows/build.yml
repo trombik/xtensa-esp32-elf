@@ -49,9 +49,13 @@ jobs:
           # find changed ports in the repository and make it a list of one
           # line separated by a space.
           for F in ${{ steps.filter.outputs.ports-to-build_files }}; do
-            PORTS_TO_BUILD="${PORTS_TO_BUILD} `echo ${F} | cut -f 1,2 -d '/' | sort -u | grep '/'`"
+            PORTS_TO_BUILD="${PORTS_TO_BUILD} `echo ${F} | cut -f 1,2 -d '/' | grep '/'`"
           done
-          PORTS_TO_BUILD=`echo ${PORTS_TO_BUILD} | sort -u | tr '\n' ' ' | sed -e 's/ $//'`
+
+          # make unique list
+          PORTS_TO_BUILD=`echo ${PORTS_TO_BUILD} | tr ' ' '\n' | sort -u`
+          echo "sorted PORTS_TO_BUILD: ${PORTS_TO_BUILD}"
+          PORTS_TO_BUILD=`echo ${PORTS_TO_BUILD} | tr '\n' ' ' | sed -e 's/ $//'`
           echo "::notice ::Building ${PORTS_TO_BUILD}"
 
           # pass the JSON to other jobs
