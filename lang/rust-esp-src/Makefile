@@ -11,6 +11,6 @@ ESPRUST_BUILD_ARGS=	dist rust-src
 ESPRUST_CONFIGURE_ARGS=	--experimental-targets=Xtensa --release-channel=nightly --release-description="${ESPRUST_VERSION}" --enable-extended --dist-compression-formats='xz'
 ESPRUST_RUSTUP_COMPONENT_NAME?=	rust-src-${ESPRUST_VERSION}
 ESPRUST_COMPONENTS?=	\
-	rust-src-${ESPRUST_COMPONENTS_VERSION} \
+	rust-src-${ESPRUST_COMPONENTS_VERSION}
 
 .include "${MASTERDIR}/Makefile"
