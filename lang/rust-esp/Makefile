@@ -19,13 +19,14 @@ LIB_DEPENDS?=	libonig.so:devel/oniguruma \
 	libgit2.so:devel/libgit2
 RUN_DEPENDS=	${LOCALBASE}/esp-llvm-embedded-toolchain/bin/clang:devel/esp-llvm-embedded-toolchain \
 	${LOCALBASE}/riscv32-esp-elf-${ESP_IDF_FLAVOR}/bin/riscv32-esp-elf-gcc:devel/riscv32-esp-elf@${ESP_IDF_FLAVOR} \
-	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin/xtensa-esp-elf-gcc:devel/xtensa-esp-elf@${ESP_IDF_FLAVOR} \
-	${LOCALBASE}/rust-esp-src/lib/rustlib/src/rust/library/core/src/lib.rs:lang/rust-esp-src
+	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin/xtensa-esp-elf-gcc:devel/xtensa-esp-elf@${ESP_IDF_FLAVOR}
 
 
 USES=	python:3.0+ cargo ninja
 .if ${PORTNAME} == "rust-esp"
+RUN_DEPENDS+=	${LOCALBASE}/rust-esp-src/lib/rustlib/src/rust/library/core/src/lib.rs:lang/rust-esp-src
 USES+=	ssl
+.elif ${PORTNAME} == "rust-esp-src"
 .endif
 MASTERDIR?=	${.CURDIR}
 
