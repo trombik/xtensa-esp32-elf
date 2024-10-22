@@ -206,8 +206,12 @@ jobs:
               # dawidd6/action-download-artifact has 2GB limit in size.
               # https://github.com/dawidd6/action-download-artifact/issues/201
               sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -o max_size=1.9G
-              sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
               sudo cat "${CCACHE_DIR}/ccache.conf"
+              echo "===> ccache statistic before build"
+              sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
+
+              # reset statistic
+              sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -z
             else
               sudo mkdir -p "${CCACHE_DIR}"
             fi
@@ -232,6 +236,8 @@ jobs:
             sudo cp -RL "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All" "${OVERLAY_DIR}/packages"
 
             # collect ccache cache
+            echo "===> ccache statistic after build"
+            sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
             sudo cp -R "${CCACHE_DIR}" ccache
             ls -al ccache
 
