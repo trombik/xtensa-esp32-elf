@@ -40,7 +40,7 @@ PLIST=	${MASTERDIR}/pkg-plist.${ESP_TARGET}
 # see versions.json. ESP_GH_TUPLE is a list of dependencies from espressif's
 # GitHub repositories. in versions.json, some ref is `main` or `master`.
 # checkout the commit SHAs in these branches and use them here.
-ESP_REF_LLVM_PROJECT=	xtensa_release_18.1.2
+ESP_REF_LLVM_PROJECT=	esp-18.1.2_20240912
 ESP_REF_BINUTILS_GDB=	esp-2.41.0_20240305
 ESP_REF_XTENSA_OVERLAYS=	dd1cf19
 ESP_REF_NEWLIB_ESP32=	esp-4.3.0_20240322
