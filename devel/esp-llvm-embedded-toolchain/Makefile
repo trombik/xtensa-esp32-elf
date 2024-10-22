@@ -31,7 +31,7 @@ LIB_DEPENDS+=	libdebuginfod.so:devel/elfutils \
 
 .elif ${PORTNAME} == esp-llvm-embedded-toolchain-libs-clang
 
-PKGNAMESUFFIX=	-libs-clang
+PKGNAMESUFFIX=
 
 .endif
 INSTALL_TARGET=	install-${ESP_TARGET}
