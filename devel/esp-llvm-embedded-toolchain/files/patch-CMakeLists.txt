@@ -1,0 +1,13 @@
+--- CMakeLists.txt.orig	2024-10-22 02:08:34 UTC
++++ CMakeLists.txt
+@@ -1071,8 +1071,8 @@ function(
+             env READELF_FOR_TARGET=${LLVM_BINARY_DIR}/bin/llvm-readelf${CMAKE_EXECUTABLE_SUFFIX}
+             env STRIP_FOR_TARGET=${LLVM_BINARY_DIR}/bin/llvm-strip${CMAKE_EXECUTABLE_SUFFIX}
+             ${newlib_src_dir}/configure --host=${host_triple} --target=${target_triple} --prefix=<INSTALL_DIR> ${config_opts}
+-        BUILD_COMMAND make -j${MAKE_JOBS_NUM}
+-        INSTALL_COMMAND make install
++        BUILD_COMMAND make -j${MAKE_JOBS_NUM} V=1
++        INSTALL_COMMAND make V=1 install
+         USES_TERMINAL_CONFIGURE TRUE
+         USES_TERMINAL_BUILD TRUE
+         USES_TERMINAL_TEST TRUE
