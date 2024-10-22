@@ -20,7 +20,7 @@ USES=		cmake compiler:c++17-lang cpe shebangfix ninja makeinfo python
 USE_GCC=	yes
 USE_GITHUB=	yes
 
-GH_TUPLE=	espressif:${PORTNAME}:esp-${ESP_LLVM_VERSION}_${ESP_SNAPDATE}
+GH_TUPLE=	espressif:esp-llvm-embedded-toolchain:esp-${ESP_LLVM_VERSION}_${ESP_SNAPDATE}
 
 ESP_TARGET?=	llvm-toolchain
 .if ${PORTNAME} == esp-llvm-embedded-toolchain
