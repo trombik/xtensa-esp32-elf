@@ -1,10 +1,10 @@
-PORTNAME=	esp-llvm-embedded-toolchain
+PORTNAME?=	esp-llvm-embedded-toolchain
 PORTVERSION=	${ESP_LLVM_VERSION}.${ESP_SNAPDATE}
 CATEGORIES=	devel
 DISTFILES=
 
 MAINTAINER=	y@trombik.org
-COMMENT=	LLVM and Clang with support the RISC-V and Xtensa architecture (clang)
+COMMENT?=	LLVM and Clang with support the RISC-V and Xtensa architecture (clang)
 WWW=		https://github.com/espressif/llvm-project
 
 # XXX the port is beta quality.
