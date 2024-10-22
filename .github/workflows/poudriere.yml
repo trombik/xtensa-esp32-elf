@@ -127,7 +127,7 @@ jobs:
             set -e
 
             df -h -tufs
-            tree .
+            tree -I ccache .
             poudriere ports -l
             poudriere jail -l
 
@@ -233,7 +233,7 @@ jobs:
 
             # collect ccache cache
             sudo cp -R "${CCACHE_DIR}" ccache
-            tree ccache
+            ls -al ccache
 
             df -h -tufs
             echo "FAILED=${FAILED}" >> "${GITHUB_OUTPUT}"
@@ -261,7 +261,7 @@ jobs:
       - name: Fail if any build failed
         shell: sh
         run: |
-          tree .
+          tree -I ccache .
 
           # logs under `errors` are symlink, not file
           ERROR_LOG_FILES=`find logs/errors -type l -name '*.log'`
