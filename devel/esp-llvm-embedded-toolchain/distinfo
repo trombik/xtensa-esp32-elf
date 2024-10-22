@@ -1,8 +1,8 @@
-TIMESTAMP = 1729054315
+TIMESTAMP = 1729624177
 SHA256 (espressif-esp-llvm-embedded-toolchain-18.1.2.20240912-esp-18.1.2_20240912_GH0.tar.gz) = bb5382a250b90f8145163c2fedb8e224374866c691cc5ee01616560339c274ce
 SIZE (espressif-esp-llvm-embedded-toolchain-18.1.2.20240912-esp-18.1.2_20240912_GH0.tar.gz) = 71806
-SHA256 (espressif-llvm-project-xtensa_release_18.1.2_GH0.tar.gz) = 66bdefc42191bf8bf563e70dc860a9fc496ad1f0f5e8eb9780166e4eb76f0898
-SIZE (espressif-llvm-project-xtensa_release_18.1.2_GH0.tar.gz) = 206013365
+SHA256 (espressif-llvm-project-esp-18.1.2_20240912_GH0.tar.gz) = 840f789c9939e452605bca12269a2276ae81a2e45e708d99140db08f483582d9
+SIZE (espressif-llvm-project-esp-18.1.2_20240912_GH0.tar.gz) = 206015548
 SHA256 (espressif-binutils-gdb-esp-2.41.0_20240305_GH0.tar.gz) = 75cc712f35b0a2f95e53d9bf54629bd66759f7225dc222392f210ca4ac5facb6
 SIZE (espressif-binutils-gdb-esp-2.41.0_20240305_GH0.tar.gz) = 65669754
 SHA256 (espressif-xtensa-overlays-dd1cf19_GH0.tar.gz) = 68c3aecd9ae9884cc15be27e4fd06915f8b76a07586a6cb1c635e89447a46bc3
