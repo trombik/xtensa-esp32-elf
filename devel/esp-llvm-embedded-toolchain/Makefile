@@ -23,19 +23,15 @@ USE_GITHUB=	yes
 GH_TUPLE=	espressif:${PORTNAME}:esp-${ESP_LLVM_VERSION}_${ESP_SNAPDATE}
 
 ESP_TARGET?=	llvm-toolchain
-.if ${ESP_TARGET} == llvm-toolchain
+.if ${PORTNAME} == esp-llvm-embedded-toolchain
 
 PKGNAMESUFFIX=	-clang
 LIB_DEPENDS+=	libdebuginfod.so:devel/elfutils \
 	libxml2.so:textproc/libxml2
 
-.elif ${ESP_TARGET} == llvm-standalone-libs
+.elif ${PORTNAME} == esp-llvm-embedded-toolchain-libs-clang
 
 PKGNAMESUFFIX=	-libs-clang
-
-.elif ${ESP_TARGET} == llvm-toolchain-target-libs
-
-PKGNAMESUFFIX=	-target-libs-clang
 
 .endif
 INSTALL_TARGET=	install-${ESP_TARGET}
@@ -115,7 +111,7 @@ PATH:=	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin:${PATH}
 DESTDIRNAME=	__DESTDIR_DISABLED__
 CMAKE_INSTALL_PREFIX=	${STAGEDIR}${ESP_PREFIX}
 
-.if ${ESP_TARGET} == "llvm-toolchain"
+.if ${PORTNAME} == esp-llvm-embedded-toolchain
 ESP_STRIP_FILES=	\
 	bin/clang-18 \
 	bin/clang-format \
@@ -153,7 +149,7 @@ ESP_STRIP_FILES=	\
 	bin/xtensa-esp32s3-elf-clang-objcopy \
 	bin/xtensa-esp32s3-elf-clang-objdump \
 	lib/libLTO.so.18.1
-.elif ${ESP_TARGET} == "llvm-standalone-libs"
+.elif ${PORTNAME} == esp-llvm-embedded-toolchain-libs-clang
 ESP_STRIP_FILES=	lib/*.so \
 					lib/*.so.*
 .endif
