@@ -183,6 +183,12 @@ XTENSA_PLATFORMIO_TOOLCHAIN_OWNER=	espressif
 XTENSA_PLATFORMIO_TOOLCHAIN_NAME=	${PORTNAME}
 XTENSA_PLATFORMIO_TOOLCHAIN_VERSION=	${ESPRESSIF_GCC_VERSION}_${ESPRESSIF_VERSION:S/esp-//}
 
+# XXX disable security-check.awk. this causes too much disk space on GitHub
+# Actions runner.
+.if ${PORTNAME} == riscv32-esp-elf
+DISABLE_SECURITY_CHECK=	yes
+.endif
+
 post-extract:
 	${MKDIR} ${BUILD_WRKSRC}/.build/tarballs
 .for F in $(DISTFILES:N$(EXTRACT_ONLY))
