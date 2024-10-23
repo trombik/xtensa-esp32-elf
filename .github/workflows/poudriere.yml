@@ -164,7 +164,11 @@ jobs:
             # packages and ccache cache might help future builds.
 
             # allow MAX_JOBS in ports which take longer to build
-            echo ALLOW_MAKE_JOBS_PACKAGES="\"cmake-core-* esp-llvm-embedded-toolchain-* xtensa-esp32-elf-* xtensa-esp-elf-* riscv32-esp-elf-*\"" | sudo tee -a /usr/local/etc/poudriere.conf
+            echo ALLOW_MAKE_JOBS_PACKAGES="\"cmake-core-* esp-llvm-embedded-toolchain-* rust-esp-* xtensa-esp32-elf-* xtensa-esp-elf-* riscv32-esp-elf-*\"" | sudo tee -a /usr/local/etc/poudriere.conf
+
+            # disable a logic to find out build failure. takes too much time
+            # and disk space
+            echo DETERMINE_BUILD_FAILURE_REASON=no | sudo tee -a /usr/local/etc/poudriere.conf
             echo "===> /usr/local/etc/poudriere.conf"
             cat /usr/local/etc/poudriere.conf
 
