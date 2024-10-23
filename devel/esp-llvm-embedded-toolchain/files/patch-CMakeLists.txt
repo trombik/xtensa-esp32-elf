@@ -6,7 +6,7 @@
              ${newlib_src_dir}/configure --host=${host_triple} --target=${target_triple} --prefix=<INSTALL_DIR> ${config_opts}
 -        BUILD_COMMAND make -j${MAKE_JOBS_NUM}
 -        INSTALL_COMMAND make install
-+        BUILD_COMMAND env CCACHE_COMPILERCHECK=none make -j${MAKE_JOBS_NUM} V=1
++        BUILD_COMMAND env CCACHE_COMPILERCHECK=content make -j${MAKE_JOBS_NUM} V=1
 +        INSTALL_COMMAND make V=1 install
          USES_TERMINAL_CONFIGURE TRUE
          USES_TERMINAL_BUILD TRUE
