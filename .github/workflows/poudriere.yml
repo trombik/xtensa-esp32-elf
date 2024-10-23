@@ -221,8 +221,8 @@ jobs:
             # the job will fail later if any build fails. limit the number of
             # job to MAX_JOBS.
             #
-            # this output catches any failure including crashed poudriere
-            # bulk without logs.
+            # this catches any failure including crashed poudriere bulk
+            # without logs.
             FAILED=""
             if ! sudo poudriere bulk -j "${JAIL_NAME}" -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD}; then
               FAILED="true"
@@ -244,8 +244,13 @@ jobs:
             df -h -tufs
             echo "FAILED=${FAILED}" >> "${GITHUB_OUTPUT}"
 
+            if [ ! -z ${FAILED} ]; then
+              exit 1
+            fi
+
       - name: upload logs
         id: logs-upload-step
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: logs-${{ env.SAFE_PORT_NAME }}
@@ -253,84 +258,15 @@ jobs:
 
       - name: upload packages
         id: packages-upload-step
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: packages-${{ env.SAFE_PORT_NAME }}
           path: packages/
 
       - name: upload ccache cache
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: ccache-${{ env.SAFE_PORT_NAME }}
           path: ccache
-
-      - name: Fail if any build failed
-        shell: sh
-        run: |
-          tree -I ccache .
-
-          # logs under `errors` are symlink, not file
-          ERROR_LOG_FILES=`find logs/errors -type l -name '*.log'`
-          echo "ERROR_LOG_FILES: ${ERROR_LOG_FILES}"
-          FAILED_PACKAGES=""
-          for F in ${ERROR_LOG_FILES}; do
-            FAILED_PACKAGE=`basename "${F}" | sed -e 's/\.log//'`
-            FAILED_PACKAGES="${FAILED_PACKAGES} ${FAILED_PACKAGE}"
-          done
-          echo "${FAILED_PACKAGES}" > failed_packages.txt
-          echo "===> Failed package"
-          cat failed_packages.txt
-
-          echo "Logs are available in an artifact. ID: ${{ steps.logs-upload-step.outputs.artifact-id }}"
-          echo "Packages are available in an artifact. ID: ${{ steps.packages-upload-step.outputs.artifact-id }}"
-
-          if [ ! -z "${FAILED_PACKAGES}" ]; then
-            echo "::warning ::building ${{ matrix.PORT }} failed to build. the logs are available at: https://github.com/${{ github.repository }}/actions/runs/${{ github.github.run_id }}/artifacts/${{ steps.packages-upload-step.outputs.artifact-id }}"
-          fi
-
-          if [ ! -z "${{ steps.poudriere-bulk.outputs.FAILED }}" ]; then
-            echo "::warning ::poudriere bulk failed"
-          fi
-
-  conclude-result:
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      - name: Download logs
-        uses: actions/download-artifact@v4
-        with:
-          pattern: logs-*
-          merge-multiple: true
-          path: logs
-
-      - name: Fail if any build failed
-        shell: sh
-        run: |
-          EXIT_STATUS=0
-          ERROR_LOG_FILES=""
-          FAILED_PACKAGES=""
-          tree logs
-
-          # logs under `errors` are files, not symlinks
-          if [ -d logs/errors ]; then
-            ERROR_LOG_FILES=`find logs/errors -type f -name '*.log'`
-          fi
-          echo "ERROR_LOG_FILES: ${ERROR_LOG_FILES}"
-          for F in ${ERROR_LOG_FILES}; do
-            FAILED_PACKAGE=`basename "${F}" | sed -e 's/\.log//'`
-            FAILED_PACKAGES="${FAILED_PACKAGES} ${FAILED_PACKAGE}"
-          done
-          echo "${FAILED_PACKAGES}" > failed_packages.txt
-          echo "===> Failed package"
-          cat failed_packages.txt
-          if [ ! -z "${FAILED_PACKAGES}" ]; then
-            echo "::error ::building ${{ matrix.PORT }} failed to build"
-            EXIT_STATUS=1
-          fi
-
-          if [ ! -z "${{ needs.build.outputs.FAILED }}" ]; then
-            echo "::error ::poudriere bulk failed"
-            EXIT_STATUS=1
-          fi
-          exit "${EXIT_STATUS}"
