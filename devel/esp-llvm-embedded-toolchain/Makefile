@@ -111,6 +111,10 @@ PATH:=	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin:${PATH}
 DESTDIRNAME=	__DESTDIR_DISABLED__
 CMAKE_INSTALL_PREFIX=	${STAGEDIR}${ESP_PREFIX}
 
+# XXX disable security-check.awk. this causes too much disk space on GitHub
+# Actions runner.
+DISABLE_SECURITY_CHECK=	yes
+
 .if ${PORTNAME} == esp-llvm-embedded-toolchain
 ESP_STRIP_FILES=	\
 	bin/clang-18 \
