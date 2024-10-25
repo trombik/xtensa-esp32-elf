@@ -210,8 +210,10 @@ do-install:
 		${SED} 's,^${STAGEDIR},@comment @dir ,' >> ${TMPPLIST}
 .endif
 
+.if ${PORTNAME} == "rust-esp-src"
 # Silence stage-qa warnings by sanitizing permissions on sources
 	@${FIND} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/src -type f -exec ${CHMOD} \
 		${SHAREMODE} {} +
+.endif
 
 .include <bsd.port.mk>
