@@ -131,11 +131,22 @@ ESPRUST_CONFIGURE_ARGS+=	--set=build.verbose=2 \
 # XXX you cannot use CCACHE_ENABLED here.
 # see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=277204
 .if "${WITH_CCACHE_BUILD:tl}" == "yes" && !defined(NO_CCACHE)
-ESPRUST_CONFIGURE_ARGS+=	--enable-ccache \
-	--set=llvm.ccache=${CCACHE_BIN}
-.else
-ESPRUST_CONFIGURE_ARGS+= --set=llvm.ccache=false
+ESPRUST_USING_SCCACHE=	yes
 .endif
+.if defined(POUDRIERE_BUILD_TYPE)
+ESPRUST_USING_POUDRIERE=	yes
+.else
+ESPRUST_USING_POUDRIERE=	no
+.endif
+
+.if defined(ESPRUST_USING_SCCACHE) # ESPRUST_USING_SCCACHE
+BUILD_DEPENDS+=	ccache:devel/ccache
+.if ${ESPRUST_USING_POUDRIERE} == "no" # ESPRUST_USING_POUDRIERE == no
+BUILD_DEPENDS+=	sccache:ports-mgmt/sccache-overlay
+.endif # ESPRUST_USING_POUDRIERE == no
+ESPRUST_CONFIGURE_ARGS+=	--set=llvm.ccache=sccache
+BINARY_ALIAS+=	sccache=${SCCACHE_BIN}
+.endif # ESPRUST_USING_SCCACHE
 
 ESPRUST_BUILD_CMD=	${PYTHON_CMD} x.py
 ESPRUST_BUILD_ARGS?=	dist --stage 2 --jobs=${MAKE_JOBS_NUMBER}
@@ -164,6 +175,11 @@ do-configure:
 
 do-build:
 	(cd ${WRKSRC} && ${SETENVI} ${WRK_ENV} ${MAKE_ENV} ${CARGO_ENV} ${ESPRUST_BUILD_CMD} ${ESPRUST_BUILD_ARGS})
+
+post-build:
+.if defined(ESPRUST_USING_SCCACHE)
+	${BSDMAKE} sccache-stats
+.endif
 
 do-install:
 	# XXX remove unnecessary directories to save disk space.
