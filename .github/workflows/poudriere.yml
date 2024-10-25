@@ -138,6 +138,7 @@ jobs:
             OVERLAY_DIR=`realpath .`
             PORT_TO_BUILD=${{ matrix.PORT }}
             CCACHE_DIR=/var/cache/ccache
+            SCCACHE_DIR="${CCACHE_DIR}/sccache"
 
             # disable tmpfs to save memory
             echo USE_TMPFS=no | sudo tee -a /usr/local/etc/poudriere.conf
@@ -198,8 +199,8 @@ jobs:
 
             # pre-fill ccache cache
             #
-            # TQODO install ccache when building the VM image
-            sudo env ASSUME_ALWAYS_YES=yes pkg install ccache
+            # TODO install ccache when building the VM image
+            sudo env ASSUME_ALWAYS_YES=yes pkg install ccache sccache sccache-overlay
             if [ -d ccache ]; then
               ls -al ccache
               sudo rm -rf "${CCACHE_DIR}"
@@ -220,6 +221,14 @@ jobs:
               sudo mkdir -p "${CCACHE_DIR}"
             fi
 
+            # pre-fill sccache cache
+            sudo poudriere ports -c -p sccache -m null -M /usr/local/share/sccache/overlay
+            sudo mkdir -p "${SCCACHE_DIR}"
+            sudo chown -R root:wheel "${SCCACHE_DIR}"
+            echo "===> sccache statistic before build"
+            sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -s
+            sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -z
+
             # build the ports with the overlay (-o) and binary packages from
             # PACKAGE_FETCH_URL (-b). Test the port with Q/A checks (-Ct).
             # the job will fail later if any build fails. limit the number of
@@ -228,7 +237,7 @@ jobs:
             # this catches any failure including crashed poudriere bulk
             # without logs.
             FAILED=""
-            if ! sudo poudriere bulk -j "${JAIL_NAME}" -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD}; then
+            if ! sudo poudriere bulk -j "${JAIL_NAME}" -O sccache -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD}; then
               FAILED="true"
             fi
 
@@ -244,6 +253,14 @@ jobs:
             sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
             sudo cp -R "${CCACHE_DIR}" ccache
             ls -al ccache
+
+            # show sccache cache statistic
+            echo "===> sccache statistic after build"
+            sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -s
+
+            # XXX change permission so that rsync can sync the directory.
+            # the default mode is 0750
+            sudo chmod -R 755 "${CCACHE_DIR}"
 
             df -h -tufs
             echo "FAILED=${FAILED}" >> "${GITHUB_OUTPUT}"
