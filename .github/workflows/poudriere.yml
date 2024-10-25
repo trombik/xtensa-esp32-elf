@@ -260,7 +260,7 @@ jobs:
 
             # XXX change permission so that rsync can sync the directory.
             # the default mode is 0750
-            sudo chmod -R 755 "${CCACHE_DIR}"
+            sudo chmod -R 755 ccache
 
             df -h -tufs
             echo "FAILED=${FAILED}" >> "${GITHUB_OUTPUT}"
