@@ -82,7 +82,7 @@ jobs:
 
       - name: Download packages
         id: download-packages
-        uses: dawidd6/action-download-artifact@v6
+        uses: trombik/action-download-artifact@fb787b53f496d12bcd885e762038fa29c90a7a28
         with:
 
           # download packages cache from previous workflow run
