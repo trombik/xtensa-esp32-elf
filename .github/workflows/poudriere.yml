@@ -92,6 +92,7 @@ jobs:
           name_is_regexp: true
           path: packages
           if_no_artifact_found: warn
+          search_artifacts: true
 
       - name: Merge packages
         run: |
@@ -113,6 +114,7 @@ jobs:
           name: ccache-${{ env.SAFE_PORT_NAME }}
           path: ccache
           if_no_artifact_found: warn
+          search_artifacts: true
 
       - name: poudriere bulk
         id: poudriere-bulk
