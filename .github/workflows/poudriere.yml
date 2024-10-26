@@ -231,6 +231,10 @@ jobs:
             sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -s
             sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -z
 
+            # delete packages except ${PORT_TO_BUILD} and its dependencies
+            # this prevents the package cache from bloating
+            sudo poudriere pkgclean -J "${JAIL_NAME}" -O overlay "${PORT_TO_BUILD}"
+
             # build the ports with the overlay (-o) and binary packages from
             # PACKAGE_FETCH_URL (-b). Test the port with Q/A checks (-Ct).
             # the job will fail later if any build fails. limit the number of
