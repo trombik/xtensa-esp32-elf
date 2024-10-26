@@ -281,7 +281,10 @@ jobs:
 
       - name: upload packages
         id: packages-upload-step
-        if: success() || failure()
+
+        # if the outcome is failure `packages` directory contains compressed
+        # zip files. do not upload them.
+        if: ${{ steps.download-packages.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: packages-${{ env.SAFE_PORT_NAME }}
