@@ -86,7 +86,7 @@ jobs:
         with:
 
           # download packages cache from previous workflow run
-          workflow: poudriere.yml
+          workflow: build.yml
           workflow_conclusion: completed
           name: packages-.*
           name_is_regexp: true
@@ -108,7 +108,7 @@ jobs:
         with:
 
           # download ccache cache from previous workflow run
-          workflow: poudriere.yml
+          workflow: build.yml
           workflow_conclusion: completed
           name: ccache-${{ env.SAFE_PORT_NAME }}
           path: ccache
