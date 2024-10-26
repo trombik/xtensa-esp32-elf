@@ -4,13 +4,7 @@ Date: Thu, 24 Oct 2024 09:28:46 +0200
 Subject: [PATCH] If a port was specified via CLI or config, search *all*
  serial ports, not just the filtered list
 
----
- espflash/src/cli/serial.rs | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/espflash/src/cli/serial.rs b/espflash/src/cli/serial.rs
-index 993efd5d..ab71630b 100644
---- espflash/src/cli/serial.rs
+--- espflash/src/cli/serial.rs.orig	2024-10-18 09:08:31 UTC
 +++ espflash/src/cli/serial.rs
 @@ -33,13 +33,14 @@ pub fn get_serial_port_info(
      // doesn't work (on Windows) with "dummy" device paths like `COM4`. That's
