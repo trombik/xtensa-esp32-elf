@@ -231,9 +231,6 @@ jobs:
             sudo poudriere ports -c -p sccache -m null -M /usr/local/share/sccache/overlay
             sudo mkdir -p "${SCCACHE_DIR}"
             sudo chown -R root:wheel "${SCCACHE_DIR}"
-            echo "===> sccache statistic before build"
-            sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -s
-            sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -z
 
             # delete packages except ${PORT_TO_BUILD} and its dependencies
             # this prevents the package cache from bloating
@@ -264,10 +261,6 @@ jobs:
             sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
             sudo cp -R "${CCACHE_DIR}" ccache
             ls -al ccache
-
-            # show sccache cache statistic
-            echo "===> sccache statistic after build"
-            sudo env SCCACHE_DIR="${SCCACHE_DIR}" sccache -s
 
             # XXX change permission so that rsync can sync the directory.
             # the default mode is 0750
