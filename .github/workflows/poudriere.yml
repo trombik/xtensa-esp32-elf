@@ -144,6 +144,7 @@ jobs:
             PORT_TO_BUILD=${{ matrix.PORT }}
             CCACHE_DIR=/var/cache/ccache
             SCCACHE_DIR="${CCACHE_DIR}/sccache"
+            PACKAGES_BUILT_DIR="${OVERLAY_DIR}/packages.built"
 
             # disable tmpfs to save memory
             echo USE_TMPFS=no | sudo tee -a /usr/local/etc/poudriere.conf
@@ -255,8 +256,8 @@ jobs:
             sudo cp -R "/usr/local/poudriere/data/logs/bulk/${JAIL_NAME}-${PORTS_NAME}/latest/logs" ${OVERLAY_DIR}/logs
 
             # collect the built packages
-            sudo cp -RL "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All" "${OVERLAY_DIR}/packages"
-            tree packages
+            sudo cp -RL "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All" "${PACKAGES_BUILT_DIR}"
+            tree "${PACKAGES_BUILT_DIR}"
 
             # collect ccache cache
             echo "===> ccache statistic after build"
@@ -289,6 +290,14 @@ jobs:
         with:
           name: logs-${{ env.SAFE_PORT_NAME }}
           path: logs/
+
+      - name: rename packages.built to packages
+        shell: sh
+        run: |
+          rm -rf packages
+          if [ -d packages.built ]; then
+            mv packages.built packages
+          fi
 
       - name: upload packages
         id: packages-upload-step
