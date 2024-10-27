@@ -236,7 +236,7 @@ jobs:
 
             # delete packages except ${PORT_TO_BUILD} and its dependencies
             # this prevents the package cache from bloating
-            sudo poudriere pkgclean -j "${JAIL_NAME}" -O sccache -O overlay "${PORT_TO_BUILD}"
+            sudo poudriere pkgclean -j "${JAIL_NAME}" -O sccache -O overlay -y "${PORT_TO_BUILD}"
 
             # build the ports with the overlay (-o) and binary packages from
             # PACKAGE_FETCH_URL (-b). Test the port with Q/A checks (-Ct).
