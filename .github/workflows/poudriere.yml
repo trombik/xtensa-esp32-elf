@@ -243,8 +243,13 @@ jobs:
             #
             # this catches any failure including crashed poudriere bulk
             # without logs.
+            #
+            # terminate poudriere after TIMEOUT_AFTER so that the step can
+            # collect caches and packages. they might help the next build.
             FAILED=""
-            if ! sudo poudriere bulk -j "${JAIL_NAME}" -O sccache -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD}; then
+            TIMEOUT_CMD="/bin/timeout"
+            TIMEOUT_AFTER="5h"
+            if ! sudo "${TIMEOUT_CMD}" "${TIMEOUT_AFTER}" poudriere bulk -j "${JAIL_NAME}" -O sccache -O overlay -b latest -J "${MAX_JOBS}" -Ct ${PORT_TO_BUILD}; then
               FAILED="true"
             fi
 
