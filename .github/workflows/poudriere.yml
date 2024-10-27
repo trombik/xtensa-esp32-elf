@@ -256,6 +256,7 @@ jobs:
 
             # collect the built packages
             sudo cp -RL "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All" "${OVERLAY_DIR}/packages"
+            tree packages
 
             # collect ccache cache
             echo "===> ccache statistic after build"
