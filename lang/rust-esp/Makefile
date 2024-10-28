@@ -213,6 +213,9 @@ do-install:
 	@${FIND} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/bin ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib \
 		${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/libexec -exec ${FILE} -i {} + | \
 		${AWK} -F: '/executable|sharedlib/ { print $$1 }' | ${XARGS} ${STRIP_CMD}
+
+	${MKDIR} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/src
+	(cd ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/src && ${LN} -s ../../../../rust-esp-src/lib/rustlib/src/rust rust)
 .endif
 	@${FIND} ${STAGEDIR}${PREFIX} -not -type d | \
 		${SED} -E -e 's,^${STAGEDIR}${PREFIX}/,,' \
