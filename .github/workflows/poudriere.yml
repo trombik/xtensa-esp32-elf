@@ -279,6 +279,7 @@ jobs:
             fi
 
       - name: Dump context
+        if: success() || failure()
         uses: crazy-max/ghaction-dump-context@5355a8e5e6ac5a302e746a1c4b7747a0393863c8
 
       - name: upload logs
@@ -290,6 +291,7 @@ jobs:
           path: logs/
 
       - name: rename packages.built to packages
+        if: success() || failure()
         shell: sh
         run: |
           rm -rf packages
@@ -302,7 +304,7 @@ jobs:
 
         # if the outcome is failure `packages` directory contains compressed
         # zip files. do not upload them.
-        if: ${{ steps.download-packages.outcome == 'success' }}
+        if: ${{ steps.download-packages.outcome == 'success' }} && ( success() || failure() )
         uses: actions/upload-artifact@v4
         with:
           name: packages-${{ env.SAFE_PORT_NAME }}
