@@ -105,7 +105,6 @@ jobs:
               rm -rf "${D}"
             done
           fi
-          tree packages
 
       - name: Download ccache
         uses: dawidd6/action-download-artifact@v6
@@ -132,7 +131,6 @@ jobs:
             set -e
 
             df -h -tufs
-            tree -I ccache .
             poudriere ports -l
             poudriere jail -l
 
@@ -194,11 +192,9 @@ jobs:
             # so that packages cache can be extracted under the directory.
             # the `All` directory is a symlink and computed by poudriere.
             sudo poudriere bulk -j "${JAIL_NAME}" -b latest -J "${MAX_JOBS}" ports-mgmt/pkg
-            tree "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All"
 
             # pre-fill packages cache
             if [ -d packages ]; then
-              ls -al packages
               sudo cp -R packages/* "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All/"
               sudo rm -rf packages
             fi
@@ -208,7 +204,6 @@ jobs:
             # TODO install ccache when building the VM image
             sudo env ASSUME_ALWAYS_YES=yes pkg install ccache sccache sccache-overlay
             if [ -d ccache ]; then
-              ls -al ccache
               sudo rm -rf "${CCACHE_DIR}"
               sudo mv ccache "${CCACHE_DIR}"
               sudo chown -R root:wheel "${CCACHE_DIR}"
@@ -259,13 +254,11 @@ jobs:
 
             # collect the built packages
             sudo cp -RL "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All" "${PACKAGES_BUILT_DIR}"
-            tree "${PACKAGES_BUILT_DIR}"
 
             # collect ccache cache
             echo "===> ccache statistic after build"
             sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
             sudo cp -R "${CCACHE_DIR}" ccache
-            ls -al ccache
 
             # XXX change permission so that rsync can sync the directory.
             # the default mode is 0750
