@@ -14,8 +14,9 @@ LICENSE_FILE=	${WRKSRC}/LICENSE-MIT
 DISTVERSIONPREFIX=	esp-
 
 # the build process uses features only available in nightly.
-BUILD_DEPENDS=	rust-nightly>0:lang/rust-nightly
-LIB_DEPENDS?=	libonig.so:devel/oniguruma \
+BUILD_DEPENDS=	rust-nightly>0:lang/rust-nightly \
+	${LOCALBASE}/lib/libonig.so:devel/oniguruma
+LIB_DEPENDS?=	\
 	libssh2.so:security/libssh2 \
 	libgit2.so:devel/libgit2
 RUN_DEPENDS=	${LOCALBASE}/esp-llvm-embedded-toolchain/bin/clang:devel/esp-llvm-embedded-toolchain \
