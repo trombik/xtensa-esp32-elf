@@ -1,0 +1,4 @@
+A CLI tool for launching a wokwi instance for your project.
+
+> idf.py build
+> wokwi-server --chip esp32 build/blink.elf
