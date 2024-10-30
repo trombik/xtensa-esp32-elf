@@ -1,0 +1,7 @@
+Fork of QEMU with Espressif patches.
+
+Espressif's QEMU project contains a fork of QEMU with patches for Espressif
+chips support. We hope that these patches will eventually be mature enough to
+become part of the upstream QEMU project.
+
+https://github.com/espressif/esp-toolchain-docs/blob/main/qemu/README.md
