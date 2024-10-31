@@ -52,3 +52,42 @@ by commenting out.
 cryptography>=2.1.4,<42
 # --only-binary cryptography
 ```
+
+## Environment variables
+
+To build `esp-idf` and `rust-esp` projects, environment variables must be set.
+With the official setup, they are set by either `idf.py` or `espup`. With
+packages in this repository, you have to do it by yourself. The variables are
+undocumented, meaning, they are considered as internal variables. Over time,
+they might, or might not, work.
+
+See
+[trombik/env-rust.zsh](https://gist.github.com/trombik/8c3b964bcdc010bca0a6f02734dba1c1)
+for an example env file to source.
+
+```console
+source env-rust.zsh
+```
+
+### Required environment variables
+
+```
+CLANG_PATH
+IDF_PATH
+IDF_PYTHON_ENV_PATH
+LIBCLANG_PATH
+PATH
+RISCV_GCC
+RUST_SRC_PATH
+XTENSA_GCC
+```
+
+### Optional environment variables
+
+These variables are documented in the official documentation.
+
+```
+IDF_CCACHE_ENABLE
+IDF_MAINTAINER
+RUSTC_WRAPPER
+```
