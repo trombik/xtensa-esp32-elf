@@ -109,3 +109,8 @@ Build the project as usual.
 ```console
 idf.py all
 ```
+
+### `esp-idf` and `rust-esp`
+
+Required environment variables for both `esp-idf` and `rust-esp` are
+documented in [lang/rust-esp/README.md](../../lang/rust-esp/README.md).
