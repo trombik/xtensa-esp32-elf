@@ -31,12 +31,43 @@ jobs:
     outputs:
       PORTS_TO_BUILD_JSON: ${{ steps.to-json.outputs.PORTS_TO_BUILD_JSON }}
     steps:
-      - name: Convert input to JSON
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: resolve all FLAVOR
+        uses: cross-platform-actions/action@v0.25.0
+        with:
+          operating_system: freebsd
+          version: '14.1'
+          image_url: https://github.com/trombik/freebsd-builder-poudriere/releases/download/v1.0.7/freebsd-14.1-x86-64.qcow2
+          sync_files: true
+          run: |
+            set -x
+            set -e
+
+            for D in ${{ inputs.ports-to-build }}; do
+              FLAVORS=`make -C "${D}" -V FLAVORS`
+              if [ -z "${FLAVORS}" ]; then
+                PORTS_TO_BUILD="${PORTS_TO_BUILD} ${D}"
+                continue
+              fi
+              for F in ${FLAVORS}; do
+                ORIGIN="${D}@${F}"
+                PORTS_TO_BUILD="${PORTS_TO_BUILD} ${ORIGIN}"
+              done
+            done
+            PORTS_TO_BUILD=`echo "${PORTS_TO_BUILD}" | sed -E -e 's/^[[:space:]]+//' -e 's/[[:space:]]+$//'`
+            echo "${PORTS_TO_BUILD}" > PORTS_TO_BUILD
+            cat PORTS_TO_BUILD
+
+      - name: Convert PORTS_TO_BUILD to JSON
         id: to-json
         shell: sh
         run: |
-          echo "${{ inputs.ports-to-build }}"
-          PORTS_TO_BUILD_JSON=`jq -n -c -M --arg V "${{ inputs.ports-to-build }}" '{ PORT: ($V | split(" ")) }'`
+          cat PORTS_TO_BUILD
+          PORTS_TO_BUILD=`cat PORTS_TO_BUILD`
+          PORTS_TO_BUILD_JSON=`jq -n -c -M --arg V "${PORTS_TO_BUILD}" '{ PORT: ($V | split(" ")) }'`
           echo "PORTS_TO_BUILD_JSON=${PORTS_TO_BUILD_JSON}" >> "${GITHUB_OUTPUT}"
           cat "${GITHUB_OUTPUT}"
 
@@ -174,6 +205,10 @@ jobs:
             # disable a logic to find out build failure. takes too much time
             # and disk space
             echo DETERMINE_BUILD_FAILURE_REASON=no | sudo tee -a /usr/local/etc/poudriere.conf
+
+            # build given FLAVOR only
+            echo FLAVOR_DEFAULT_ALL=no | sudo tee -a /usr/local/etc/poudriere.conf
+
             echo "===> /usr/local/etc/poudriere.conf"
             cat /usr/local/etc/poudriere.conf
 
