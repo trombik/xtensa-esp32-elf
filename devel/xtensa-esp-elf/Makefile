@@ -1,5 +1,6 @@
 PORTNAME?=	xtensa-esp-elf
 PORTVERSION=	${ESPRESSIF_VERSION:S/esp-//:S/_/./}
+PORTREVISION=	1
 CATEGORIES=	devel
 MASTER_SITES=
 DISTFILES=
@@ -196,6 +197,7 @@ ESP_REMOVE_BEFORE_DO_INSTALL=	\
 GH_TUPLE+=	espressif:picolibc:${ESPRESSIF_PICOLIBC_TAG}:source109
 EXTRACT_ONLY+= espressif-picolibc-${ESPRESSIF_PICOLIBC_TAG}_GH0.tar.gz
 ESP_REMOVE_BEFORE_DO_INSTALL+= espressif-picolibc-${ESPRESSIF_PICOLIBC_TAG}
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS+=	esp8266
 .endif
 
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
@@ -259,6 +261,12 @@ post-extract:
 .if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
 	${RMDIR} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
 	${LN} -s ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
+.endif
+
+post-patch:
+.if ${PORTNAME} == xtensa-esp-elf && ${FLAVOR} == idf54
+	@${ECHO_MSG} "===>  Applying ESP8266 support patch to gcc-${ESPRESSIF_GCC_TAG}"
+	@(cd ${WRKDIR}/gcc-${ESPRESSIF_GCC_TAG} && ${PATCH} ${PATCH_ARGS} < ${FILESDIR}/${FLAVOR}/esp8266.patch)
 .endif
 
 pre-configure:
