@@ -1,0 +1,4 @@
+A simple tool to forward linker arguments to the actual linker executable also
+given as an argument to ldproxy.
+
+Required to build Rust on ESP `std` projects.
