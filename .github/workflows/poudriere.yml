@@ -318,6 +318,9 @@ jobs:
           name: logs-${{ env.SAFE_PORT_NAME }}
           path: logs/
 
+          # overwrite artifact if exists. this enables failed job to run again
+          overwrite: true
+
       - name: rename packages.built to packages
         if: success() || failure()
         shell: sh
@@ -334,6 +337,7 @@ jobs:
         with:
           name: packages-${{ env.SAFE_PORT_NAME }}
           path: packages/
+          overwrite: true
 
       - name: upload ccache cache
         if: success() || failure()
@@ -341,3 +345,4 @@ jobs:
         with:
           name: ccache-${{ env.SAFE_PORT_NAME }}
           path: ccache
+          overwrite: true
