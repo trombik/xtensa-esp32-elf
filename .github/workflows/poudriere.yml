@@ -21,9 +21,17 @@ on:
         description: space separated `category/name`
         required: true
         type: string
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: true
 
 env:
    BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+   GH_TOKEN: ${{ github.token }}
 
 jobs:
   convert:
@@ -113,6 +121,11 @@ jobs:
         run: |
           SAFE_PORT_NAME=`echo -n "${{ matrix.PORT }}" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g'`
           echo "SAFE_PORT_NAME=${SAFE_PORT_NAME}" >> "${GITHUB_ENV}"
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
 
       - name: Download packages
         id: download-packages
