@@ -21,17 +21,22 @@ on:
         description: space separated `category/name`
         required: true
         type: string
+      expand-disk:
+        description: Expand disk space of the host OS
+        required: false
+        type: boolean
+        default: true
+
   workflow_dispatch:
     inputs:
       debug_enabled:
         type: boolean
         description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
         required: false
-        default: true
+        default: false
 
 env:
    BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-   GH_TOKEN: ${{ github.token }}
 
 jobs:
   convert:
@@ -48,7 +53,7 @@ jobs:
         with:
           operating_system: freebsd
           version: '14.1'
-          image_url: https://github.com/trombik/freebsd-builder-poudriere/releases/download/v1.0.23/freebsd-14.1-x86-64.qcow2
+          image_url: https://github.com/trombik/freebsd-builder-poudriere/releases/download/v1.0.26/freebsd-14.1-x86-64.qcow2
           sync_files: true
           run: |
             set -x
@@ -102,7 +107,7 @@ jobs:
         uses: crazy-max/ghaction-dump-context@5355a8e5e6ac5a302e746a1c4b7747a0393863c8
 
       - name: Maximize build space
-        if: runner.os == 'Linux'
+        if: ${{ runner.os == 'Linux' && inputs.expand-disk }}
         uses: AdityaGarg8/remove-unwanted-software@8831c82abf29b34eb2caac48d5f999ecfc0d8eef
         with:
           remove-android: 'true'
@@ -123,44 +128,36 @@ jobs:
           echo "SAFE_PORT_NAME=${SAFE_PORT_NAME}" >> "${GITHUB_ENV}"
 
       - name: Setup tmate session
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
 
-      - name: Download packages
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Download packages and ccache
         id: download-packages
-        uses: trombik/action-download-artifact@fb787b53f496d12bcd885e762038fa29c90a7a28
-        with:
-
-          # download packages cache from previous workflow run
-          workflow: build.yml
-          workflow_conclusion: completed
-          name: packages-.*
-          name_is_regexp: true
-          path: packages
-          if_no_artifact_found: warn
-          search_artifacts: true
-
-      - name: Merge packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: sh
         run: |
-          if [ -d packages ]; then
-            for D in `echo packages/*`; do
-              mv "${D}"/*.pkg packages/
-              rm -rf "${D}"
-            done
-          fi
+          root_dir="`pwd`"
+          cd .github/scripts
+          bundle install
 
-      - name: Download ccache
-        uses: dawidd6/action-download-artifact@v6
-        with:
+          bundle exec ruby download_artifact.rb "packages-*" "${root_dir}/packages"
+          echo "::group::Downloaded packages"
+          tree "${root_dir}/packages"
+          echo "::endgroup::"
 
-          # download ccache cache from previous workflow run
-          workflow: build.yml
-          workflow_conclusion: completed
-          name: ccache-${{ env.SAFE_PORT_NAME }}
-          path: ccache
-          if_no_artifact_found: warn
-          search_artifacts: true
+          bundle exec ruby download_artifact.rb "ccache-${{ env.SAFE_PORT_NAME }}" "${root_dir}/ccache"
+          echo "::group::Downloaded ccache"
+          tree "${root_dir}/ccache"
+          echo "::endgroup::"
 
       - name: poudriere bulk
         id: poudriere-bulk
@@ -168,7 +165,7 @@ jobs:
         with:
           operating_system: freebsd
           version: '14.1'
-          image_url: https://github.com/trombik/freebsd-builder-poudriere/releases/download/v1.0.23/freebsd-14.1-x86-64.qcow2
+          image_url: https://github.com/trombik/freebsd-builder-poudriere/releases/download/v1.0.26/freebsd-14.1-x86-64.qcow2
           sync_files: true
           run: |
             set -x
@@ -213,7 +210,7 @@ jobs:
             # packages and ccache cache might help future builds.
 
             # allow MAX_JOBS in ports which take longer to build
-            echo ALLOW_MAKE_JOBS_PACKAGES="\"rust rust-nightly cmake-core-* esp-llvm-embedded-toolchain-* rust-esp* xtensa-esp32-elf-* xtensa-esp-elf-* riscv32-esp-elf-*\"" | sudo tee -a /usr/local/etc/poudriere.conf
+            echo ALLOW_MAKE_JOBS_PACKAGES="\"rust rust-nightly cmake-core-* qt*-* cura CuraEngine\"" | sudo tee -a /usr/local/etc/poudriere.conf
 
             # disable a logic to find out build failure. takes too much time
             # and disk space
@@ -255,11 +252,6 @@ jobs:
               sudo rm -rf "${CCACHE_DIR}"
               sudo mv ccache "${CCACHE_DIR}"
               sudo chown -R root:wheel "${CCACHE_DIR}"
-
-              # set max_size to less than 2GB.
-              # dawidd6/action-download-artifact has 2GB limit in size.
-              # https://github.com/dawidd6/action-download-artifact/issues/201
-              sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -o max_size=1.9G
               sudo cat "${CCACHE_DIR}/ccache.conf"
               echo "===> ccache statistic before build"
               sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
@@ -296,6 +288,7 @@ jobs:
               FAILED="true"
             fi
 
+            echo "::group::Post poudriere task"
             # collect the logs. freebsd-vm will copy them back to the host OS.
             tree "/usr/local/poudriere/data/logs/bulk/${JAIL_NAME}-${PORTS_NAME}/latest/logs"
             sudo cp -R "/usr/local/poudriere/data/logs/bulk/${JAIL_NAME}-${PORTS_NAME}/latest/logs" ${OVERLAY_DIR}/logs
@@ -318,6 +311,7 @@ jobs:
             if [ ! -z ${FAILED} ]; then
               exit 1
             fi
+            echo "::endgroup::"
 
       - name: Dump context
         if: success() || failure()
