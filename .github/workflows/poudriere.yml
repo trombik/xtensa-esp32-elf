@@ -252,7 +252,7 @@ jobs:
               sudo rm -rf "${CCACHE_DIR}"
               sudo mv ccache "${CCACHE_DIR}"
               sudo chown -R root:wheel "${CCACHE_DIR}"
-              sudo cat "${CCACHE_DIR}/ccache.conf"
+              sudo cat "${CCACHE_DIR}/ccache.conf" || true
               echo "===> ccache statistic before build"
               sudo env CCACHE_DIR="${CCACHE_DIR}" ccache -s
 
