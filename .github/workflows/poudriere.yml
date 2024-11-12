@@ -210,7 +210,12 @@ jobs:
             # packages and ccache cache might help future builds.
 
             # allow MAX_JOBS in ports which take longer to build
-            echo ALLOW_MAKE_JOBS_PACKAGES="\"rust rust-nightly cmake-core-* qt*-* cura CuraEngine\"" | sudo tee -a /usr/local/etc/poudriere.conf
+            ORIGIN=`echo ${PORT_TO_BUILD} | sed -e 's/@.*//'`
+            PKGNAMEPREFIX=`make -V PKGNAMEPREFIX -C "${ORIGIN}"`
+            PORTNAME=`make -V PORTNAME -C "${ORIGIN}"`
+            PKGNAMESUFFIX=`make -V PKGNAMESUFFIX -C "${ORIGIN}"`
+            PKGNAME="${PKGNAMEPREFIX}${PORTNAME}${PKGNAMESUFFIX}"
+            echo ALLOW_MAKE_JOBS_PACKAGES="\"rust rust-nightly cmake-core-* qt*-* cura ${PKGNAME}\"" | sudo tee -a /usr/local/etc/poudriere.conf
 
             # disable a logic to find out build failure. takes too much time
             # and disk space
