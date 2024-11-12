@@ -53,11 +53,11 @@ doc["artifacts"].each do |artifact|
   results[artifact["name"]] = artifact
 end
 
+FileUtils.mkdir_p(out_dir)
 results.each do |k, v|
   url = octokit.artifact_download_url(owner_repo, v.id)
   zipfile = "#{out_dir}/#{v['name']}.zip"
   puts format("Downloading %s", zipfile)
-  FileUtils.mkdir_p(out_dir)
   sh "curl", "--output", "#{zipfile}", "#{url}"
   sh "unzip", "-o", "#{zipfile}", "-d", "#{out_dir}"
   sh "rm", "-f", "#{zipfile}"
