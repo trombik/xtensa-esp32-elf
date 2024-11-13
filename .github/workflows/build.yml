@@ -79,6 +79,6 @@ jobs:
   build-ports:
     name: Build ports with poudriere
     needs: list-ports
-    uses: ./.github/workflows/poudriere.yml
+    uses: trombik/poudriere-build/.github/workflows/poudriere.yml@main
     with:
       ports-to-build: ${{ needs.list-ports.outputs.PORTS_TO_BUILD }}
