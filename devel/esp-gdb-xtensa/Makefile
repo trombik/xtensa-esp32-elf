@@ -1,5 +1,6 @@
 PORTNAME=	${ESP_PORTNAME}-${ESP_ARCH}
 DISTVERSION=	${ESP_GDB_VERSION}.${ESP_REL_DATE}
+PORTREVISION=	1
 CATEGORIES=	devel
 
 MAINTAINER=	y@trombik.org
@@ -92,5 +93,11 @@ do-install:
 .endif
 	(cd ${WRKSRC}/dist${PREFIX}/share && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/share)
 	(cd ${WRKSRC}/dist${PREFIX}/include && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/include)
+	(cd ${STAGEDIR}${PREFIX}/${PORTNAME}/bin && ln -s ${ESP_ARCH}-esp-elf-gdb-${PYTHON_VER} ${ESP_ARCH}-esp-elf-gdb)
+	echo "${PORTNAME}/bin/${ESP_ARCH}-esp-elf-gdb" >> ${TMPPLIST}
+.if ${ESP_ARCH} == xtensa
+	(cd ${STAGEDIR}${PREFIX}/${PORTNAME}/bin && ln -s ${ESP_ARCH}-esp-elf-gdb-${PYTHON_VER} ${ESP_ARCH}-esp32-elf-gdb)
+	echo "${PORTNAME}/bin/${ESP_ARCH}-esp32-elf-gdb" >> ${TMPPLIST}
+.endif
 
 .include <bsd.port.post.mk>
