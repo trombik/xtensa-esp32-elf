@@ -1,6 +1,6 @@
 PORTNAME=	${ESP_PORTNAME}-${ESP_ARCH}
 DISTVERSION=	${ESP_GDB_VERSION}.${ESP_REL_DATE}
-PORTREVISION=	1
+PORTREVISION=	2
 CATEGORIES=	devel
 
 MAINTAINER=	y@trombik.org
@@ -20,7 +20,8 @@ LIB_DEPENDS= \
 		libxxhash.so:devel/xxhash
 
 WWW=	https://github.com/espressif/binutils-gdb
-USES=	gmake ncurses iconv python gettext-runtime pkgconfig
+
+USES=	gmake ncurses iconv python gettext-runtime pkgconfig cargo
 USE_GITHUB=	yes
 USE_GCC=	yes
 
@@ -59,9 +60,33 @@ GH_TUPLE=	espressif:binutils-gdb:${ESP_PORTNAME}-v${ESP_GDB_VERSION}_${ESP_REL_D
 	espressif:xtensa-overlays:${ESP_XTENSA_OVERLAY_TAG}:xtensaoverlay/xtensa-overlays \
 	espressif:esp-toolchain-bin-wrappers:${ESP_TOOLCHAIN_BIN_WRAPPERS_TAG}:esptoolchainbinwrappers/esp-toolchain-bin-wrappers
 
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${WRKSRC}/esp-toolchain-bin-wrappers/gnu-debugger/unix
+CARGO_CARGOTOML=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/Cargo.toml
+CARGO_CARGOLOCK=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/Cargo.lock
+CARGO_BUILD_TARGET=	${ARCH:S/amd64/x86_64/}-unknown-freebsd
+ESP_ELF_GDB_WRAPPER=	esp-elf-gdb-wrapper
+
+# XXX Makefile has its own do-* target
+CARGO_INSTALL=	no
+CARGO_BUILD=	no
+CARGO_ENV=	\
+	CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
+	CARGO_TARGET_${CARGO_BUILD_TARGET:S/-/_/g:tu}_LINKER="${CC}"
+
 .include <bsd.port.pre.mk>
 
-pre-configure:
+# a helper target to update distinfo
+updatecrates: makelockfile installlockfile
+	${MAKE} cargo-crates > Makefile.crates
+	${MAKE} makesum
+
+makelockfile: extract cargo-crates-generate-lockfile
+	${CP} ${CARGO_CARGOLOCK} ${FILESDIR}/Cargo.lock
+
+installlockfile:
+	${CP} ${FILESDIR}/Cargo.lock ${CARGO_CARGOLOCK}
+
+pre-configure:	installlockfile
 	${REINPLACE_CMD} \
 		-e 's|%%PREFIX%%|${PREFIX}|g' \
 		-e 's|%%PYTHON_INCLUDEDIR%%|${PYTHON_INCLUDEDIR}|g' \
@@ -71,6 +96,15 @@ pre-configure:
 		${WRKSRC}/build_esp_gdb.sh
 
 do-build:
+# see build_esp_gdb.sh
+.if ${ESP_ARCH} == xtensa
+	${CARGO_CARGO_RUN} build \
+		--manifest-path ${CARGO_CARGOTOML} \
+		--verbose \
+		--verbose \
+		${CARGO_BUILD_ARGS}
+.endif
+
 	(cd ${WRKSRC} && ${SETENV} ${WRK_ENV} ${MAKE_ENV} bash ${WRKSRC}/build_esp_gdb.sh ${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL} ${ESP_ARCH} ${PYTHON_VERSION})
 
 do-install:
@@ -93,11 +127,10 @@ do-install:
 .endif
 	(cd ${WRKSRC}/dist${PREFIX}/share && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/share)
 	(cd ${WRKSRC}/dist${PREFIX}/include && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/include)
-	(cd ${STAGEDIR}${PREFIX}/${PORTNAME}/bin && ln -s ${ESP_ARCH}-esp-elf-gdb-${PYTHON_VER} ${ESP_ARCH}-esp-elf-gdb)
-	echo "${PORTNAME}/bin/${ESP_ARCH}-esp-elf-gdb" >> ${TMPPLIST}
 .if ${ESP_ARCH} == xtensa
-	(cd ${STAGEDIR}${PREFIX}/${PORTNAME}/bin && ln -s ${ESP_ARCH}-esp-elf-gdb-${PYTHON_VER} ${ESP_ARCH}-esp32-elf-gdb)
-	echo "${PORTNAME}/bin/${ESP_ARCH}-esp32-elf-gdb" >> ${TMPPLIST}
+.for CHIP in esp32 esp32s2 esp32s3 esp
+	${INSTALL_PROGRAM} ${CARGO_TARGET_DIR}/release/${ESP_ELF_GDB_WRAPPER} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin/${ESP_ARCH}-${CHIP}-elf-gdb
+.endfor
 .endif
 
 .include <bsd.port.post.mk>

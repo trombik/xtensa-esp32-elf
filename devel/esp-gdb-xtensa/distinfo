@@ -1,4 +1,8 @@
-TIMESTAMP = 1725587117
+TIMESTAMP = 1731674930
+SHA256 (rust/crates/lazy_static-1.5.0.crate) = bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe
+SIZE (rust/crates/lazy_static-1.5.0.crate) = 14025
+SHA256 (rust/crates/libc-0.2.162.crate) = 18d287de67fe55fd7e1581fe933d965a5a9477b38e949cfa9f8574ef01506398
+SIZE (rust/crates/libc-0.2.162.crate) = 769354
 SHA256 (espressif-binutils-gdb-14.2.20240403-esp-gdb-v14.2_20240403_GH0.tar.gz) = 7f11e7f8a23521513867c91dec57eafd9ae3baa5e8f624f0c74b928573ade9da
 SIZE (espressif-binutils-gdb-14.2.20240403-esp-gdb-v14.2_20240403_GH0.tar.gz) = 71907434
 SHA256 (espressif-xtensa-dynconfig-905b913_GH0.tar.gz) = a26369e09117d19067f0aa9c5ba88ee4d3dd4b4a53eafba3b78c5b7a85bf326b
