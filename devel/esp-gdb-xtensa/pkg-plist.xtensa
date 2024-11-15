@@ -1,6 +1,10 @@
+esp-gdb-xtensa/bin/xtensa-esp-elf-gdb
 esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-%%PYTHON_VER%%
 esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-add-index
 esp-gdb-xtensa/bin/xtensa-esp-elf-gprof
+esp-gdb-xtensa/bin/xtensa-esp32-elf-gdb
+esp-gdb-xtensa/bin/xtensa-esp32s2-elf-gdb
+esp-gdb-xtensa/bin/xtensa-esp32s3-elf-gdb
 esp-gdb-xtensa/include/gdb/jit-reader.h
 esp-gdb-xtensa/lib/xtensa_esp32.so
 esp-gdb-xtensa/lib/xtensa_esp32s2.so
