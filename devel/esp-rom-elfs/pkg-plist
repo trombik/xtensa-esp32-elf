@@ -1,0 +1,12 @@
+esp-rom-elfs/esp32_rev0_rom.elf
+esp-rom-elfs/esp32_rev300_rom.elf
+esp-rom-elfs/esp32c2_rev100_rom.elf
+esp-rom-elfs/esp32c3_rev0_rom.elf
+esp-rom-elfs/esp32c3_rev101_rom.elf
+esp-rom-elfs/esp32c3_rev3_rom.elf
+esp-rom-elfs/esp32c5_rev0_rom.elf
+esp-rom-elfs/esp32c6_rev0_rom.elf
+esp-rom-elfs/esp32h2_rev0_rom.elf
+esp-rom-elfs/esp32p4_rev0_rom.elf
+esp-rom-elfs/esp32s2_rev0_rom.elf
+esp-rom-elfs/esp32s3_rev0_rom.elf
