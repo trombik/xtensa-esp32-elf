@@ -1,6 +1,6 @@
 PORTNAME=	${ESP_PORTNAME}-${ESP_ARCH}
 DISTVERSION=	${ESP_GDB_VERSION}.${ESP_REL_DATE}
-PORTREVISION=	2
+PORTREVISION=	3
 CATEGORIES=	devel
 
 MAINTAINER=	y@trombik.org
@@ -21,13 +21,13 @@ LIB_DEPENDS= \
 
 WWW=	https://github.com/espressif/binutils-gdb
 
-USES=	gmake ncurses iconv python gettext-runtime pkgconfig cargo
+USES=	gmake ncurses iconv gettext-runtime pkgconfig cargo
 USE_GITHUB=	yes
 USE_GCC=	yes
 
 BINARY_ALIAS=	g++=${CXX} gcc=${CC} make=${GMAKE} \
 				${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL}-gcc=${CC} \
-				python=${PYTHON_CMD}
+				${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL}-strip=${STRIP_CMD}
 HAS_CONFIGURE=	no
 PKGNAMESUFFIX=	${PYTHON_PKGNAMESUFFIX}
 ESP_GDB_VERSION=	14.2
@@ -45,13 +45,13 @@ PLIST=	${PKGDIR}/pkg-plist.${ESP_ARCH}
 ESP_FILE_SCRIPTS=	\
 	xtensa-esp-elf-gdb-add-index
 ESP_FILE_PROGRAMS=	\
-	xtensa-esp-elf-gdb-${PYTHON_VER} \
+	xtensa-esp-elf-gdb-no-python \
 	xtensa-esp-elf-gprof
 .elif ${ESP_ARCH} == riscv32
 ESP_FILE_SCRIPTS=	\
 	riscv32-esp-elf-gdb-add-index
 ESP_FILE_PROGRAMS= \
-	riscv32-esp-elf-gdb-${PYTHON_VER} \
+	riscv32-esp-elf-gdb-no-python \
 	riscv32-esp-elf-gprof
 .endif
 
@@ -89,9 +89,6 @@ installlockfile:
 pre-configure:	installlockfile
 	${REINPLACE_CMD} \
 		-e 's|%%PREFIX%%|${PREFIX}|g' \
-		-e 's|%%PYTHON_INCLUDEDIR%%|${PYTHON_INCLUDEDIR}|g' \
-		-e 's|%%PYTHON_LIBDIR%%|${PYTHON_LIBDIR}|g' \
-		-e 's|%%PYTHON_VER%%|${PYTHON_VER}|g' \
 		-e 's|%%MAKE_JOBS_NUMBER%%|${MAKE_JOBS_NUMBER}|g' \
 		${WRKSRC}/build_esp_gdb.sh
 
@@ -105,7 +102,7 @@ do-build:
 		${CARGO_BUILD_ARGS}
 .endif
 
-	(cd ${WRKSRC} && ${SETENV} ${WRK_ENV} ${MAKE_ENV} bash ${WRKSRC}/build_esp_gdb.sh ${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL} ${ESP_ARCH} ${PYTHON_VERSION})
+	(cd ${WRKSRC} && ${SETENV} ${WRK_ENV} ${MAKE_ENV} bash ${WRKSRC}/build_esp_gdb.sh ${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL} ${ESP_ARCH} without_python)
 
 do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin \
