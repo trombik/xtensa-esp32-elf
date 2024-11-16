@@ -16,45 +16,17 @@
  else # linux
    PLATFORM="linux"
  fi
-@@ -30,7 +32,7 @@ if [ $BUILD_PYTHON_VERSION != "without_python" ]; then
- # Prepare build configure variables
- if [ $BUILD_PYTHON_VERSION != "without_python" ]; then
- 	PYTHON_CROSS_DIR=/opt/python-$TARGET_HOST-$BUILD_PYTHON_VERSION
--	PYTHON_CROSS_DIR_INCLUDE=`find $PYTHON_CROSS_DIR -name Python.h | xargs -n1 dirname`
-+	PYTHON_CROSS_DIR_INCLUDE=%%PYTHON_INCLUDEDIR%%
- fi
- PYTHON_CROSS_DIR_LIB=
- PYTHON_CROSS_LINK_FLAG=
-@@ -59,7 +61,7 @@ if [ $ESP_CHIP_ARCHITECTURE == "xtensa" ]; then
+@@ -58,8 +60,7 @@ if [ $ESP_CHIP_ARCHITECTURE == "xtensa" ]; then
+ if [ $ESP_CHIP_ARCHITECTURE == "xtensa" ]; then
    # Build xtensa-config libs
    pushd xtensa-dynconfig
-   make clean
+-  make clean
 -  make CC=${TARGET_HOST}-gcc CONF_DIR="${GDB_REPO_ROOT}/xtensa-overlays"
 +  make -j %%MAKE_JOBS_NUMBER%% CC=${TARGET_HOST}-${CC} CONF_DIR="${GDB_REPO_ROOT}/xtensa-overlays"
    make install DESTDIR="${GDB_DIST}"
    popd
  fi
-@@ -83,16 +85,10 @@ if [ $BUILD_PYTHON_VERSION != "without_python" ]; then
- 
- PYTHON_CONFIG_OPTS=
- if [ $BUILD_PYTHON_VERSION != "without_python" ]; then
--	PYTHON_CROSS_LIB_PATH=$(find $PYTHON_CROSS_DIR -name ${PYTHON_LIB_PREFIX}python3${PYTHON_LIB_POINT}[0-9]*${PYTHON_LIB_SUFFIX} | head -1)
--	PYTHON_CROSS_LINK_FLAG=$(basename $PYTHON_CROSS_LIB_PATH)
--	PYTHON_CROSS_LINK_FLAG="${PYTHON_CROSS_LINK_FLAG%$PYTHON_LIB_SUFFIX}"
--	PYTHON_CROSS_LINK_FLAG="-l${PYTHON_CROSS_LINK_FLAG#$PYTHON_LIB_PREFIX}"
--	PYTHON_CROSS_DIR_LIB=$(dirname $PYTHON_CROSS_LIB_PATH)
--	PYTHON_LDFLAGS="-L$PYTHON_CROSS_DIR_LIB $PYTHON_CROSS_LINK_FLAG -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes"
- 	PYTHON_CONFIG_OPTS="--with-python \
----with-python-libdir=$PYTHON_CROSS_DIR/lib \
----with-python-includes=-I$PYTHON_CROSS_DIR_INCLUDE \
----with-python-ldflags=\"$PYTHON_LDFLAGS\""
-+--with-python-libdir=%%PYTHON_LIBDIR%% \
-+--with-python-includes=-I%%PYTHON_INCLUDEDIR%% \
-+"
- else
- 	PYTHON_CONFIG_OPTS="--without-python"
- fi
-@@ -100,10 +96,9 @@ --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
+@@ -100,10 +101,9 @@ --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
  CONFIG_OPTS=" \
  --host=$TARGET_HOST \
  --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
@@ -66,7 +38,7 @@
  --disable-threads \
  --disable-sim \
  --disable-nls \
-@@ -111,15 +106,13 @@ --disable-source-highlight \
+@@ -111,15 +111,13 @@ --disable-source-highlight \
  --disable-ld \
  --disable-gas \
  --disable-source-highlight \
@@ -88,28 +60,18 @@
  --with-static-standard-libraries \
  --with-pkgversion="esp-gdb" \
  --with-curses \
-@@ -144,18 +137,14 @@ eval "$GDB_REPO_ROOT/configure $CONFIG_OPTS"
- 
- # Build GDB
- 
--make
-+make -j %%MAKE_JOBS_NUMBER%%
+@@ -148,8 +146,8 @@ make install DESTDIR=$GDB_DIST
  make install DESTDIR=$GDB_DIST
  
--#strip binaries. Save user's disc space
+ #strip binaries. Save user's disc space
 -${TARGET_HOST}-strip $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE}
 -${TARGET_HOST}-strip $GDB_DIST/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gprof${EXE}
--
++${TARGET_HOST}-strip $GDB_DIST%%PREFIX%%/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gdb${EXE}
++${TARGET_HOST}-strip $GDB_DIST%%PREFIX%%/bin/${ESP_CHIP_ARCHITECTURE}-esp-elf-gprof${EXE}
+ 
  GDB_PROGRAM_SUFFIX=
  if [ $BUILD_PYTHON_VERSION == "without_python" ]; then
-   GDB_PROGRAM_SUFFIX="no-python"
- else
--  GDB_PROGRAM_SUFFIX=${BUILD_PYTHON_VERSION%.*}
-+  GDB_PROGRAM_SUFFIX=%%PYTHON_VER%%
- fi
- 
- # Change path to the libpython for macos
-@@ -170,13 +159,13 @@ fi
+@@ -170,13 +168,13 @@ fi
  fi
  
  # rename gdb to have python version in filename
