@@ -1,0 +1,20 @@
+A debugging toolset and library for debugging embedded ARM and RISC-V targets
+on a separate host.
+
+A modern, embedded debugging toolkit, written in Rust.
+
+crates.io documentation Actions Status chat
+
+The goal of this library is to provide a toolset to interact with a variety of
+embedded MCUs and debug probes.
+
+Similar projects like OpenOCD, PyOCD, Segger Toolset, ST Tooling, etc. exist.
+They all implement the GDB protocol and their own protocol on top of it to
+enable GDB to communicate with the debug probe. Only Segger provides a closed
+source DLL which you can use for talking to the JLink.
+
+This project gets rid of the GDB layer and provides a direct interface to the
+debug probe, which then enables other software to use its debug functionality.
+
+The end goal of this project is to have a complete library toolset to enable
+other tools to communicate with embedded targets.
