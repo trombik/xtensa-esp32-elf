@@ -2,7 +2,12 @@
 set -e
 
 MAKEFILE_CRATES=`make -V MAKEFILE_CRATES`
-CARGOTOML_FILES="Cargo.toml src/bootstrap/Cargo.toml src/tools/rust-analyzer/Cargo.toml src/tools/cargo/Cargo.toml"
+CARGOTOML_FILES="Cargo.toml \
+    src/bootstrap/Cargo.toml \
+    src/tools/cargo/Cargo.toml \
+    src/tools/rust-analyzer/Cargo.toml
+    src/tools/rustbook/Cargo.toml \
+"
 
 make clean
 make patch

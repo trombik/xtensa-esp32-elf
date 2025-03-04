@@ -11,7 +11,7 @@ if [ ! -d ${DIR}/.git ]; then
 fi
 
 cd ${DIR}
-git checkout --force ${TAG}
+git checkout --force ${TAG} >/dev/null
 git submodule update --init --recursive
 MODULE_NAMES=`git config --file .gitmodules --name-only --get-regexp path | sed -e 's|^submodule\.||' -e 's|\.path$||' | sort`
 MODULE_TUPLES=""

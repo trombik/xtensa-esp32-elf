@@ -1,13 +1,14 @@
 GH_TUPLE+= \
-	rust-lang:backtrace-rs:72265be:rust_lang_backtrace_rs/library/backtrace \
-	rust-lang:stdarch:df3618d:rust_lang_stdarch/library/stdarch \
-	rust-lang:book:67fa536:rust_lang_book/src/doc/book \
-	rust-lang:edition-guide:5454de3:rust_lang_edition_guide/src/doc/edition-guide \
-	rust-embedded:book:019f392:rust_embedded_book/src/doc/embedded-book \
-	rust-lang:nomicon:0ebdaca:rust_lang_nomicon/src/doc/nomicon \
-	rust-lang:reference:e2f0bdc:rust_lang_reference/src/doc/reference \
-	rust-lang:rust-by-example:89aecb6:rust_lang_rust_by_example/src/doc/rust-by-example \
-	rust-lang:rustc-dev-guide:0c4d55c:rust_lang_rustc_dev_guide/src/doc/rustc-dev-guide \
-	espressif:llvm-project:829c5ad:espressif_llvm_project/src/llvm-project \
-	rust-lang:cargo:2dbb1af:rust_lang_cargo/src/tools/cargo \
-	rust-lang:rustc-perf:c64bb60:rust_lang_rustc_perf/src/tools/rustc-perf
+	rust-lang:backtrace-rs:4d7906b:rust_lang_backtrace_rs/library/backtrace \
+	rust-lang:stdarch:684de0d:rust_lang_stdarch/library/stdarch \
+	rust-lang:book:82a4a49:rust_lang_book/src/doc/book \
+	rust-lang:edition-guide:8889501:rust_lang_edition_guide/src/doc/edition-guide \
+	rust-embedded:book:ddbf1b4:rust_embedded_book/src/doc/embedded-book \
+	rust-lang:nomicon:7ef05b9:rust_lang_nomicon/src/doc/nomicon \
+	rust-lang:reference:b05d56e:rust_lang_reference/src/doc/reference \
+	rust-lang:rust-by-example:0933975:rust_lang_rust_by_example/src/doc/rust-by-example \
+	rust-lang:gcc:fd3498b:rust_lang_gcc/src/gcc \
+	espressif:llvm-project:a8a8fec:espressif_llvm_project/src/llvm-project \
+	rust-lang:cargo:d73d2ca:rust_lang_cargo/src/tools/cargo \
+	EnzymeAD:Enzyme:2fe5164:EnzymeAD_Enzyme/src/tools/enzyme \
+	rust-lang:rustc-perf:d5055e7:rust_lang_rustc_perf/src/tools/rustc-perf

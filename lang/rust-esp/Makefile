@@ -1,6 +1,6 @@
 PORTNAME?=	rust-esp
 DISTVERSION=	${ESPRUST_VERSION}
-PORTREVISION=	1
+#PORTREVISION=	1
 CATEGORIES=	lang
 MASTER_SITES=
 
@@ -33,11 +33,19 @@ USES+=	ssl
 MASTERDIR?=	${.CURDIR}
 
 USE_GITHUB=	yes
-GH_TUPLE=	esp-rs:rust:02368e9
+# see the latest commit ref in ESPRUST_VERSION branch in esp-rs/rust
+GH_TUPLE=	esp-rs:rust:fc08bef
 WITHOUT_LTO=	yes
 
 # to update GH_TUPLE for submodules, run:
-# make patch && make makesubmodule
+# rm distinfo
+# echo > Makfile.submodules
+# make fetch makesum
+# make patch makesubmodule
+# make makesum
+# sh files/update_crates.sh
+#
+# XXX the above steps might not always work.
 MAKEFILE_SUBMODULES=	Makefile.submodule
 .include "${MASTERDIR}/${MAKEFILE_SUBMODULES}"
 
@@ -86,16 +94,16 @@ CARGO_CARGOTOML?=	${WRKSRC}/Cargo.toml
 CARGO_CARGOLOCK?=	${WRKSRC}/Cargo.lock
 
 # see src/version
-ESPRUST_UPSTREAM_VERSION=	1.81.0
+ESPRUST_UPSTREAM_VERSION=	1.85.0
 
 # see compiler_version in src/stage0
-ESPRUST_COMPILER_VERSION=	1.80.1
+ESPRUST_COMPILER_VERSION=	1.84.0
 
 # see compiler_date in src/stage0
-ESPRUST_RELEASE_DATE=	2024-08-08
+ESPRUST_RELEASE_DATE=	2025-01-09
 
 # see change_id of the last entry of CONFIG_CHANGE_HISTORY in src/bootstrap/src/utils/change_tracker.rs
-ESPRUST_CHANGE_ID=	127866
+ESPRUST_CHANGE_ID=	134650
 
 # see https://github.com/esp-rs/rust-build/releases
 # x.y.z.${ESPRUST_PATCH_LEVEL}
