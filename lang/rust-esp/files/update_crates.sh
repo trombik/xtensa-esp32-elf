@@ -3,6 +3,7 @@ set -e
 
 MAKEFILE_CRATES=`make -V MAKEFILE_CRATES`
 CARGOTOML_FILES="Cargo.toml \
+    library/Cargo.toml
     src/bootstrap/Cargo.toml \
     src/tools/cargo/Cargo.toml \
     src/tools/rust-analyzer/Cargo.toml
