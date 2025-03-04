@@ -245,7 +245,9 @@ jobs:
 
             # pre-fill packages cache
             if [ -d packages ]; then
-              sudo cp -R packages/* "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All/"
+              if [ ! -z `ls -A packages` ]; then
+                sudo cp -R packages/* "/usr/local/poudriere/data/packages/${JAIL_NAME}-${PORTS_NAME}/All/"
+              fi
               sudo rm -rf packages
             fi
 
