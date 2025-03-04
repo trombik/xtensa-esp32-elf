@@ -1,6 +1,6 @@
---- src/tools/cargo/Cargo.toml.orig	2024-08-20 18:24:58 UTC
+--- src/tools/cargo/Cargo.toml.orig	2025-03-04 00:38:40 UTC
 +++ src/tools/cargo/Cargo.toml
-@@ -252,10 +252,8 @@ doc = false
+@@ -267,10 +267,8 @@ doc = false
  doc = false
  
  [features]
