@@ -16,7 +16,7 @@ LICENSE_COMB=	multi
 BUILD_DEPENDS=	bash:shells/bash \
 		gawk:lang/gawk \
 		gpatch:devel/patch \
-		${LOCALBASE}/bin/grep:textproc/gnugrep \
+		${LOCALBASE}/bin/ggrep:textproc/gnugrep \
 		gperf:devel/gperf \
 		gsed:textproc/gsed \
 		help2man:misc/help2man \
@@ -316,7 +316,7 @@ pre-configure:
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
 	cd ${BUILD_WRKSRC} && \
-	    ${SETENV} GREP=${LOCALBASE}/bin/grep \
+	    ${SETENV} GREP=${LOCALBASE}/bin/ggrep \
 		EGREP="${LOCALBASE}/bin/egrep" \
 		SED="${LOCALBASE}/bin/gsed" \
 		AWK="${LOCALBASE}/bin/gawk" \
