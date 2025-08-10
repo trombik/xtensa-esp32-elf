@@ -24,7 +24,7 @@ RUN_DEPENDS=	${LOCALBASE}/esp-llvm-embedded-toolchain/bin/clang:devel/esp-llvm-e
 	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin/xtensa-esp-elf-gcc:devel/xtensa-esp-elf@${ESP_IDF_FLAVOR}
 
 
-USES=	python:3.0+ cargo ninja
+USES=	python:3.0+ cargo ninja pkgconfig
 .if ${PORTNAME} == "rust-esp"
 RUN_DEPENDS+=	${LOCALBASE}/rust-esp-src/lib/rustlib/src/rust/library/core/src/lib.rs:lang/rust-esp-src
 USES+=	ssl
