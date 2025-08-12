@@ -20,8 +20,8 @@ LICENSE=	GPLv2
 # configure: https://github.com/espressif/qemu/blob/esp-develop/.github/workflows/scripts/configure-native.sh
 
 # see https://github.com/espressif/qemu/releases
-ESP_QEMU_VERSION=	9.0.0
-ESP_QEMU_SNAPDATE=	20240606
+ESP_QEMU_VERSION=	9.2.2
+ESP_QEMU_SNAPDATE=	20250228
 ESP_VERSION=	${ESP_QEMU_VERSION}-${ESP_QEMU_SNAPDATE}
 ESP_RELEASE_TAG=	esp-develop-${ESP_VERSION}
 ESP_PREFIX=	${PREFIX}/${PORTNAME}
