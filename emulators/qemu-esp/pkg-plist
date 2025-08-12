@@ -11,8 +11,6 @@
 %%PORTNAME%%/share/icons/hicolor/512x512/apps/qemu.png
 %%PORTNAME%%/share/icons/hicolor/64x64/apps/qemu.png
 %%PORTNAME%%/share/icons/hicolor/scalable/apps/qemu.svg
-%%PORTNAME%%/share/qemu/QEMU,cgthree.bin
-%%PORTNAME%%/share/qemu/QEMU,tcx.bin
 %%PORTNAME%%/share/qemu/bamboo.dtb
 %%PORTNAME%%/share/qemu/bios-256k.bin
 %%PORTNAME%%/share/qemu/bios-microvm.bin
@@ -68,10 +66,10 @@
 %%PORTNAME%%/share/qemu/keymaps/th
 %%PORTNAME%%/share/qemu/keymaps/tr
 %%PORTNAME%%/share/qemu/kvmvapic.bin
-%%PORTNAME%%/share/qemu/linuxboot.bin
 %%PORTNAME%%/share/qemu/linuxboot_dma.bin
-%%PORTNAME%%/share/qemu/multiboot.bin
+%%PORTNAME%%/share/qemu/linuxboot.bin
 %%PORTNAME%%/share/qemu/multiboot_dma.bin
+%%PORTNAME%%/share/qemu/multiboot.bin
 %%PORTNAME%%/share/qemu/npcm7xx_bootrom.bin
 %%PORTNAME%%/share/qemu/openbios-ppc
 %%PORTNAME%%/share/qemu/openbios-sparc32
@@ -89,10 +87,10 @@
 %%PORTNAME%%/share/qemu/pxe-rtl8139.rom
 %%PORTNAME%%/share/qemu/pxe-virtio.rom
 %%PORTNAME%%/share/qemu/qboot.rom
-%%PORTNAME%%/share/qemu/qemu-nsis.bmp
 %%PORTNAME%%/share/qemu/qemu_vga.ndrv
-%%PORTNAME%%/share/qemu/s390-ccw.img
-%%PORTNAME%%/share/qemu/s390-netboot.img
+%%PORTNAME%%/share/qemu/qemu-nsis.bmp
+%%PORTNAME%%/share/qemu/QEMU,cgthree.bin
+%%PORTNAME%%/share/qemu/QEMU,tcx.bin
 %%PORTNAME%%/share/qemu/skiboot.lid
 %%PORTNAME%%/share/qemu/slof.bin
 %%PORTNAME%%/share/qemu/trace-events-all
