@@ -76,7 +76,8 @@ CONFIGURE_ARGS+=	--cc=${CC} \
 			--mandir=${ESP_PREFIX}/share/man \
 			--prefix=${ESP_PREFIX} \
 			--python=${PYTHON_CMD} \
-			--enable-fdt=system
+			--enable-fdt=system \
+			--disable-pie
 
 CFLAGS:=	${CFLAGS:C/-fno-tree-vrp//}
 WITHOUT_CPU_CFLAGS=	yes #to avoid problems with register allocation
