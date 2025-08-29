@@ -1,14 +1,14 @@
 GH_TUPLE+= \
-	rust-lang:backtrace-rs:4d7906b:rust_lang_backtrace_rs/library/backtrace \
-	rust-lang:stdarch:684de0d:rust_lang_stdarch/library/stdarch \
-	rust-lang:book:82a4a49:rust_lang_book/src/doc/book \
-	rust-lang:edition-guide:8889501:rust_lang_edition_guide/src/doc/edition-guide \
-	rust-embedded:book:ddbf1b4:rust_embedded_book/src/doc/embedded-book \
-	rust-lang:nomicon:7ef05b9:rust_lang_nomicon/src/doc/nomicon \
-	rust-lang:reference:b05d56e:rust_lang_reference/src/doc/reference \
-	rust-lang:rust-by-example:0933975:rust_lang_rust_by_example/src/doc/rust-by-example \
-	rust-lang:gcc:fd3498b:rust_lang_gcc/src/gcc \
-	espressif:llvm-project:8684df259d4c403d249572c947919b4181818668:espressif_llvm_project/src/llvm-project \
-	rust-lang:cargo:d73d2ca:rust_lang_cargo/src/tools/cargo \
-	EnzymeAD:Enzyme:2fe5164:EnzymeAD_Enzyme/src/tools/enzyme \
-	rust-lang:rustc-perf:d5055e7:rust_lang_rustc_perf/src/tools/rustc-perf
+	rust-lang:backtrace-rs:b65ab935fb2e0d59dba8966ffca09c9cc5a5f57c:rust_lang_backtrace_rs/library/backtrace \
+	rust-lang:stdarch:8099c08d501ec80214d7bfe3f85002dec7d79655:rust_lang_stdarch/library/stdarch \
+	rust-lang:book:8a6d44e45b7b564eeb6bae30507e1fbac439d72d:rust_lang_book/src/doc/book \
+	rust-lang:edition-guide:aa6ce337c0adf7a63e33960d184270f2a45ab9ef:rust_lang_edition_guide/src/doc/edition-guide \
+	rust-embedded:book:10fa1e084365f23f24ad0000df541923385b73b6:rust_embedded_book/src/doc/embedded-book \
+	rust-lang:nomicon:8b61acfaea822e9ac926190bc8f15791c33336e8:rust_lang_nomicon/src/doc/nomicon \
+	rust-lang:reference:9571d4d38cc580bd9fe926f97fccd98f215564a9:rust_lang_reference/src/doc/reference \
+	rust-lang:rust-by-example:05c7d8bae65f23a1837430c5a19be129d414f5ec:rust_lang_rust_by_example/src/doc/rust-by-example \
+	rust-lang:gcc:04ce66d8c918de9273bd7101638ad8724edf5e21:rust_lang_gcc/src/gcc \
+	espressif:llvm-project:5df1c75d1345e7a513ad070a30640d131b346a57:espressif_llvm_project/src/llvm-project \
+	rust-lang:cargo:c24e1064277fe51ab72011e2612e556ac56addf7:rust_lang_cargo/src/tools/cargo \
+	rust-lang:enzyme:a35f4f773118ccfbd8d05102eb12a34097b1ee55:rust_lang_enzyme/src/tools/enzyme \
+	rust-lang:rustc-perf:6a70166b92a1b1560cb3cf056427b011b2a1f2bf:rust_lang_rustc_perf/src/tools/rustc-perf
