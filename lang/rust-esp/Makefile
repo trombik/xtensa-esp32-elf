@@ -34,7 +34,7 @@ MASTERDIR?=	${.CURDIR}
 
 USE_GITHUB=	yes
 # see the latest commit ref in ESPRUST_VERSION branch in esp-rs/rust
-GH_TUPLE=	esp-rs:rust:fc08bef
+GH_TUPLE=	esp-rs:rust:599bedc
 WITHOUT_LTO=	yes
 
 # to update GH_TUPLE for submodules, run:
@@ -53,7 +53,7 @@ ONLY_FOR_ARCHS=	amd64
 ESPRUST_ARCH=	x86_64
 ESPRUST_TUPLE=	${ESPRUST_ARCH}-unknown-freebsd
 ESPRUST_COMPONENTS_VERSION=	nightly
-ESP_IDF_FLAVOR=	idf53
+ESP_IDF_FLAVOR=	idf55
 
 # the component rustup needs
 ESPRUST_RUSTUP_COMPONENT=	rust-${ESPRUST_COMPONENTS_VERSION}-${ESPRUST_TUPLE}
@@ -94,16 +94,16 @@ CARGO_CARGOTOML?=	${WRKSRC}/Cargo.toml
 CARGO_CARGOLOCK?=	${WRKSRC}/Cargo.lock
 
 # see src/version
-ESPRUST_UPSTREAM_VERSION=	1.85.0
+ESPRUST_UPSTREAM_VERSION=	1.89.0
 
 # see compiler_version in src/stage0
-ESPRUST_COMPILER_VERSION=	1.84.0
+ESPRUST_COMPILER_VERSION=	1.88.0
 
 # see compiler_date in src/stage0
-ESPRUST_RELEASE_DATE=	2025-01-09
+ESPRUST_RELEASE_DATE=	2025-06-26
 
 # see change_id of the last entry of CONFIG_CHANGE_HISTORY in src/bootstrap/src/utils/change_tracker.rs
-ESPRUST_CHANGE_ID=	134650
+ESPRUST_CHANGE_ID=	142379
 
 # see https://github.com/esp-rs/rust-build/releases
 # x.y.z.${ESPRUST_PATCH_LEVEL}
@@ -127,7 +127,14 @@ DISTFILES+=	${F}-${ESPRUST_COMPILER_VERSION}-${ESPRUST_TUPLE}.tar.xz:src_${F:S/-
 ESPRUST_CONFIGURE_SCRIPT=	${WRKSRC}/src/bootstrap/configure.py
 
 # the original configure arguments
-ESPRUST_CONFIGURE_ARGS?=	--experimental-targets=Xtensa --release-channel=nightly --release-description="${ESPRUST_VERSION}" --enable-extended --enable-cargo-native-static --tools=clippy,cargo,rustfmt,rust-analyzer-proc-macro-srv --dist-compression-formats='xz' --enable-lld
+ESPRUST_CONFIGURE_ARGS?=	--experimental-targets=Xtensa \
+							--release-channel=nightly \
+							--release-description="${ESPRUST_VERSION}" \
+							--enable-extended \
+							--enable-cargo-native-static \
+							--tools=clippy,cargo,rustfmt,rust-analyzer-proc-macro-srv \
+							--dist-compression-formats='xz' \
+							--enable-lld
 # our own configure arguments
 ESPRUST_CONFIGURE_ARGS+=	--set=build.verbose=2 \
 	--set=build.python=${PYTHON_CMD} \
@@ -140,22 +147,8 @@ ESPRUST_CONFIGURE_ARGS+=	--set=build.verbose=2 \
 # XXX you cannot use CCACHE_ENABLED here.
 # see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=277204
 .if "${WITH_CCACHE_BUILD:tl}" == "yes" && !defined(NO_CCACHE)
-ESPRUST_USING_SCCACHE=	yes
+ESPRUST_CONFIGURE_ARGS+=	--enable-ccache
 .endif
-.if defined(POUDRIERE_BUILD_TYPE)
-ESPRUST_USING_POUDRIERE=	yes
-.else
-ESPRUST_USING_POUDRIERE=	no
-.endif
-
-.if defined(ESPRUST_USING_SCCACHE) # ESPRUST_USING_SCCACHE
-BUILD_DEPENDS+=	ccache:devel/ccache
-.if ${ESPRUST_USING_POUDRIERE} == "no" # ESPRUST_USING_POUDRIERE == no
-BUILD_DEPENDS+=	sccache:ports-mgmt/sccache-overlay
-.endif # ESPRUST_USING_POUDRIERE == no
-ESPRUST_CONFIGURE_ARGS+=	--set=llvm.ccache=sccache
-BINARY_ALIAS+=	sccache=${SCCACHE_BIN}
-.endif # ESPRUST_USING_SCCACHE
 
 ESPRUST_BUILD_CMD=	${PYTHON_CMD} x.py
 ESPRUST_BUILD_ARGS?=	dist --stage 2 --jobs=${MAKE_JOBS_NUMBER}
@@ -174,21 +167,20 @@ post-extract:
 do-configure:
 	(cd ${WRKSRC} && ${SETENVI} ${CONFIGURE_ENV} ${PYTHON_CMD} ${ESPRUST_CONFIGURE_SCRIPT} ${ESPRUST_CONFIGURE_ARGS})
 
-	# add change-id to config.toml to avoid a warning
-	${ECHO} "change-id = ${ESPRUST_CHANGE_ID}" > ${WRKSRC}/config.toml.new
-	${CAT} ${WRKSRC}/config.toml >> ${WRKSRC}/config.toml.new
-	${MV} ${WRKSRC}/config.toml.new ${WRKSRC}/config.toml
+	# add change-id to bootstrap.toml to avoid a warning
+	${ECHO} "change-id = ${ESPRUST_CHANGE_ID}" > ${WRKSRC}/bootstrap.toml.new
+	${CAT} ${WRKSRC}/bootstrap.toml >> ${WRKSRC}/bootstrap.toml.new
+	${MV} ${WRKSRC}/bootstrap.toml.new ${WRKSRC}/bootstrap.toml
 
-	${ECHO_MSG} "===> ${WRKSRC}/config.toml"
-	@${CAT} ${WRKSRC}/config.toml
+	${ECHO_MSG} "===> ${WRKSRC}/bootstrap.toml"
+	@${CAT} ${WRKSRC}/bootstrap.toml
+
+	${ECHO_MSG} "===> Generating ${WRKSRC}/src/tools/generate-copyright/Cargo.lock"
+	(cd ${WRKSRC}/src/tools/generate-copyright && ${SETENVI} ${WRK_ENV} ${MAKE_ENV} ${CARGO_ENV} \
+			${CARGO} generate-lockfile --manifest-path=Cargo.toml --lockfile-path=Cargo.lock -Z unstable-options --verbose)
 
 do-build:
 	(cd ${WRKSRC} && ${SETENVI} ${WRK_ENV} ${MAKE_ENV} ${CARGO_ENV} ${ESPRUST_BUILD_CMD} ${ESPRUST_BUILD_ARGS})
-
-post-build:
-.if defined(ESPRUST_USING_SCCACHE)
-	${BSDMAKE} sccache-stats
-.endif
 
 do-install:
 	# XXX remove unnecessary directories to save disk space.
