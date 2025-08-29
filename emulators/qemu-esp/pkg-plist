@@ -91,6 +91,7 @@
 %%PORTNAME%%/share/qemu/qemu-nsis.bmp
 %%PORTNAME%%/share/qemu/QEMU,cgthree.bin
 %%PORTNAME%%/share/qemu/QEMU,tcx.bin
+%%PORTNAME%%/share/qemu/s390-ccw.img
 %%PORTNAME%%/share/qemu/skiboot.lid
 %%PORTNAME%%/share/qemu/slof.bin
 %%PORTNAME%%/share/qemu/trace-events-all
