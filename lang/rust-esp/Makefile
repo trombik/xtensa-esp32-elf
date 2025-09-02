@@ -1,6 +1,6 @@
 PORTNAME?=	rust-esp
 DISTVERSION=	${ESPRUST_VERSION}
-#PORTREVISION=	1
+PORTREVISION=	1
 CATEGORIES=	lang
 MASTER_SITES=
 
@@ -19,23 +19,19 @@ BUILD_DEPENDS=	rust-nightly>0:lang/rust-nightly \
 LIB_DEPENDS?=	\
 	libssh2.so:security/libssh2 \
 	libgit2.so:devel/libgit2
-RUN_DEPENDS=	${LOCALBASE}/esp-llvm-embedded-toolchain/bin/clang:devel/esp-llvm-embedded-toolchain \
+RUN_DEPENDS=	\
+	bash:shells/bash \
+	${LOCALBASE}/esp-llvm-embedded-toolchain/bin/clang:devel/esp-llvm-embedded-toolchain \
 	${LOCALBASE}/riscv32-esp-elf-${ESP_IDF_FLAVOR}/bin/riscv32-esp-elf-gcc:devel/riscv32-esp-elf@${ESP_IDF_FLAVOR} \
 	${LOCALBASE}/xtensa-esp-elf-${ESP_IDF_FLAVOR}/bin/xtensa-esp-elf-gcc:devel/xtensa-esp-elf@${ESP_IDF_FLAVOR}
 
 
-USES=	python:3.0+ cargo ninja pkgconfig
-.if ${PORTNAME} == "rust-esp"
-RUN_DEPENDS+=	${LOCALBASE}/rust-esp-src/lib/rustlib/src/rust/library/core/src/lib.rs:lang/rust-esp-src
-USES+=	ssl
-.elif ${PORTNAME} == "rust-esp-src"
-.endif
-MASTERDIR?=	${.CURDIR}
-
+USES=	python:3.0+ cargo ninja pkgconfig ssl shebangfix
 USE_GITHUB=	yes
 # see the latest commit ref in ESPRUST_VERSION branch in esp-rs/rust
 GH_TUPLE=	esp-rs:rust:599bedc
 WITHOUT_LTO=	yes
+SHEBANG_GLOB=	*.py *.sh
 
 # to update GH_TUPLE for submodules, run:
 # rm distinfo
@@ -47,7 +43,7 @@ WITHOUT_LTO=	yes
 #
 # XXX the above steps might not always work.
 MAKEFILE_SUBMODULES=	Makefile.submodule
-.include "${MASTERDIR}/${MAKEFILE_SUBMODULES}"
+.include "${.CURDIR}/${MAKEFILE_SUBMODULES}"
 
 ONLY_FOR_ARCHS=	amd64
 ESPRUST_ARCH=	x86_64
@@ -68,7 +64,7 @@ ESPRUST_RUSTUP_COMPONENT_NAME?=	rust-${ESPRUST_VERSION}-${ESPRUST_TUPLE}
 ESPRUST_RUSTUP_COMPONENT_FULLPATH?=	${ESPRUST_DIST_DIR}/${ESPRUST_RUSTUP_COMPONENT_NAME}.tar.xz
 
 # components to extract and install
-ESPRUST_COMPONENTS?=	${ESPRUST_RUSTUP_COMPONENT}
+ESPRUST_COMPONENTS?=	${ESPRUST_RUSTUP_COMPONENT} rust-src-nightly
 
 # where tarballs are kept
 ESPRUST_DIST_DIR=	${WRKSRC}/build/dist
@@ -82,7 +78,7 @@ ESPRUST_ROOT_DIR=	${PORTNAME}
 # to update the list of crates, run:
 # sh files/update_crates.sh
 MAKEFILE_CRATES=	Makefile.rust.crates
-.include "${MASTERDIR}/${MAKEFILE_CRATES}"
+.include "${.CURDIR}/${MAKEFILE_CRATES}"
 
 # XXX remove duplicates
 CARGO_CRATES!=	(${ECHO} ${CARGO_CRATES} | /usr/bin/tr ' ' '\n' | /usr/bin/sort -u) || ${ECHO} ""
@@ -132,7 +128,7 @@ ESPRUST_CONFIGURE_ARGS?=	--experimental-targets=Xtensa \
 							--release-description="${ESPRUST_VERSION}" \
 							--enable-extended \
 							--enable-cargo-native-static \
-							--tools=clippy,cargo,rustfmt,rust-analyzer-proc-macro-srv \
+							--tools=clippy,cargo,rustfmt,rust-analyzer-proc-macro-srv,src \
 							--dist-compression-formats='xz' \
 							--enable-lld
 # our own configure arguments
@@ -141,7 +137,6 @@ ESPRUST_CONFIGURE_ARGS+=	--set=build.verbose=2 \
 	--set=install.prefix=${PREFIX}/${ESPRUST_ROOT_DIR} \
 	--set=install.sysconfdir=${PREFIX}/${ESPRUST_ROOT_DIR}/etc \
 	--set=llvm.ninja=true \
-	--set=dist.src-tarball=false \
 	--set=rust.deny-warnings=false
 
 # XXX you cannot use CCACHE_ENABLED here.
@@ -214,9 +209,6 @@ do-install:
 	@${FIND} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/bin ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib \
 		${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/libexec -exec ${FILE} -i {} + | \
 		${AWK} -F: '/executable|sharedlib/ { print $$1 }' | ${XARGS} ${STRIP_CMD}
-
-	${MKDIR} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/src
-	(cd ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/src && ${LN} -s ../../../../rust-esp-src/lib/rustlib/src/rust rust)
 .endif
 	@${FIND} ${STAGEDIR}${PREFIX} -not -type d | \
 		${SED} -E -e 's,^${STAGEDIR}${PREFIX}/,,' \
@@ -228,12 +220,6 @@ do-install:
 # to build (failures are ignored due to deny-warnings=false).
 	@${FIND} ${STAGEDIR}${DOCSDIR}/html -empty -type d | \
 		${SED} 's,^${STAGEDIR},@comment @dir ,' >> ${TMPPLIST}
-.endif
-
-.if ${PORTNAME} == "rust-esp-src"
-# Silence stage-qa warnings by sanitizing permissions on sources
-	@${FIND} ${STAGEDIR}${PREFIX}/${ESPRUST_ROOT_DIR}/lib/rustlib/src -type f -exec ${CHMOD} \
-		${SHAREMODE} {} +
 .endif
 
 .include <bsd.port.mk>
