@@ -1,0 +1,49 @@
+# the version of the toolchain. see tools/tools.json in espressif/esp-idf.
+ESPRESSIF_VERSION=	 esp-15.2.0_20250929
+
+# the version of gcc
+ESPRESSIF_GCC_VERSION=	15.2.0
+
+# the git tags to use crosstool.config. see
+# samples/xtensa-esp-elf/crosstool.config in espressif/crosstool-NG
+ESPRESSIF_GCC_TAG=	esp-15.2.0_20250929
+ESPRESSIF_NEWLIB_TAG=	esp-4.5.0_20250929
+ESPRESSIF_BINUTILS_TAG=	esp-2.45.0_20250929
+ESPRESSIF_PICOLIBC_TAG=	esp-1.8.10_20250929
+
+# git submodules tags to use. see .gitmodules in espressif/crosstool-NG.
+XTENSA_OVERLAYS_TAGNAME=	dd1cf19
+XTENSA_DYNCONFIG_TAGNAME=	c545876
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	6d77906
+
+# see */Cargo.toml and */unix/Cargo.toml in espressif/esp-toolchain-bin-wrappers
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION=	1.5.0
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION=	0.2.175
+
+MASTER_SITES+= \
+		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
+		SF/expat/:source1 \
+		GNU/gmp/:source2 \
+		http://isl.gforge.inria.fr/:source3 \
+		GNU/mpc/:source4 \
+		http://www.mpfr.org/mpfr-4.2.1/:source5 \
+		ftp://ftp.invisible-island.net/ncurses/:source6 \
+		GNU/ncurses/:source6 \
+		GNU/autoconf/:source7 \
+		GNU/automake/:source8 \
+		https://www.zlib.net/fossils/:source11 \
+		https://github.com/facebook/zstd/releases/download/v1.5.6/:source12
+DISTFILES+=	\
+		expat-2.4.1.tar.gz:source1 \
+		gmp-6.3.0.tar.xz:source2 \
+		isl-0.26.tar.xz:source3 \
+		mpc-1.3.1.tar.gz:source4 \
+		mpfr-4.2.1.tar.xz:source5 \
+		ncurses-6.2.tar.gz:source6 \
+		autoconf-2.69.tar.gz:source7 \
+		automake-1.16.1.tar.gz:source8 \
+		zlib-1.3.1.tar.gz:source11 \
+		zstd-1.5.6.tar.gz:source12
+
+idf60_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
+idf60_PKGNAMESUFFIX=	-${FLAVOR}

@@ -23,7 +23,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
 
-FLAVORS?=	idf55 idf54 idf53
+FLAVORS?=	idf60 idf55 idf54 idf53
 FLAVOR?=	${FLAVORS:[1]}
 
 # XXX use iconv:wchar_t.
@@ -38,7 +38,11 @@ USES=		autoreconf:build bison gmake libtool python:3.8+ gettext-runtime iconv:wc
 CARGO?=		${LOCALBASE}/bin/cargo
 CARGO_BUILD_TARGET=	x86_64-unknown-freebsd
 
-.include "Makefile.${FLAVOR}"
+.if defined(MASTERDIR)
+.include "${MASTERDIR}/Makefile.${FLAVOR}"
+.else
+.include "${.CURDIR}/Makefile.${FLAVOR}"
+.endif
 
 GH_TUPLE+=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
 	espressif:binutils-gdb:${ESPRESSIF_BINUTILS_TAG}:source102 \
@@ -67,6 +71,17 @@ EXTRACT_ONLY+=	espressif-xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME}_GH0.tar.gz
 
 .if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
 
+# XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME depends on these variables. verify
+# they are defined.
+.	if !defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION)
+.		warning "XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME is defined but XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION is not"
+.		error "Define XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION in Makefile.${FLAVOR}"
+.	endif
+.	if !defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION)
+.		warning "XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME is defined but XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION is not"
+.		error "Define XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION in Makefile.${FLAVOR}"
+.	endif
+
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${BUILD_WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/vendor
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/target/release/xtensa-toolchian-wrapper
@@ -74,11 +89,18 @@ XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS=	esp32 esp32s2 esp32s3
 
 # cargo crates for esp-toolchain-bin-wrappers. see
 # esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/Cargo.toml
+# esp-toolchain-bin-wrappers/gnu-riscv-binutils/Cargo.toml
+# esp-toolchain-bin-wrappers/gnu-debugger/unix/Cargo.tom
+#
+# they depend on different versions of lazy_static and libc, which complicates
+# vendoring. each Cargo.toml files were patched so that we can use the same
+# versions of lazy_static and libc.
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES=	\
-	rust-lang-nursery:lazy-static.rs:1.4.0:source107:lazy_static \
-	rust-lang:libc:0.2.147:source108:libc
+	rust-lang-nursery:lazy-static.rs:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION}:source107:lazy_static \
+	rust-lang:libc:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION}:source108:libc
 GH_TUPLE+=	espressif:esp-toolchain-bin-wrappers:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}:source106
 EXTRACT_ONLY+=	espressif-esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}_GH0.tar.gz
+
 .for _org _project _tag _src_group _name in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES:C/:/ /g}
 GH_TUPLE+=	${_org}:${_project}:${_tag}:${_src_group}
 EXTRACT_ONLY+=	${_org}-${_project}-${_tag}_GH0.tar.gz
@@ -117,7 +139,10 @@ SUBDIR=		crosstool-NG
 BINARY_ALIAS=	g++=${CXX} gcc=${CC} python=${PYTHON_VERSION}
 BUILD_ENV=	LD_RUN_PATH=${PREFIX}/lib/${CC} \
 		${MAKE_ENV:MPATH=*} \
-		CT_JOBS=${MAKE_JOBS_NUMBER}
+		CT_JOBS=${MAKE_JOBS_NUMBER} \
+		CARGO=${CARGO} \
+		CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
+		CARGO_HOME=${WRKDIR}/cargo-home
 
 # these variables are automatically appended to crosstool.config at
 # pre-configure. common variables should go into XTENSA_CT_CONFIG
@@ -167,12 +192,16 @@ post-extract:
 	${LN} -s ${WRKDIR}/xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME} ${BUILD_WRKSRC}/xtensa-dynconfig
 .endif
 .if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
+# move esp-toolchain-bin-wrappers into WRKSRC because `makepatch` target does
+# not create patches when esp-toolchain-bin-wrappers is a symlink (find(1)
+# does not follow symlinks by default).
 	${RMDIR} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
-	${LN} -s ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
+	${MV} ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
+	${LN} -s ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}
 .endif
 
 post-patch:
-.if ${PORTNAME} == xtensa-esp-elf && (${FLAVOR} == idf54 || ${FLAVOR} == idf55)
+.if ${PORTNAME} == xtensa-esp-elf && (${FLAVOR} == idf54 || ${FLAVOR} == idf55 || ${FLAVOR} == idf60)
 	@${ECHO_MSG} "===>  Applying ESP8266 support patch to gcc-${ESPRESSIF_GCC_TAG}"
 	@(cd ${WRKDIR}/gcc-${ESPRESSIF_GCC_TAG} && ${PATCH} ${PATCH_ARGS} < ${FILESDIR}/${FLAVOR}/esp8266.patch)
 .endif
@@ -205,6 +234,19 @@ pre-configure:
 		-e 's|%%PREFIX%%|${PREFIX:S/\///1}|g' \
 		${WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/main.rs
 
+.if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION)
+	${REINPLACE_CMD} \
+		-e 's|%%XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION%%|${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION}|g' \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/unix/Cargo.toml \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/Cargo.toml
+.endif
+.if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION)
+	${REINPLACE_CMD} \
+		-e 's|%%XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION%%|${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION}|g' \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/unix/Cargo.toml \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/Cargo.toml
+.endif
+
 # vendor the creates
 	@${ECHO_MSG} "===>   Cargo config:"
 	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}
@@ -220,6 +262,12 @@ pre-configure:
 	${ECHO_CMD} "[source.vendored-sources]" >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
 	${ECHO_CMD} 'directory = "vendor"' >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
 	${CAT} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+
+# remove the build script for esp_bin_wrapper as we build it in this Makefile
+# later
+.if ${FLAVOR} == idf60
+	${RM} ${WRKSRC}/scripts/build/companion_libs/901-xtensa_esp_bin_wrappers.sh
+.endif
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
@@ -245,6 +293,7 @@ do-build:
 
 # see .gitlab-ci.yml in espressif/crosstool-NG
 	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
+
 .if ${PORTNAME} == xtensa-esp-elf
 	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR} && \
 		${SETENVI} \

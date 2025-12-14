@@ -1,6 +1,6 @@
 PORTNAME=	riscv32-esp-elf
 COMMENT=	Espressif ESP32 toolchain for RISC-V-based MCUs
-FLAVORS=	idf55 idf54 idf53
+FLAVORS=	idf60 idf55 idf54 idf53
 FLAVOR?=	${FLAVORS:[1]}
 MASTERDIR=	${.CURDIR}/../xtensa-esp-elf
 
