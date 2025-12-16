@@ -32,12 +32,6 @@ FLAVOR?=	${FLAVORS:[1]}
 # XXX use ncurses, which is required by gdb (libtinfow)
 USES=		autoreconf:build bison gmake libtool python:3.8+ gettext-runtime iconv:wchar_t ncurses:port
 
-# esp-toolchain-bin-wrappers requires rust and cargo. USES=cargo cannot be
-# used because the build process is significantly different from regular cargo
-# build.
-CARGO?=		${LOCALBASE}/bin/cargo
-CARGO_BUILD_TARGET=	x86_64-unknown-freebsd
-
 .if defined(MASTERDIR)
 .include "${MASTERDIR}/Makefile.${FLAVOR}"
 .else
@@ -82,10 +76,19 @@ EXTRACT_ONLY+=	espressif-xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME}_GH0.tar.gz
 .		error "Define XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION in Makefile.${FLAVOR}"
 .	endif
 
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${BUILD_WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${WRKSRC}/esp-toolchain-bin-wrappers
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/vendor
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/target/release/xtensa-toolchian-wrapper
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS=	esp32 esp32s2 esp32s3
+
+# esp-toolchain-bin-wrappers requires rust and cargo. USES=cargo cannot be
+# used because the build process is significantly different from regular cargo
+# build.
+CARGO?=		${LOCALBASE}/bin/cargo
+CARGO_BUILD_TARGET=	x86_64-unknown-freebsd
+CARGO_HOME=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}
+CARGO_DOT_DIR=	${CARGO_HOME}/.cargo
+
 .if defined(FLAVOR_SUPPORTS_ESP8266)
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS+=	esp8266
 .endif
@@ -144,7 +147,7 @@ BUILD_ENV=	LD_RUN_PATH=${PREFIX}/lib/${CC} \
 		CT_JOBS=${MAKE_JOBS_NUMBER} \
 		CARGO=${CARGO} \
 		CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
-		CARGO_HOME=${WRKDIR}/cargo-home
+		CARGO_HOME=${CARGO_HOME}
 
 # these variables are automatically appended to crosstool.config at
 # pre-configure. common variables should go into XTENSA_CT_CONFIG
@@ -209,20 +212,34 @@ post-patch:
 .endif
 
 # vendor the creates
-	@${ECHO_MSG} "===>   Cargo config:"
+	@${ECHO_MSG} "===>   Creating XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR (${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR})"
 	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}
-	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo
+
+	@${ECHO_MSG} "===>   Moving ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES} (${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES}) to XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR (${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR})"
 .for _org _project _tag _src_group _name in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES:C/:/ /g}
+
+	@${ECHO_MSG} "===>   Moving ${_project}/${_name}"
 	${MV} ${WRKDIR}/${_project}-${_tag} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}
+
+	@${ECHO_MSG} "===>   Generating SHA256 hash of ${_name}"
 	${PRINTF} '{"package":"%s","files":{}}' \
 		$$(${SHA256} -q ${DISTDIR}/${_org}-${_project}-${_tag}_GH0.tar.gz) \
 		> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}/.cargo-checksum.json
 .endfor
-	${ECHO_CMD} "[source.crates-io]" >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${ECHO_CMD} 'replace-with = "vendored-sources"' >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${ECHO_CMD} "[source.vendored-sources]" >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${ECHO_CMD} 'directory = "vendor"' >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${CAT} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+
+	@${ECHO_MSG} "===>   Making CARGO_HOME (${CARGO_HOME})"
+	${MKDIR} ${CARGO_HOME}
+	${MKDIR} ${CARGO_DOT_DIR}
+
+	@${ECHO_MSG} "===>   Making cargo config (${CARGO_DOT_DIR}/config.yml)"
+	@: > ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "[source.cargo]" >> ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "directory = '${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}'" >> ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "[source.crates-io]" >> ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "replace-with = 'cargo'" >> ${CARGO_DOT_DIR}/config.toml
+
+	@${ECHO_MSG} "===>   The contents of cargo config (${CARGO_DOT_DIR}/config.toml)"
+	@${CAT} ${CARGO_DOT_DIR}/config.toml
 
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
