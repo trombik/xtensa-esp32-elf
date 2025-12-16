@@ -1,4 +1,4 @@
-TIMESTAMP = 1765846927
+TIMESTAMP = 1765856749
 SHA256 (expat-2.4.1.tar.gz) = a00ae8a6b96b63a3910ddc1100b1a7ef50dc26dceb65ced18ded31ab392f132b
 SIZE (expat-2.4.1.tar.gz) = 697439
 SHA256 (gmp-6.3.0.tar.xz) = a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898
@@ -37,3 +37,5 @@ SHA256 (rust-lang-nursery-lazy-static.rs-1.5.0_GH0.tar.gz) = 10ea39d9b71af90b6a8
 SIZE (rust-lang-nursery-lazy-static.rs-1.5.0_GH0.tar.gz) = 11908
 SHA256 (rust-lang-libc-0.2.175_GH0.tar.gz) = 1619437448a6437c7fb7987ba1acbdd5f452c09749d2172bdb7f463a8d00042e
 SIZE (rust-lang-libc-0.2.175_GH0.tar.gz) = 1007545
+SHA256 (espressif-picolibc-esp-1.8.10_20250929_GH0.tar.gz) = 8c8aff430a303ebefaf98a953dfd3d10ad830758812b61e99b7516a4667d7082
+SIZE (espressif-picolibc-esp-1.8.10_20250929_GH0.tar.gz) = 3712426

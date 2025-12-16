@@ -16,6 +16,10 @@ XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 XTENSA_DYNCONFIG_TAGNAME=	c545876
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	62776e9
 
+# see */Cargo.toml and */unix/Cargo.toml in espressif/esp-toolchain-bin-wrappers
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION=	1.4.0
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION=	0.2.147
+
 MASTER_SITES+= \
 		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
 		SF/expat/:source1 \
@@ -43,3 +47,5 @@ DISTFILES+=	\
 
 idf54_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf54_PKGNAMESUFFIX=	-${FLAVOR}
+
+FLAVOR_SUPPORTS_ESP8266=	y

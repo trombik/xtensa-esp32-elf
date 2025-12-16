@@ -86,6 +86,9 @@ XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${BUILD_WRKSRC}/esp-toolchain-bin-wrapper
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/vendor
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/target/release/xtensa-toolchian-wrapper
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS=	esp32 esp32s2 esp32s3
+.if defined(FLAVOR_SUPPORTS_ESP8266)
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS+=	esp8266
+.endif
 
 # cargo crates for esp-toolchain-bin-wrappers. see
 # esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/Cargo.toml
@@ -123,11 +126,10 @@ ESP_REMOVE_BEFORE_DO_INSTALL=	\
 	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG} \
 	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}
 
-.if ${FLAVOR} == idf54
+.if defined(ESPRESSIF_PICOLIBC_TAG)
 GH_TUPLE+=	espressif:picolibc:${ESPRESSIF_PICOLIBC_TAG}:source109
 EXTRACT_ONLY+= espressif-picolibc-${ESPRESSIF_PICOLIBC_TAG}_GH0.tar.gz
 ESP_REMOVE_BEFORE_DO_INSTALL+= espressif-picolibc-${ESPRESSIF_PICOLIBC_TAG}
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS+=	esp8266
 .endif
 
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
@@ -201,7 +203,7 @@ post-extract:
 .endif
 
 post-patch:
-.if ${PORTNAME} == xtensa-esp-elf && (${FLAVOR} == idf54 || ${FLAVOR} == idf55 || ${FLAVOR} == idf60)
+.if defined(FLAVOR_SUPPORTS_ESP8266)
 	@${ECHO_MSG} "===>  Applying ESP8266 support patch to gcc-${ESPRESSIF_GCC_TAG}"
 	@(cd ${WRKDIR}/gcc-${ESPRESSIF_GCC_TAG} && ${PATCH} ${PATCH_ARGS} < ${FILESDIR}/${FLAVOR}/esp8266.patch)
 .endif
