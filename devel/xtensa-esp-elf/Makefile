@@ -282,12 +282,6 @@ pre-configure:
 		${WRKSRC}/esp-toolchain-bin-wrappers/*/Cargo.toml
 .endif
 
-# remove the build script for esp_bin_wrapper as we build it in this Makefile
-# later
-.if ${FLAVOR} == idf60
-	${RM} ${WRKSRC}/scripts/build/companion_libs/901-xtensa_esp_bin_wrappers.sh
-.endif
-
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
 	cd ${BUILD_WRKSRC} && \
@@ -313,12 +307,13 @@ do-build:
 # see .gitlab-ci.yml in espressif/crosstool-NG
 	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
 
-.if ${PORTNAME} == xtensa-esp-elf
+.if ${PORTNAME} == xtensa-esp-elf && !defined(FLAVOR_SUPPORTS_VENDORED_CARGO)
 	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR} && \
 		${SETENVI} \
 			${WRK_ENV} \
 			CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
 			CARGO_TARGET_${CARGO_BUILD_TARGET:S/-/_/g:tu}_LINKER="${CC}" \
+			CARGO_HOME=${CARGO_HOME} \
 			${CARGO} build --release --verbose --verbose)
 .for XTENSA_CHIP in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS}
 	${FIND} ${WRKSRC}/builds/${PORTNAME}/bin  -type f | ${SED} -e 's/xtensa-esp-elf-/xtensa-${XTENSA_CHIP}-elf-/' | ${XARGS} -J % -n 1 ${CP} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE} %
