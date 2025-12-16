@@ -1,22 +1,22 @@
-# the version of the toolchain. see tools/tools.json in espressif/esp-idf.
+# the version of the toolchain. see tools/tools.json in https://github.com/espressif/esp-idf.
 ESPRESSIF_VERSION=	 esp-15.2.0_20250929
 
 # the version of gcc
 ESPRESSIF_GCC_VERSION=	15.2.0
 
 # the git tags to use crosstool.config. see
-# samples/xtensa-esp-elf/crosstool.config in espressif/crosstool-NG
+# samples/xtensa-esp-elf/crosstool.config in https://github.com/espressif/crosstool-NG
 ESPRESSIF_GCC_TAG=	esp-15.2.0_20250929
 ESPRESSIF_NEWLIB_TAG=	esp-4.5.0_20250929
 ESPRESSIF_BINUTILS_TAG=	esp-2.45.0_20250929
 ESPRESSIF_PICOLIBC_TAG=	esp-1.8.10_20250929
 
-# git submodules tags to use. see .gitmodules in espressif/crosstool-NG.
+# git submodules tags to use. see .gitmodules in https://github.com/espressif/crosstool-NG.
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
 XTENSA_DYNCONFIG_TAGNAME=	c545876
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	6d77906
 
-# see */Cargo.toml and */unix/Cargo.toml in espressif/esp-toolchain-bin-wrappers
+# see */Cargo.toml and */unix/Cargo.toml in https://github.com/espressif/esp-toolchain-bin-wrappers
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION=	1.5.0
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION=	0.2.175
 
