@@ -78,7 +78,7 @@ EXTRACT_ONLY+=	espressif-xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME}_GH0.tar.gz
 
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${WRKSRC}/esp-toolchain-bin-wrappers
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/vendor
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/target/release/xtensa-toolchian-wrapper
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/gnu-xtensa-toolchian//target/release/xtensa-toolchian-wrapper
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS=	esp32 esp32s2 esp32s3
 
 # esp-toolchain-bin-wrappers requires rust and cargo. USES=cargo cannot be
@@ -308,7 +308,7 @@ do-build:
 	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
 
 .if ${PORTNAME} == xtensa-esp-elf && !defined(FLAVOR_SUPPORTS_VENDORED_CARGO)
-	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR} && \
+	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/gnu-xtensa-toolchian/ && \
 		${SETENVI} \
 			${WRK_ENV} \
 			CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
