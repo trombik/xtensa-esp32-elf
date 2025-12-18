@@ -23,7 +23,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
 
-FLAVORS?=	idf55 idf54 idf53
+FLAVORS?=	idf60 idf55 idf54 idf53
 FLAVOR?=	${FLAVORS:[1]}
 
 # XXX use iconv:wchar_t.
@@ -32,151 +32,10 @@ FLAVOR?=	${FLAVORS:[1]}
 # XXX use ncurses, which is required by gdb (libtinfow)
 USES=		autoreconf:build bison gmake libtool python:3.8+ gettext-runtime iconv:wchar_t ncurses:port
 
-# esp-toolchain-bin-wrappers requires rust and cargo. USES=cargo cannot be
-# used because the build process is significantly different from regular cargo
-# build.
-CARGO?=		${LOCALBASE}/bin/cargo
-CARGO_BUILD_TARGET=	x86_64-unknown-freebsd
-
-.if ${FLAVOR} == idf53
-# the version of the toolchain. see tools/tools.json in espressif/esp-idf.
-ESPRESSIF_VERSION=	esp-13.2.0_20240530
-
-# the version of gcc
-ESPRESSIF_GCC_VERSION=	13.2.0
-
-# the git tags to use crosstool.config. see
-# samples/xtensa-esp-elf/crosstool.config in espressif/crosstool-NG
-ESPRESSIF_GCC_TAG=	esp-13.2.0_20240530
-ESPRESSIF_NEWLIB_TAG=	esp-4.3.0_20240530
-ESPRESSIF_BINUTILS_TAG=	esp-2.41.0_20240530
-
-# git submodules tags to use. see .gitmodules in espressif/crosstool-NG.
-XTENSA_OVERLAYS_TAGNAME=	dd1cf19
-XTENSA_DYNCONFIG_TAGNAME=	c545876
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	62776e9
-
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
-		SF/expat/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-4.2.1/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://www.zlib.net/fossils/:source11 \
-		https://github.com/facebook/zstd/releases/download/v1.5.5/:source12
-DISTFILES+=	\
-		expat-2.4.1.tar.gz:source1 \
-		gmp-6.2.1.tar.xz:source2 \
-		isl-0.26.tar.xz:source3 \
-		mpc-1.2.1.tar.gz:source4 \
-		mpfr-4.2.1.tar.xz:source5 \
-		ncurses-6.2.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.13.tar.gz:source11 \
-		zstd-1.5.5.tar.gz:source12
-
-idf53_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf53_PKGNAMESUFFIX=	-${FLAVOR}
-
-.elif ${FLAVOR} == idf54
-# the version of the toolchain. see tools/tools.json in espressif/esp-idf.
-ESPRESSIF_VERSION=	esp-14.2.0_20240906
-
-# the version of gcc
-ESPRESSIF_GCC_VERSION=	14.2.0
-
-# the git tags to use crosstool.config. see
-# samples/xtensa-esp-elf/crosstool.config in espressif/crosstool-NG
-ESPRESSIF_GCC_TAG=	esp-14.2.0_20240906
-ESPRESSIF_NEWLIB_TAG=	esp-4.3.0_20240906
-ESPRESSIF_BINUTILS_TAG=	esp-2.43.1_20240906
-ESPRESSIF_PICOLIBC_TAG=	esp-1.8.6_20240906
-
-# git submodules tags to use. see .gitmodules in espressif/crosstool-NG.
-XTENSA_OVERLAYS_TAGNAME=	dd1cf19
-XTENSA_DYNCONFIG_TAGNAME=	c545876
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	62776e9
-
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
-		SF/expat/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-4.2.1/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://www.zlib.net/fossils/:source11 \
-		https://github.com/facebook/zstd/releases/download/v1.5.5/:source12
-DISTFILES+=	\
-		expat-2.4.1.tar.gz:source1 \
-		gmp-6.2.1.tar.xz:source2 \
-		isl-0.26.tar.xz:source3 \
-		mpc-1.2.1.tar.gz:source4 \
-		mpfr-4.2.1.tar.xz:source5 \
-		ncurses-6.2.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.13.tar.gz:source11 \
-		zstd-1.5.5.tar.gz:source12
-
-idf54_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf54_PKGNAMESUFFIX=	-${FLAVOR}
-
-.elif ${FLAVOR} == idf55
-# the version of the toolchain. see tools/tools.json in espressif/esp-idf.
-ESPRESSIF_VERSION=	 esp-14.2.0_20241119
-
-# the version of gcc
-ESPRESSIF_GCC_VERSION=	14.2.0
-
-# the git tags to use crosstool.config. see
-# samples/xtensa-esp-elf/crosstool.config in espressif/crosstool-NG
-ESPRESSIF_GCC_TAG=	esp-14.2.0_20241119
-ESPRESSIF_NEWLIB_TAG=	esp-4.3.0_20241119
-ESPRESSIF_BINUTILS_TAG=	esp-2.43.1_20241119
-ESPRESSIF_PICOLIBC_TAG=	esp-1.8.6_20241119
-
-# git submodules tags to use. see .gitmodules in espressif/crosstool-NG.
-XTENSA_OVERLAYS_TAGNAME=	dd1cf19
-XTENSA_DYNCONFIG_TAGNAME=	c545876
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME=	62776e9
-
-MASTER_SITES+= \
-		https://github.com/libexpat/libexpat/releases/download/R_2_4_1/:source1 \
-		SF/expat/:source1 \
-		GNU/gmp/:source2 \
-		http://isl.gforge.inria.fr/:source3 \
-		GNU/mpc/:source4 \
-		http://www.mpfr.org/mpfr-4.2.1/:source5 \
-		ftp://ftp.invisible-island.net/ncurses/:source6 \
-		GNU/ncurses/:source6 \
-		GNU/autoconf/:source7 \
-		GNU/automake/:source8 \
-		https://www.zlib.net/fossils/:source11 \
-		https://github.com/facebook/zstd/releases/download/v1.5.5/:source12
-DISTFILES+=	\
-		expat-2.4.1.tar.gz:source1 \
-		gmp-6.2.1.tar.xz:source2 \
-		isl-0.26.tar.xz:source3 \
-		mpc-1.2.1.tar.gz:source4 \
-		mpfr-4.2.1.tar.xz:source5 \
-		ncurses-6.2.tar.gz:source6 \
-		autoconf-2.69.tar.gz:source7 \
-		automake-1.16.1.tar.gz:source8 \
-		zlib-1.2.13.tar.gz:source11 \
-		zstd-1.5.5.tar.gz:source12
-
-idf55_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
-idf55_PKGNAMESUFFIX=	-${FLAVOR}
+.if defined(MASTERDIR)
+.include "${MASTERDIR}/Makefile.${FLAVOR}"
+.else
+.include "${.CURDIR}/Makefile.${FLAVOR}"
 .endif
 
 GH_TUPLE+=	espressif:gcc:${ESPRESSIF_GCC_TAG}:source100 \
@@ -206,18 +65,48 @@ EXTRACT_ONLY+=	espressif-xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME}_GH0.tar.gz
 
 .if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
 
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${BUILD_WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian
+# XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME depends on these variables. verify
+# they are defined.
+.	if !defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION)
+.		warning "XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME is defined but XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION is not"
+.		error "Define XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION in Makefile.${FLAVOR}"
+.	endif
+.	if !defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION)
+.		warning "XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME is defined but XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION is not"
+.		error "Define XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION in Makefile.${FLAVOR}"
+.	endif
+
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR=	${WRKSRC}/esp-toolchain-bin-wrappers
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/vendor
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/target/release/xtensa-toolchian-wrapper
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/gnu-xtensa-toolchian//target/release/xtensa-toolchian-wrapper
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS=	esp32 esp32s2 esp32s3
+
+# esp-toolchain-bin-wrappers requires rust and cargo. USES=cargo cannot be
+# used because the build process is significantly different from regular cargo
+# build.
+CARGO?=		${LOCALBASE}/bin/cargo
+CARGO_BUILD_TARGET=	x86_64-unknown-freebsd
+CARGO_HOME=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}
+CARGO_DOT_DIR=	${CARGO_HOME}/.cargo
+
+.if defined(FLAVOR_SUPPORTS_ESP8266)
+XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS+=	esp8266
+.endif
 
 # cargo crates for esp-toolchain-bin-wrappers. see
 # esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/Cargo.toml
+# esp-toolchain-bin-wrappers/gnu-riscv-binutils/Cargo.toml
+# esp-toolchain-bin-wrappers/gnu-debugger/unix/Cargo.tom
+#
+# they depend on different versions of lazy_static and libc, which complicates
+# vendoring. each Cargo.toml files were patched so that we can use the same
+# versions of lazy_static and libc.
 XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES=	\
-	rust-lang-nursery:lazy-static.rs:1.4.0:source107:lazy_static \
-	rust-lang:libc:0.2.147:source108:libc
+	rust-lang-nursery:lazy-static.rs:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION}:source107:lazy_static \
+	rust-lang:libc:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION}:source108:libc
 GH_TUPLE+=	espressif:esp-toolchain-bin-wrappers:${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}:source106
 EXTRACT_ONLY+=	espressif-esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}_GH0.tar.gz
+
 .for _org _project _tag _src_group _name in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES:C/:/ /g}
 GH_TUPLE+=	${_org}:${_project}:${_tag}:${_src_group}
 EXTRACT_ONLY+=	${_org}-${_project}-${_tag}_GH0.tar.gz
@@ -240,11 +129,10 @@ ESP_REMOVE_BEFORE_DO_INSTALL=	\
 	espressif-binutils-gdb-${ESPRESSIF_BINUTILS_TAG} \
 	espressif-newlib-esp32-${ESPRESSIF_NEWLIB_TAG}
 
-.if ${FLAVOR} == idf54
+.if defined(ESPRESSIF_PICOLIBC_TAG)
 GH_TUPLE+=	espressif:picolibc:${ESPRESSIF_PICOLIBC_TAG}:source109
 EXTRACT_ONLY+= espressif-picolibc-${ESPRESSIF_PICOLIBC_TAG}_GH0.tar.gz
 ESP_REMOVE_BEFORE_DO_INSTALL+= espressif-picolibc-${ESPRESSIF_PICOLIBC_TAG}
-XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS+=	esp8266
 .endif
 
 PATCHDIR=		${MASTERDIR}/files/${FLAVOR}
@@ -256,7 +144,10 @@ SUBDIR=		crosstool-NG
 BINARY_ALIAS=	g++=${CXX} gcc=${CC} python=${PYTHON_VERSION}
 BUILD_ENV=	LD_RUN_PATH=${PREFIX}/lib/${CC} \
 		${MAKE_ENV:MPATH=*} \
-		CT_JOBS=${MAKE_JOBS_NUMBER}
+		CT_JOBS=${MAKE_JOBS_NUMBER} \
+		CARGO=${CARGO} \
+		CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
+		CARGO_HOME=${CARGO_HOME}
 
 # these variables are automatically appended to crosstool.config at
 # pre-configure. common variables should go into XTENSA_CT_CONFIG
@@ -306,15 +197,49 @@ post-extract:
 	${LN} -s ${WRKDIR}/xtensa-dynconfig-${XTENSA_DYNCONFIG_TAGNAME} ${BUILD_WRKSRC}/xtensa-dynconfig
 .endif
 .if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME)
+# move esp-toolchain-bin-wrappers into WRKSRC because `makepatch` target does
+# not create patches when esp-toolchain-bin-wrappers is a symlink (find(1)
+# does not follow symlinks by default).
 	${RMDIR} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
-	${LN} -s ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
+	${MV} ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME} ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers
+	${LN} -s ${BUILD_WRKSRC}/esp-toolchain-bin-wrappers ${WRKDIR}/esp-toolchain-bin-wrappers-${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TAGNAME}
 .endif
 
 post-patch:
-.if ${PORTNAME} == xtensa-esp-elf && (${FLAVOR} == idf54 || ${FLAVOR} == idf55)
+.if defined(FLAVOR_SUPPORTS_ESP8266)
 	@${ECHO_MSG} "===>  Applying ESP8266 support patch to gcc-${ESPRESSIF_GCC_TAG}"
 	@(cd ${WRKDIR}/gcc-${ESPRESSIF_GCC_TAG} && ${PATCH} ${PATCH_ARGS} < ${FILESDIR}/${FLAVOR}/esp8266.patch)
 .endif
+
+# vendor the creates
+	@${ECHO_MSG} "===>   Creating XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR (${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR})"
+	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}
+
+	@${ECHO_MSG} "===>   Moving ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES} (${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES}) to XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR (${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR})"
+.for _org _project _tag _src_group _name in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES:C/:/ /g}
+
+	@${ECHO_MSG} "===>   Moving ${_project}/${_name}"
+	${MV} ${WRKDIR}/${_project}-${_tag} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}
+
+	@${ECHO_MSG} "===>   Generating SHA256 hash of ${_name}"
+	${PRINTF} '{"package":"%s","files":{}}' \
+		$$(${SHA256} -q ${DISTDIR}/${_org}-${_project}-${_tag}_GH0.tar.gz) \
+		> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}/.cargo-checksum.json
+.endfor
+
+	@${ECHO_MSG} "===>   Making CARGO_HOME (${CARGO_HOME})"
+	${MKDIR} ${CARGO_HOME}
+	${MKDIR} ${CARGO_DOT_DIR}
+
+	@${ECHO_MSG} "===>   Making cargo config (${CARGO_DOT_DIR}/config.yml)"
+	@: > ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "[source.cargo]" >> ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "directory = '${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}'" >> ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "[source.crates-io]" >> ${CARGO_DOT_DIR}/config.toml
+	@${ECHO_CMD} "replace-with = 'cargo'" >> ${CARGO_DOT_DIR}/config.toml
+
+	@${ECHO_MSG} "===>   The contents of cargo config (${CARGO_DOT_DIR}/config.toml)"
+	@${CAT} ${CARGO_DOT_DIR}/config.toml
 
 pre-configure:
 	@${REINPLACE_CMD} -e 's/\(GNU bash, version.*4\)/\1|5/' \
@@ -344,21 +269,18 @@ pre-configure:
 		-e 's|%%PREFIX%%|${PREFIX:S/\///1}|g' \
 		${WRKSRC}/esp-toolchain-bin-wrappers/gnu-xtensa-toolchian/main.rs
 
-# vendor the creates
-	@${ECHO_MSG} "===>   Cargo config:"
-	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}
-	${MKDIR} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo
-.for _org _project _tag _src_group _name in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_TUPLES:C/:/ /g}
-	${MV} ${WRKDIR}/${_project}-${_tag} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}
-	${PRINTF} '{"package":"%s","files":{}}' \
-		$$(${SHA256} -q ${DISTDIR}/${_org}-${_project}-${_tag}_GH0.tar.gz) \
-		> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/${_name}/.cargo-checksum.json
-.endfor
-	${ECHO_CMD} "[source.crates-io]" >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${ECHO_CMD} 'replace-with = "vendored-sources"' >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${ECHO_CMD} "[source.vendored-sources]" >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${ECHO_CMD} 'directory = "vendor"' >> ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
-	${CAT} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_VENDOR_DIR}/../.cargo/config.toml
+.if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION)
+	${REINPLACE_CMD} \
+		-e 's|%%XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION%%|${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LAZY_STATIC_VERSION}|g' \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/unix/Cargo.toml \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/Cargo.toml
+.endif
+.if defined(XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION)
+	${REINPLACE_CMD} \
+		-e 's|%%XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION%%|${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_LIBC_VERSION}|g' \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/unix/Cargo.toml \
+		${WRKSRC}/esp-toolchain-bin-wrappers/*/Cargo.toml
+.endif
 
 do-configure:
 	cd ${BUILD_WRKSRC} && ./bootstrap
@@ -384,12 +306,14 @@ do-build:
 
 # see .gitlab-ci.yml in espressif/crosstool-NG
 	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
-.if ${PORTNAME} == xtensa-esp-elf
-	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR} && \
+
+.if ${PORTNAME} == xtensa-esp-elf && !defined(FLAVOR_SUPPORTS_VENDORED_CARGO)
+	(cd ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/gnu-xtensa-toolchian/ && \
 		${SETENVI} \
 			${WRK_ENV} \
 			CARGO_BUILD_JOBS=${MAKE_JOBS_NUMBER} \
 			CARGO_TARGET_${CARGO_BUILD_TARGET:S/-/_/g:tu}_LINKER="${CC}" \
+			CARGO_HOME=${CARGO_HOME} \
 			${CARGO} build --release --verbose --verbose)
 .for XTENSA_CHIP in ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_CHIPS}
 	${FIND} ${WRKSRC}/builds/${PORTNAME}/bin  -type f | ${SED} -e 's/xtensa-esp-elf-/xtensa-${XTENSA_CHIP}-elf-/' | ${XARGS} -J % -n 1 ${CP} ${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_FILE} %
@@ -417,14 +341,11 @@ do-install:
 	cd ${BUILD_WRKSRC}/builds && \
 		${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
 	${MV} ${STAGEDIR}${PREFIX}/${PORTNAME} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/bfd-plugins/libdep.so
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcc1plugin.so.0.0.0
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/libcp1plugin.so.0.0.0
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib/libcc1.so.0.0.0
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/libexec/gcc/${PORTNAME}/${ESPRESSIF_GCC_VERSION}/plugin/gengtype
-.if ${PORTNAME} == xtensa-esp-elf
-	${STRIP_CMD} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}${PREFIX}/lib/xtensa_*.so
-.endif
+
+	${FIND} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib -name "*.so" | ${XARGS} ${STRIP_CMD}
+	${FIND} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib -name "*.so.*" | ${XARGS} ${STRIP_CMD}
+	${FIND} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}/lib -name "gengtype" | ${XARGS} ${STRIP_CMD}
+
 	# do NOT install ct-ng and its files. we just need binaries for the
 	# PORTNAME, not ct-ng
 	cd ${STAGEDIR}${PREFIX} && \
