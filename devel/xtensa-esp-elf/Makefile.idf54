@@ -1,15 +1,17 @@
+ESPRESSIF_VERSION_DATE=	20250730
+
 # the version of the toolchain. see tools/tools.json in espressif/esp-idf.
-ESPRESSIF_VERSION=	esp-14.2.0_20240906
+ESPRESSIF_VERSION=	esp-${ESPRESSIF_GCC_VERSION}_${ESPRESSIF_VERSION_DATE}
 
 # the version of gcc
 ESPRESSIF_GCC_VERSION=	14.2.0
 
 # the git tags to use crosstool.config. see
 # samples/xtensa-esp-elf/crosstool.config in espressif/crosstool-NG
-ESPRESSIF_GCC_TAG=	esp-14.2.0_20240906
-ESPRESSIF_NEWLIB_TAG=	esp-4.3.0_20240906
-ESPRESSIF_BINUTILS_TAG=	esp-2.43.1_20240906
-ESPRESSIF_PICOLIBC_TAG=	esp-1.8.6_20240906
+ESPRESSIF_GCC_TAG=	esp-${ESPRESSIF_GCC_VERSION}_${ESPRESSIF_VERSION_DATE}
+ESPRESSIF_NEWLIB_TAG=	esp-4.3.0_${ESPRESSIF_VERSION_DATE}
+ESPRESSIF_BINUTILS_TAG=	esp-2.43.1_${ESPRESSIF_VERSION_DATE}
+ESPRESSIF_PICOLIBC_TAG=	esp-1.8.6_${ESPRESSIF_VERSION_DATE}
 
 # git submodules tags to use. see .gitmodules in espressif/crosstool-NG.
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
