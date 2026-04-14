@@ -23,7 +23,7 @@ BUILD_DEPENDS=	bash:shells/bash \
 		makeinfo:print/texinfo \
 		${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
 
-FLAVORS?=	idf60 idf55 idf54 idf53
+FLAVORS?=	idf61 idf60 idf55 idf54 idf53
 FLAVOR?=	${FLAVORS:[1]}
 
 # XXX use iconv:wchar_t.
