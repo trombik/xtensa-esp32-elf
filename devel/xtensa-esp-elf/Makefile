@@ -338,6 +338,7 @@ pre-install:
 	@/bin/df -h -t ufs
 
 do-install:
+	${RM} -f ${BUILD_WRKSRC}/builds/${PORTNAME}/share/${PORTNAME}-ct-ng.config.bz2
 	cd ${BUILD_WRKSRC}/builds && \
 		${COPYTREE_BIN} ${PORTNAME} ${STAGEDIR}${PREFIX}
 	${MV} ${STAGEDIR}${PREFIX}/${PORTNAME} ${STAGEDIR}${PREFIX}/${XTENSA_ROOT_DIR}
