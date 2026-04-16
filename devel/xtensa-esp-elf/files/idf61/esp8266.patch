@@ -1,0 +1,15 @@
+--- gcc/config/xtensa/t-esp-multilib.orig	2024-11-02 08:04:05.650057000 +0700
++++ gcc/config/xtensa/t-esp-multilib	2024-11-02 08:05:42.000992000 +0700
+@@ -16,9 +16,9 @@
+ # along with GCC; see the file COPYING3.  If not see
+ # <http://www.gnu.org/licenses/>.
+ 
+-MULTILIB_OPTIONS = mdynconfig=xtensa_esp32.so/mdynconfig=xtensa_esp32s2.so/mdynconfig=xtensa_esp32s3.so mfix-esp32-psram-cache-issue fno-rtti
+-MULTILIB_DIRNAMES = esp32 esp32s2 esp32s3 psram no-rtti
+-MULTILIB_REQUIRED = mdynconfig=xtensa_esp32.so mdynconfig=xtensa_esp32.so/fno-rtti \
++MULTILIB_OPTIONS = mdynconfig=xtensa_esp8266.so/mdynconfig=xtensa_esp32.so/mdynconfig=xtensa_esp32s2.so/mdynconfig=xtensa_esp32s3.so mfix-esp32-psram-cache-issue fno-rtti
++MULTILIB_DIRNAMES = esp8266 esp32 esp32s2 esp32s3 psram no-rtti
++MULTILIB_REQUIRED = mdynconfig=xtensa_esp8266.so mdynconfig=xtensa_esp32.so mdynconfig=xtensa_esp32.so/fno-rtti \
+ mdynconfig=xtensa_esp32.so/mfix-esp32-psram-cache-issue mdynconfig=xtensa_esp32.so/mfix-esp32-psram-cache-issue/fno-rtti \
+ mdynconfig=xtensa_esp32s2.so mdynconfig=xtensa_esp32s2.so/fno-rtti \
+ mdynconfig=xtensa_esp32s3.so mdynconfig=xtensa_esp32s3.so/fno-rtti

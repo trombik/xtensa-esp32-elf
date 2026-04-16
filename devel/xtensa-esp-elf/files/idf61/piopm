@@ -1,0 +1,10 @@
+{
+  "type": "tool",
+  "name": "%%XTENSA_PLATFORMIO_TOOLCHAIN_NAME%%",
+  "version": "%%XTENSA_PLATFORMIO_TOOLCHAIN_VERSION%%",
+  "spec": {
+    "owner": "%%XTENSA_PLATFORMIO_TOOLCHAIN_OWNER%%",
+    "name": "%%XTENSA_PLATFORMIO_TOOLCHAIN_NAME%%",
+    "url": "https://github.com/trombik/xtensa-esp32-elf"
+  }
+}
