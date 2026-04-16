@@ -1,6 +1,6 @@
 esp-gdb-xtensa/bin/xtensa-esp-elf-gdb
-esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-no-python
 esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-add-index
+esp-gdb-xtensa/bin/xtensa-esp-elf-gdb-no-python
 esp-gdb-xtensa/bin/xtensa-esp-elf-gprof
 esp-gdb-xtensa/bin/xtensa-esp32-elf-gdb
 esp-gdb-xtensa/bin/xtensa-esp32s2-elf-gdb
@@ -16,6 +16,7 @@ esp-gdb-xtensa/share/gdb/syscalls/arm-linux.xml
 esp-gdb-xtensa/share/gdb/syscalls/freebsd.xml
 esp-gdb-xtensa/share/gdb/syscalls/gdb-syscalls.dtd
 esp-gdb-xtensa/share/gdb/syscalls/i386-linux.xml
+esp-gdb-xtensa/share/gdb/syscalls/loongarch-linux.xml
 esp-gdb-xtensa/share/gdb/syscalls/mips-n32-linux.xml
 esp-gdb-xtensa/share/gdb/syscalls/mips-n64-linux.xml
 esp-gdb-xtensa/share/gdb/syscalls/mips-o32-linux.xml
@@ -40,4 +41,5 @@ esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gdb-add-index.1
 esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gdb.1
 esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gdbserver.1
 esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gprof.1
+esp-gdb-xtensa/share/man/man1/xtensa-esp-elf-gstack.1
 esp-gdb-xtensa/share/man/man5/xtensa-esp-elf-gdbinit.5
