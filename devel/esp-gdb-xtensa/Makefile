@@ -30,17 +30,15 @@ BINARY_ALIAS=	g++=${CXX} gcc=${CC} make=${GMAKE} \
 				${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL}-strip=${STRIP_CMD}
 HAS_CONFIGURE=	no
 PKGNAMESUFFIX=	${PYTHON_PKGNAMESUFFIX}
-ESP_GDB_VERSION=	14.2
-ESP_REL_DATE=	20240403
 
 ESP_PORTNAME=	esp-gdb
 ESP_ARCH?=	xtensa
-# XXX esp-gdb-v14.2_20240403 points to esp-toolchain-bin-wrappers @ ead71c2,
-# but the tag does not exist. use the latest. The ref must be later than
-# b9b42f8, which fixes a bug, `unrecognized option `--mcpu=esp32s3'`.
-ESP_TOOLCHAIN_BIN_WRAPPERS_TAG=	b9b42f8
+ESP_GDB_VERSION=	17.1
+ESP_REL_DATE=	20260402
+ESP_TOOLCHAIN_BIN_WRAPPERS_TAG=	925bd7c
 ESP_XTENSA_DYNCONFIG_TAG=	905b913
 ESP_XTENSA_OVERLAY_TAG=	dd1cf19
+
 PLIST=	${PKGDIR}/pkg-plist.${ESP_ARCH}
 .if ${ESP_ARCH} == xtensa
 ESP_FILE_SCRIPTS=	\

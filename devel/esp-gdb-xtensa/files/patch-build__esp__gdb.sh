@@ -1,4 +1,4 @@
---- build_esp_gdb.sh.orig	2024-04-02 08:31:37 UTC
+--- build_esp_gdb.sh.orig	2026-04-02 03:12:58 UTC
 +++ build_esp_gdb.sh
 @@ -1,5 +1,5 @@
  #!/bin/bash
@@ -22,23 +22,24 @@
    pushd xtensa-dynconfig
 -  make clean
 -  make CC=${TARGET_HOST}-gcc CONF_DIR="${GDB_REPO_ROOT}/xtensa-overlays"
-+  make -j %%MAKE_JOBS_NUMBER%% CC=${TARGET_HOST}-${CC} CONF_DIR="${GDB_REPO_ROOT}/xtensa-overlays"
++  make -j 8 CC=${TARGET_HOST}-${CC} CONF_DIR="${GDB_REPO_ROOT}/xtensa-overlays"
    make install DESTDIR="${GDB_DIST}"
    popd
  fi
-@@ -100,10 +101,9 @@ --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
+@@ -108,10 +109,9 @@ --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
  CONFIG_OPTS=" \
  --host=$TARGET_HOST \
  --target=${ESP_CHIP_ARCHITECTURE}-esp-elf \
 ---build=`gcc -dumpmachine` \
 +--build=`${CC} -dumpmachine` \
  --disable-werror \
- --with-expat \
+---with-expat \
 ---with-libexpat-prefix=/opt/expat-$TARGET_HOST \
++--with-expat=%%PREFIX%% \
  --disable-threads \
  --disable-sim \
  --disable-nls \
-@@ -111,15 +111,13 @@ --disable-source-highlight \
+@@ -119,17 +119,13 @@ --disable-source-highlight \
  --disable-ld \
  --disable-gas \
  --disable-source-highlight \
@@ -49,18 +50,19 @@
 ---with-mpfr=/opt/mpfr-$TARGET_HOST \
 +--prefix=%%PREFIX%% \
 +--with-gmp=%%PREFIX%% \
++--with-libgmp-prefix=%%PREFIX%% \
 +--with-mpc=%%PREFIX%% \
 +--with-mpfr=%%PREFIX%% \
-+--with-zstd=%%PREFIX%% \
-+--with-debuginfod=%%PREFIX%% \
  ${PYTHON_CONFIG_OPTS} \
 ---with-libexpat-type=static \
 ---with-liblzma-type=static \
 ---with-libgmp-type=static \
- --with-static-standard-libraries \
+ ${LIBICONV_CONFIG_OPTS} \
+---with-static-standard-libraries \
  --with-pkgversion="esp-gdb" \
  --with-curses \
-@@ -148,8 +146,8 @@ make install DESTDIR=$GDB_DIST
+ --enable-tui \
+@@ -165,8 +161,8 @@ make install DESTDIR=$GDB_DIST
  make install DESTDIR=$GDB_DIST
  
  #strip binaries. Save user's disc space
@@ -71,7 +73,7 @@
  
  GDB_PROGRAM_SUFFIX=
  if [ $BUILD_PYTHON_VERSION == "without_python" ]; then
-@@ -170,13 +168,13 @@ fi
+@@ -187,13 +183,13 @@ fi
  fi
  
  # rename gdb to have python version in filename

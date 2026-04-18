@@ -1,5 +1,5 @@
-esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-no-python
 esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-add-index
+esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-no-python
 esp-gdb-riscv32/bin/riscv32-esp-elf-gprof
 esp-gdb-riscv32/include/gdb/jit-reader.h
 esp-gdb-riscv32/share/gdb/syscalls/aarch64-linux.xml
@@ -8,6 +8,7 @@ esp-gdb-riscv32/share/gdb/syscalls/arm-linux.xml
 esp-gdb-riscv32/share/gdb/syscalls/freebsd.xml
 esp-gdb-riscv32/share/gdb/syscalls/gdb-syscalls.dtd
 esp-gdb-riscv32/share/gdb/syscalls/i386-linux.xml
+esp-gdb-riscv32/share/gdb/syscalls/loongarch-linux.xml
 esp-gdb-riscv32/share/gdb/syscalls/mips-n32-linux.xml
 esp-gdb-riscv32/share/gdb/syscalls/mips-n64-linux.xml
 esp-gdb-riscv32/share/gdb/syscalls/mips-o32-linux.xml
@@ -32,6 +33,7 @@ esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb-add-index.1
 esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb.1
 esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdbserver.1
 esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gprof.1
+esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gstack.1
 esp-gdb-riscv32/share/man/man5/riscv32-esp-elf-gdbinit.5
 @dir esp-gdb-riscv32/share/man/man5
 @dir esp-gdb-riscv32/share/man/man1
