@@ -1,4 +1,4 @@
-bin/xtensa-esp-elf-gdb
+bin/xtensa-esp-elf-gdb-no-python
 bin/xtensa-esp-elf-gdb-add-index
 bin/xtensa-esp-elf-gprof
 bin/xtensa-esp-elf-gstack

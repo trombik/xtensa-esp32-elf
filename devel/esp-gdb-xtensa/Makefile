@@ -123,5 +123,6 @@ post-install:
 .if ${ESP_ARCH} == rsicv32
 	${INSTALL_PROGRAM} ${WRKDIR}/target/release/esp-elf-gdb-wrapper ${STAGEDIR}${PREFIX}/bin/${ESP_ARCH}-esp-elf-gdb
 .endif
+	${MV} ${STAGEDIR}${PREFIX}/bin/${ESP_ARCH}-esp-elf-gdb ${STAGEDIR}${PREFIX}/bin/${ESP_ARCH}-esp-elf-gdb-no-python
 
 .include <bsd.port.post.mk>

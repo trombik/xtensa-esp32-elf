@@ -1,4 +1,4 @@
-bin/riscv32-esp-elf-gdb
+bin/riscv32-esp-elf-gdb-no-python
 bin/riscv32-esp-elf-gdb-add-index
 bin/riscv32-esp-elf-gprof
 bin/riscv32-esp-elf-gstack
