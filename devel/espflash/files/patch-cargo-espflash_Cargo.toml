@@ -1,11 +1,11 @@
---- cargo-espflash/Cargo.toml.orig	2024-10-26 14:08:45 UTC
+--- cargo-espflash/Cargo.toml.orig	2025-09-24 04:49:03 UTC
 +++ cargo-espflash/Cargo.toml
 @@ -32,7 +32,7 @@ toml           = "0.8.19"
  toml           = "0.8.19"
  
  [target.'cfg(unix)'.dependencies]
--cargo = { version = "0.83.0", features = ["vendored-openssl"] }
-+cargo = { version = "0.83.0", features = [] }
+-cargo = { version = "0.85.0", features = ["vendored-openssl"] }
++cargo = { version = "0.85.0" }
  
  [target.'cfg(windows)'.dependencies]
- cargo = "0.83.0"
+ cargo = "0.85.0"
