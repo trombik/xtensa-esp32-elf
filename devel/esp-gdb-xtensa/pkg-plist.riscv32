@@ -1,49 +1,37 @@
-esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-add-index
-esp-gdb-riscv32/bin/riscv32-esp-elf-gdb-no-python
-esp-gdb-riscv32/bin/riscv32-esp-elf-gprof
-esp-gdb-riscv32/include/gdb/jit-reader.h
-esp-gdb-riscv32/share/gdb/syscalls/aarch64-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/amd64-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/arm-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/freebsd.xml
-esp-gdb-riscv32/share/gdb/syscalls/gdb-syscalls.dtd
-esp-gdb-riscv32/share/gdb/syscalls/i386-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/loongarch-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/mips-n32-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/mips-n64-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/mips-o32-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/netbsd.xml
-esp-gdb-riscv32/share/gdb/syscalls/ppc-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/ppc64-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/s390-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/s390x-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/sparc-linux.xml
-esp-gdb-riscv32/share/gdb/syscalls/sparc64-linux.xml
-esp-gdb-riscv32/share/gdb/system-gdbinit/elinos.py
-esp-gdb-riscv32/share/gdb/system-gdbinit/wrs-linux.py
-esp-gdb-riscv32/share/info/annotate.info
-esp-gdb-riscv32/share/info/bfd.info
-esp-gdb-riscv32/share/info/ctf-spec.info
-esp-gdb-riscv32/share/info/dir
-esp-gdb-riscv32/share/info/gdb.info
-esp-gdb-riscv32/share/info/gprof.info
-esp-gdb-riscv32/share/info/sframe-spec.info
-esp-gdb-riscv32/share/info/stabs.info
-esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb-add-index.1
-esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdb.1
-esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gdbserver.1
-esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gprof.1
-esp-gdb-riscv32/share/man/man1/riscv32-esp-elf-gstack.1
-esp-gdb-riscv32/share/man/man5/riscv32-esp-elf-gdbinit.5
-@dir esp-gdb-riscv32/share/man/man5
-@dir esp-gdb-riscv32/share/man/man1
-@dir esp-gdb-riscv32/share/man
-@dir esp-gdb-riscv32/share/info
-@dir esp-gdb-riscv32/share/gdb/system-gdbinit
-@dir esp-gdb-riscv32/share/gdb/syscalls
-@dir esp-gdb-riscv32/share/gdb
-@dir esp-gdb-riscv32/share
-@dir esp-gdb-riscv32/include/gdb
-@dir esp-gdb-riscv32/include
-@dir esp-gdb-riscv32/bin
-@dir esp-gdb-riscv32
+bin/riscv32-esp-elf-gdb
+bin/riscv32-esp-elf-gdb-add-index
+bin/riscv32-esp-elf-gprof
+bin/riscv32-esp-elf-gstack
+include/gdb/jit-reader.h
+share/gdb/syscalls/aarch64-linux.xml
+share/gdb/syscalls/amd64-linux.xml
+share/gdb/syscalls/arm-linux.xml
+share/gdb/syscalls/freebsd.xml
+share/gdb/syscalls/gdb-syscalls.dtd
+share/gdb/syscalls/i386-linux.xml
+share/gdb/syscalls/loongarch-linux.xml
+share/gdb/syscalls/mips-n32-linux.xml
+share/gdb/syscalls/mips-n64-linux.xml
+share/gdb/syscalls/mips-o32-linux.xml
+share/gdb/syscalls/netbsd.xml
+share/gdb/syscalls/ppc-linux.xml
+share/gdb/syscalls/ppc64-linux.xml
+share/gdb/syscalls/s390-linux.xml
+share/gdb/syscalls/s390x-linux.xml
+share/gdb/syscalls/sparc-linux.xml
+share/gdb/syscalls/sparc64-linux.xml
+share/gdb/system-gdbinit/elinos.py
+share/gdb/system-gdbinit/wrs-linux.py
+share/info/annotate.info
+share/info/bfd.info
+share/info/ctf-spec.info
+share/info/gdb.info
+share/info/gprof.info
+share/info/sframe-spec.info
+share/info/stabs.info
+share/man/man1/riscv32-esp-elf-gdb-add-index.1.gz
+share/man/man1/riscv32-esp-elf-gdb.1.gz
+share/man/man1/riscv32-esp-elf-gdbserver.1.gz
+share/man/man1/riscv32-esp-elf-gprof.1.gz
+share/man/man1/riscv32-esp-elf-gstack.1.gz
+share/man/man5/riscv32-esp-elf-gdbinit.5.gz

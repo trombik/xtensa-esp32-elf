@@ -21,16 +21,6 @@ LIB_DEPENDS= \
 
 WWW=	https://github.com/espressif/binutils-gdb
 
-USES=	gmake ncurses iconv gettext-runtime pkgconfig cargo
-USE_GITHUB=	yes
-USE_GCC=	yes
-
-BINARY_ALIAS=	g++=${CXX} gcc=${CC} make=${GMAKE} \
-				${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL}-gcc=${CC} \
-				${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL}-strip=${STRIP_CMD}
-HAS_CONFIGURE=	no
-PKGNAMESUFFIX=	${PYTHON_PKGNAMESUFFIX}
-
 ESP_PORTNAME=	esp-gdb
 ESP_ARCH?=	xtensa
 ESP_GDB_VERSION=	17.1
@@ -39,20 +29,43 @@ ESP_TOOLCHAIN_BIN_WRAPPERS_TAG=	925bd7c
 ESP_XTENSA_DYNCONFIG_TAG=	905b913
 ESP_XTENSA_OVERLAY_TAG=	dd1cf19
 
+USES=	gmake ncurses iconv gettext-runtime pkgconfig cargo compiler
+USE_GITHUB=	yes
+USE_GCC=	yes
+
+# see build_esp_gdb.sh
+GNU_CONFIGURE=	yes
+CFLAGS=	-Wno-psabi
+CXXFLAGS=	-Wno-psabi
+PREFIX=	${LOCALBASE}/${PORTNAME}
+CROSS_HOST=	${ARCH}-portbld-${OPSYS:tl}${OSREL}
+CONFIGURE_TARGET=	${ESP_ARCH}-esp-elf
+CONFIGURE_ARGS=	\
+	--host=${CROSS_HOST} \
+	--target=${ESP_ARCH}-esp-elf \
+	--build=${CROSS_HOST} \
+	--disable-werror \
+	--with-expat=${LOCALBASE} \
+	--disable-threads \
+	--disable-sim \
+	--disable-nls \
+	--disable-binutils \
+	--disable-ld \
+	--disable-gas \
+	--disable-source-highlight \
+	--prefix=${LOCALBASE} \
+	--with-gmp=${LOCALBASE} \
+	--with-libgmp-prefix=${LOCALBASE} \
+	--with-mpc=${LOCALBASE} \
+	--with-mpfr=${LOCALBASE} \
+	--with-pkgversion="${ESP_PORTNAME}" \
+	--with-curses \
+	--enable-tui \
+	--enable-threads=posix
+# see bfd/configure
+CONFIGURE_ENV=	CC_FOR_BUILD=${CC}
+
 PLIST=	${PKGDIR}/pkg-plist.${ESP_ARCH}
-.if ${ESP_ARCH} == xtensa
-ESP_FILE_SCRIPTS=	\
-	xtensa-esp-elf-gdb-add-index
-ESP_FILE_PROGRAMS=	\
-	xtensa-esp-elf-gdb-no-python \
-	xtensa-esp-elf-gprof
-.elif ${ESP_ARCH} == riscv32
-ESP_FILE_SCRIPTS=	\
-	riscv32-esp-elf-gdb-add-index
-ESP_FILE_PROGRAMS= \
-	riscv32-esp-elf-gdb-no-python \
-	riscv32-esp-elf-gprof
-.endif
 
 GH_TUPLE=	espressif:binutils-gdb:${ESP_PORTNAME}-v${ESP_GDB_VERSION}_${ESP_REL_DATE} \
 	espressif:xtensa-dynconfig:${ESP_XTENSA_DYNCONFIG_TAG}:xtensadynconfig/xtensa-dynconfig \
@@ -65,7 +78,7 @@ CARGO_CARGOLOCK=	${XTENSA_ESP_TOOLCHAIN_BIN_WRAPPERS_DIR}/Cargo.lock
 CARGO_BUILD_TARGET=	${ARCH:S/amd64/x86_64/}-unknown-freebsd
 ESP_ELF_GDB_WRAPPER=	esp-elf-gdb-wrapper
 
-# XXX Makefile has its own do-* target
+# XXX this Makefile has its own targets
 CARGO_INSTALL=	no
 CARGO_BUILD=	no
 CARGO_ENV=	\
@@ -86,12 +99,8 @@ installlockfile:
 	${CP} ${FILESDIR}/Cargo.lock ${CARGO_CARGOLOCK}
 
 pre-configure:	installlockfile
-	${REINPLACE_CMD} \
-		-e 's|%%PREFIX%%|${PREFIX}|g' \
-		-e 's|%%MAKE_JOBS_NUMBER%%|${MAKE_JOBS_NUMBER}|g' \
-		${WRKSRC}/build_esp_gdb.sh
 
-do-build:
+pre-build:
 # see build_esp_gdb.sh
 .if ${ESP_ARCH} == xtensa
 	${CARGO_CARGO_RUN} build \
@@ -99,34 +108,6 @@ do-build:
 		--verbose \
 		--verbose \
 		${CARGO_BUILD_ARGS}
-.endif
-
-	(cd ${WRKSRC} && ${SETENV} ${WRK_ENV} ${MAKE_ENV} bash ${WRKSRC}/build_esp_gdb.sh ${ARCH:S/amd64/x86_64/}-portbld-freebsd${OSREL} ${ESP_ARCH} without_python)
-
-do-install:
-	${MKDIR} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin \
-		${STAGEDIR}${PREFIX}/${PORTNAME}/share \
-		${STAGEDIR}${PREFIX}/${PORTNAME}/include
-.if ${ESP_ARCH} == xtensa
-	${MKDIR} ${STAGEDIR}${PREFIX}/${PORTNAME}/lib
-.endif
-
-.for F in ${ESP_FILE_SCRIPTS}
-	${INSTALL_SCRIPT} ${WRKSRC}/dist${PREFIX}/bin/${F} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin/
-.endfor
-.for F in ${ESP_FILE_PROGRAMS}
-	${INSTALL_PROGRAM} ${WRKSRC}/dist${PREFIX}/bin/${F} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin/
-.endfor
-.if ${ESP_ARCH} == xtensa
-	${STRIP_CMD} ${WRKSRC}/dist${PREFIX}/lib/*
-	(cd ${WRKSRC}/dist${PREFIX}/lib && ${COPYTREE_BIN} . ${STAGEDIR}${PREFIX}/${PORTNAME}/lib)
-.endif
-	(cd ${WRKSRC}/dist${PREFIX}/share && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/share)
-	(cd ${WRKSRC}/dist${PREFIX}/include && ${COPYTREE_SHARE} . ${STAGEDIR}${PREFIX}/${PORTNAME}/include)
-.if ${ESP_ARCH} == xtensa
-.for CHIP in esp32 esp32s2 esp32s3 esp
-	${INSTALL_PROGRAM} ${CARGO_TARGET_DIR}/release/${ESP_ELF_GDB_WRAPPER} ${STAGEDIR}${PREFIX}/${PORTNAME}/bin/${ESP_ARCH}-${CHIP}-elf-gdb
-.endfor
 .endif
 
 .include <bsd.port.post.mk>
