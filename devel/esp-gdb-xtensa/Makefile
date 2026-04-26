@@ -108,6 +108,20 @@ pre-build:
 		--verbose \
 		--verbose \
 		${CARGO_BUILD_ARGS}
+	(cd ${WRKSRC}/xtensa-dynconfig && \
+	${SETENVI} ${WRK_ENV} ${MAKE_ENV} CONF_DIR=${WRKSRC}/xtensa-overlays \
+		${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} ${INSTALL_TARGET})
+.endif
+
+post-install:
+.if ${ESP_ARCH} == xtensa
+	${INSTALL_LIB} ${WRKSRC}/xtensa-dynconfig/*.so ${STAGEDIR}${PREFIX}/lib
+.for CHIP in esp32 esp32s2 esp32s3
+	${INSTALL_PROGRAM} ${WRKDIR}/target/release/esp-elf-gdb-wrapper ${STAGEDIR}${PREFIX}/bin/${ESP_ARCH}-${CHIP}-elf-gdb
+.endfor
+.endif
+.if ${ESP_ARCH} == rsicv32
+	${INSTALL_PROGRAM} ${WRKDIR}/target/release/esp-elf-gdb-wrapper ${STAGEDIR}${PREFIX}/bin/${ESP_ARCH}-esp-elf-gdb
 .endif
 
 .include <bsd.port.post.mk>

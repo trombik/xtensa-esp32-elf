@@ -2,7 +2,14 @@ bin/xtensa-esp-elf-gdb
 bin/xtensa-esp-elf-gdb-add-index
 bin/xtensa-esp-elf-gprof
 bin/xtensa-esp-elf-gstack
+bin/xtensa-esp32-elf-gdb
+bin/xtensa-esp32s2-elf-gdb
+bin/xtensa-esp32s3-elf-gdb
 include/gdb/jit-reader.h
+lib/xtensa_esp32.so
+lib/xtensa_esp32s2.so
+lib/xtensa_esp32s3.so
+lib/xtensa_esp8266.so
 share/gdb/syscalls/aarch64-linux.xml
 share/gdb/syscalls/amd64-linux.xml
 share/gdb/syscalls/arm-linux.xml
