@@ -1,5 +1,5 @@
 PORTNAME=	esp-rom-elfs
-DISTVERSION= 20241011
+DISTVERSION= 20260313
 CATEGORIES=	devel
 # XXX USE_GITHUB cannot be used because the repository does not contain the
 # binaries.
