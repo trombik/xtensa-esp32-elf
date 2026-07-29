@@ -21,7 +21,8 @@ BUILD_DEPENDS=	bash:shells/bash \
 		gsed:textproc/gsed \
 		help2man:misc/help2man \
 		makeinfo:print/texinfo \
-		${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
+		${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT} \
+		meson:devel/meson
 
 FLAVORS?=	idf61 idf60 idf55 idf54 idf53
 FLAVOR?=	${FLAVORS:[1]}
@@ -302,9 +303,9 @@ pre-build:
 		${WRKSRC}/samples/${PORTNAME}/crosstool.config.orig
 
 do-build:
-	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
-
 # see .gitlab-ci.yml in espressif/crosstool-NG
+	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng upgradeconfig
+	cd ${BUILD_WRKSRC} && ${SETENV} ${BUILD_ENV} ./ct-ng build
 	${RM} ${WRKSRC}/builds/${PORTNAME}/bin/*.config
 
 .if ${PORTNAME} == xtensa-esp-elf && !defined(FLAVOR_SUPPORTS_VENDORED_CARGO)
