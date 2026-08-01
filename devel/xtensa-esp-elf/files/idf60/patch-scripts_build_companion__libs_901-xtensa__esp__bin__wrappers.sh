@@ -1,6 +1,6 @@
---- scripts/build/companion_libs/901-xtensa_esp_bin_wrappers.sh.orig	2025-09-28 17:31:36 UTC
+--- scripts/build/companion_libs/901-xtensa_esp_bin_wrappers.sh.orig	2025-12-05 07:19:54 UTC
 +++ scripts/build/companion_libs/901-xtensa_esp_bin_wrappers.sh
-@@ -42,6 +41,9 @@ map_triplet_to_rust() {
+@@ -42,6 +42,9 @@ map_triplet_to_rust() {
          x86_64*-mingw32)
              echo "x86_64-pc-windows-gnu"
              ;;
@@ -10,7 +10,7 @@
          *)
              echo "Unsupported"
              CT_DoLog ERROR ">> map_triplet_to_rust: unknown mapping for: $gcc_triplet"
-@@ -49,37 +51,15 @@ map_triplet_to_rust() {
+@@ -49,37 +52,15 @@ map_triplet_to_rust() {
      esac
  }
  

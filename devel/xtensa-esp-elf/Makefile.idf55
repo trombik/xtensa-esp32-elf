@@ -45,6 +45,10 @@ DISTFILES+=	\
 		zlib-1.2.13.tar.gz:source11 \
 		zstd-1.5.5.tar.gz:source12
 
+# picolibc depends on meson. move this dependency to Makefile when idf53 is
+# EoLed.
+BUILD_DEPENDS+=	meson:devel/meson
+
 idf55_PLIST=	${MASTERDIR}/pkg-plist.${PORTNAME}-${FLAVOR}
 idf55_PKGNAMESUFFIX=	-${FLAVOR}
 
