@@ -8,8 +8,8 @@ ESPRESSIF_GCC_VERSION=	15.2.0
 # samples/xtensa-esp-elf/crosstool.config in https://github.com/espressif/crosstool-NG
 ESPRESSIF_GCC_TAG=	esp-15.2.0_20251204
 ESPRESSIF_NEWLIB_TAG=	esp-4.5.0_20251204
-ESPRESSIF_BINUTILS_TAG=	esp-2.45.0_20250929
-ESPRESSIF_PICOLIBC_TAG=	esp-1.8.10_20250929
+ESPRESSIF_BINUTILS_TAG=	esp-2.45.0_20251204
+ESPRESSIF_PICOLIBC_TAG=	esp-1.8.10_20251204
 
 # git submodules tags to use. see .gitmodules in https://github.com/espressif/crosstool-NG.
 XTENSA_OVERLAYS_TAGNAME=	dd1cf19
