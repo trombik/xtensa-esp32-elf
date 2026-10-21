@@ -21,6 +21,8 @@ BUILD_DEPENDS=	bash:shells/bash \
 		gsed:textproc/gsed \
 		help2man:misc/help2man \
 		makeinfo:print/texinfo \
+		pkgconf:devel/pkgconf \
+		zstd:archivers/zstd \
 		${RUST_DEFAULT}>=1.77.0:lang/${RUST_DEFAULT}
 
 FLAVORS?=	idf61 idf60 idf55 idf54 idf53
